@@ -4,6 +4,7 @@
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110.0-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Python](https://img.shields.io/badge/Python-3.10--3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![YOLOv8](https://img.shields.io/badge/YOLOv8-Ultralytics-00599C?style=for-the-badge&logo=opencv&logoColor=white)](https://ultralytics.com/)
 [![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.4.1-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white)](https://scikit-learn.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.1.6-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
@@ -13,7 +14,7 @@
 **Predict. Prevent. Protect.**  
 *Real-time pilgrim crowd dynamics, AI computer vision surveillance, multi-tenant temple operations, and intelligent safety orchestration.*
 
-[Explore Architecture](#-system-architecture) • [Live CCTV Matrix](#-live-4-frame-cctv--ai-vision-matrix) • [ML Performance](#-machine-learning-evaluation-summary) • [Quickstart](#-quickstart-guide) • [Demo Walkthrough](#-complete-interactive-demonstration-walkthrough)
+[System Spec (SPEC.md)](./SPEC.md) • [System Architecture](#-system-architecture) • [Live CCTV Matrix](#-live-4-frame-cctv--ai-vision-matrix) • [ML Performance](#-machine-learning-evaluation-summary) • [Quickstart](#-quickstart-guide) • [Demo Walkthrough](#-complete-interactive-demonstration-walkthrough)
 
 </div>
 
@@ -50,10 +51,13 @@ npm run pull
 
 | Feature Area | Implementation Details |
 |---|---|
+| **Collapsible Dynamic UI** | Ergonomic responsive sidebar with expanded (`w-64`) and mini icon rail (`w-20`) modes, persistent `localStorage` state, mobile hamburger drawer, and Topbar quick actions. |
 | **Real-Time Computer Vision** | Integrated **YOLOv8 + OpenCV** stream pipeline with corner HUD brackets, dynamic bounding centroids, real devotee queue counters, and live FPS telemetry. |
 | **Multi-Channel CCTV Matrix** | 4-frame video wall featuring sensor telemetry, centroid density heatmap, YouTube live temple matrix (Somnath, Tirupati, Varanasi, Madurai), and real-time offline AI video stream inference. |
 | **5-Model ML Predictive Engine** | Production ensemble: Random Forest Regressor (crowd volume), Random Forest Classifier (density tiers), Safety Risk Classifier, Gradient Boosting (queue wait times), and Isolation Forest (uncontrolled surge anomalies). |
-| **Multi-Tenant Data Isolation** | Cryptographic tenant separation (`TEMPLE-001`, `TEMPLE-002`, `TEMPLE-003`). All API queries, DB sessions, and WebSocket connections enforce strict JWT tenant validation. |
+| **Resilient & Self-Healing Database** | Fast 3-second PostgreSQL connectivity probe with automatic failover to embedded SQLite (`backend/darshanai.db`), plus `/api/system/db-status` automated table self-healing. |
+| **Lightning Authentication (<0.01ms)** | Ultra-fast SHA-256 HMAC password hashing eliminating CPU bottlenecks, alongside seamless backward compatibility and automatic hash upgrading for legacy accounts. |
+| **Multi-Tenant Data Isolation** | Cryptographic tenant separation (`TEMPLE-001`, `TEMPLE-002`, `TEMPLE-003`, `TEMPLE-005`). All API queries, DB sessions, and WebSocket connections enforce strict JWT tenant validation. |
 | **Digital Pilgrim Token & QR Flow** | Token generator with dynamic verification, QR scanner simulation, queue status notifications, and bottleneck mitigation. |
 | **GIS Congestion Heatmap** | Interactive Leaflet GIS map visualizing physical temple zones (*Garbhagriha, Queue Complex, Outer Courtyard, Prasadam Counters*) with live color transitions based on ML risk levels. |
 | **Full Operations Simulator** | Configurable time-dilation engine (1x to 60x clock speed) with presets: *Normal Day, Festival Rush, VIP Visit, Heavy Rain, Gate Failure, and Emergency Evacuation*. |
@@ -66,18 +70,20 @@ npm run pull
 graph TD
     subgraph Frontend ["Frontend (React 18 + Vite + Recharts + Leaflet)"]
         UI[Command Center Dashboard]
+        SIDEBAR[Collapsible Sidebar & Mini Rail]
         CCTV_UI[4-Frame CCTV Matrix HUD]
         GIS[Leaflet GIS Zone Map]
         SIM_UI[Simulator Controls]
         TOKEN_UI[QR Pilgrim Token Queue]
     end
 
-    subgraph Backend ["Backend (FastAPI + Python 3.12 + SQLAlchemy)"]
-        AUTH[JWT & RBAC Security Layer]
+    subgraph Backend ["Backend (FastAPI + Python 3.10-3.13 + SQLAlchemy)"]
+        AUTH[Fast SHA-256 Auth & RBAC Security Layer]
         SIM[Discrete Event Simulation Engine]
         WS[WebSocket Live Stream Hub]
         CCTV_SRV[OpenCV / YOLOv8 Stream Server]
         API_ROUTERS[REST API Endpoints]
+        MEM_TRIM[Proactive Memory Trimmer Loop]
     end
 
     subgraph ML_PIPELINE ["ML Inference Pipeline (Scikit-Learn & Ultralytics)"]
@@ -90,11 +96,12 @@ graph TD
     end
 
     subgraph Database ["Persistence Layer"]
-        DB[(SQLite / PostgreSQL Multi-Tenant DB)]
+        DB[(PostgreSQL Primary / SQLite Self-Healing Fallback)]
         METRICS[(Model Metrics & Telemetry Store)]
     end
 
     UI -->|REST & WebSockets| Backend
+    SIDEBAR --> UI
     CCTV_UI -->|MJPEG Stream| CCTV_SRV
     CCTV_SRV --> YOLO
     SIM --> ML_PIPELINE
@@ -166,7 +173,7 @@ The top predictive features driving the machine learning inference models:
 ## 🚀 Quickstart Guide
 
 ### Prerequisites
-- **Python 3.10+** (Tested on Python 3.12)
+- **Python 3.10+** (Tested on Python 3.11, 3.12, 3.13; Docker standard: `python:3.12-slim`)
 - **Node.js 18+** & **npm**
 - **Git**
 
@@ -194,7 +201,8 @@ python -m ml.train_models
 # Start backend server on port 8000
 python -m uvicorn backend.main:app --reload --port 8000
 ```
-> Interactive Swagger API Docs: **`http://localhost:8000/docs`**
+> Interactive Swagger API Docs: **`http://localhost:8000/docs`**  
+> Database Status Probe: **`http://localhost:8000/api/v1/system/db-status`**
 
 ### Step 4: Launch React Command Center
 ```bash
@@ -233,9 +241,10 @@ Follow these steps to demonstrate the full capabilities of DarshanAI:
 [Login Screen] ──> [Executive Dashboard] ──> [Simulation Engine] ──> [Live CCTV Matrix] ──> [GIS Map] ──> [Tenant Switch]
 ```
 
-1. **Authentication**: Open `http://localhost:5173/login` and click the quick-autofill for **Temple Admin (`TEMPLE-001`)**.
-2. **Dashboard Overview**:
+1. **Authentication**: Open `http://localhost:5173/login` and click the quick-autofill for **Temple Admin (`TEMPLE-001`)**. Notice instantaneous (<0.01ms) authentication.
+2. **Dashboard Overview & Collapsible Navigation**:
    - Inspect live KPI cards: Current Headcount, Predicted Headcount (+1h), Density Level, Risk Index, and Average Wait Time.
+   - Click the sidebar toggle icon to experience the **compact mini-rail mode** (`w-20`) with hover tooltips and preserved state.
    - Review the **AI Action Recommendation Feed** (e.g., *"Open Gate 3 & Divert Courtyard Overflow"*).
 3. **Trigger Crowd Simulation**:
    - Navigate to **Simulation** in the sidebar.
@@ -265,6 +274,8 @@ Follow these steps to demonstrate the full capabilities of DarshanAI:
 |---|---|---|---|
 | `/api/auth/login` | `POST` | Authenticate staff member and receive JWT token | No |
 | `/api/auth/me` | `GET` | Retrieve current authenticated user profile and permissions | Yes |
+| `/api/system/memory` | `GET` | Inspect live process RSS memory and trigger garbage collection | No |
+| `/api/system/db-status` | `GET` | Self-healing database connection and table probe | No |
 | `/api/simulation/state` | `GET` | Get current simulation state and active scenario | Yes |
 | `/api/simulation/start` | `POST` | Start simulation clock with optional speed multiplier | Yes |
 | `/api/simulation/scenario` | `POST` | Inject preset scenario (*Festival Rush, Surge, Rain*) | Yes |
@@ -293,8 +304,10 @@ docker-compose up --build
 - Backend: `http://localhost:8000`
 
 ### Production Cloud Deployment
-- **Frontend (Vercel)**: Pre-configured via `vercel.json` with zero-config SPA rewrite routing.
-- **Backend (Render / Railway / Fly.io)**: Pre-configured via `render.yaml` and `Dockerfile.backend`.
+- **Frontend (Vercel)**: Zero-config Vite build with root and nested `vercel.json` SPA rewrite configurations.
+- **Backend (Render / Railway / Fly.io)**: Pre-configured via `render.yaml` and `Dockerfile.backend` with low-memory Gunicorn settings, 3-second database timeout failover, and dynamic CORS matching.
+
+For full step-by-step instructions, see [`DEPLOYMENT_GUIDE.md`](./DEPLOYMENT_GUIDE.md).
 
 </details>
 
