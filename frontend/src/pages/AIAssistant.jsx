@@ -3,22 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import Loading from '../components/Loading';
-import { 
-  Sparkles, 
-  Send, 
-  Bot, 
-  User, 
-  Compass, 
-  Clock, 
-  MapPin, 
-  ShieldCheck, 
-  Activity, 
-  TrendingUp, 
-  Building2, 
-  AlertTriangle, 
-  ChevronRight, 
-  Plus, 
-  MessageSquare, 
+import {
+  Sparkles,
+  Send,
+  Bot,
+  User,
+  Compass,
+  Clock,
+  MapPin,
+  ShieldCheck,
+  Activity,
+  TrendingUp,
+  Building2,
+  AlertTriangle,
+  ChevronRight,
+  Plus,
+  MessageSquare,
   ExternalLink,
   Zap,
   Info,
@@ -187,7 +187,7 @@ const AIAssistant = () => {
             <h6 className="fw-bold m-0 text-maroon d-flex align-items-center gap-2">
               <Sparkles size={16} className="text-warning" /> AI Consultations
             </h6>
-            <button 
+            <button
               className="btn btn-sm btn-outline-dark d-flex align-items-center gap-1 shadow-sm"
               onClick={startNewConversation}
               title="Start a new analytical consultation"
@@ -199,7 +199,7 @@ const AIAssistant = () => {
           {/* Temple Selector in Sidebar */}
           <div className="p-3 border-bottom bg-light">
             <label className="form-label small fw-semibold text-muted mb-1">Active Temple Context:</label>
-            <select 
+            <select
               className="form-select form-select-sm border-saffron fw-semibold text-maroon"
               value={selectedTempleId}
               onChange={(e) => {
@@ -267,7 +267,7 @@ const AIAssistant = () => {
               </small>
             </div>
 
-            <button 
+            <button
               className="btn btn-sm btn-outline-primary d-flex align-items-center gap-1 shadow-sm"
               onClick={() => navigate('/digital-twin')}
             >
@@ -298,12 +298,12 @@ const AIAssistant = () => {
             {messages.map((m, idx) => {
               const isAssistant = m.role === 'assistant';
               return (
-                <div 
-                  key={idx} 
+                <div
+                  key={idx}
                   className={`d-flex gap-3 ${isAssistant ? 'justify-content-start' : 'justify-content-end'}`}
                 >
                   {isAssistant && (
-                    <div 
+                    <div
                       className="rounded-circle d-flex align-items-center justify-content-center shadow-sm flex-shrink-0"
                       style={{ width: '36px', height: '36px', backgroundColor: '#800000', color: '#FFF' }}
                     >
@@ -311,21 +311,21 @@ const AIAssistant = () => {
                     </div>
                   )}
 
-                  <div 
+                  <div
                     className={`rounded-3 p-3 shadow-sm ${isAssistant ? 'bg-white text-dark border' : 'bg-maroon text-white'}`}
-                    style={{ 
-                      maxWidth: '82%', 
+                    style={{
+                      maxWidth: '82%',
                       borderColor: '#E5E7EB',
                       lineHeight: '1.5'
                     }}
                   >
                     {/* Render message content with formatted lines */}
-                    <div 
-                      className="small" 
-                      style={{ 
-                        fontSize: '0.88rem', 
-                        whiteSpace: 'pre-wrap', 
-                        wordBreak: 'break-word' 
+                    <div
+                      className="small"
+                      style={{
+                        fontSize: '0.88rem',
+                        whiteSpace: 'pre-wrap',
+                        wordBreak: 'break-word'
                       }}
                     >
                       {m.content}
@@ -334,7 +334,7 @@ const AIAssistant = () => {
                     {/* Zone 3D Highlight Action Button */}
                     {isAssistant && m.zone_to_highlight && (
                       <div className="mt-2 pt-2 border-top">
-                        <button 
+                        <button
                           className="btn btn-sm btn-outline-info text-dark d-flex align-items-center gap-1 py-1 px-2"
                           style={{ fontSize: '0.75rem', backgroundColor: '#E0F2FE' }}
                           onClick={() => navigate('/digital-twin')}
@@ -366,7 +366,7 @@ const AIAssistant = () => {
                   </div>
 
                   {!isAssistant && (
-                    <div 
+                    <div
                       className="rounded-circle d-flex align-items-center justify-content-center shadow-sm flex-shrink-0"
                       style={{ width: '36px', height: '36px', backgroundColor: '#D97706', color: '#FFF' }}
                     >
@@ -379,7 +379,7 @@ const AIAssistant = () => {
 
             {isSending && (
               <div className="d-flex gap-3 justify-content-start">
-                <div 
+                <div
                   className="rounded-circle d-flex align-items-center justify-content-center shadow-sm flex-shrink-0"
                   style={{ width: '36px', height: '36px', backgroundColor: '#800000', color: '#FFF' }}
                 >
@@ -397,15 +397,15 @@ const AIAssistant = () => {
 
           {/* Chat Input Bar */}
           <div className="p-3 bg-white border-top shadow-sm">
-            <form 
+            <form
               onSubmit={(e) => {
                 e.preventDefault();
                 handleSendMessage();
               }}
               className="d-flex gap-2"
             >
-              <input 
-                type="text" 
+              <input
+                type="text"
                 className="form-control shadow-sm border-saffron"
                 placeholder={`Ask an analytical question regarding ${activeTemple.name} (e.g. crowd count, predictions, routes)...`}
                 value={inputMessage}
@@ -414,8 +414,8 @@ const AIAssistant = () => {
                 style={{ fontSize: '0.88rem' }}
               />
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="btn btn-maroon px-4 fw-bold shadow-sm d-flex align-items-center gap-2"
                 disabled={isSending || !inputMessage.trim()}
               >
