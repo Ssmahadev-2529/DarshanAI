@@ -643,9 +643,29 @@ const HolographicCanvas = ({
         edges.position.y = (size * 0.9) / 2;
         group.add(edges);
 
+        // Emergency Flashing Beacon for Hospitals & Police Stations
+        if (fac.facility_type === 'HOSPITAL' || fac.facility_type === 'POLICE_STATION') {
+          const beaconColor = fac.facility_type === 'HOSPITAL' ? 0xff0044 : 0x0088ff;
+          const beaconMesh = new THREE.Mesh(
+            new THREE.SphereGeometry(2.5, 12, 12),
+            new THREE.MeshBasicMaterial({ color: beaconColor, wireframe: true })
+          );
+          beaconMesh.position.y = size * 0.9 + 3;
+          group.add(beaconMesh);
+
+          // Pulsing vertical beam
+          const beam = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.3, 0.3, 40, 8),
+            new THREE.MeshBasicMaterial({ color: beaconColor, transparent: true, opacity: 0.45 })
+          );
+          beam.position.y = size * 0.9 + 20;
+          group.add(beam);
+        }
+
         const distStr = fac.distance_meters > 1000 ? `${(fac.distance_meters/1000).toFixed(1)}km` : `${fac.distance_meters}m`;
-        const label = createFloatingLabel(fac.name, `${fac.facility_type} • ${distStr}`, labelTheme);
-        label.position.set(0, size + 8, 0);
+        const bedStr = fac.bed_capacity ? ` • ${fac.bed_capacity} beds` : '';
+        const label = createFloatingLabel(fac.name, `${fac.facility_type} • ${distStr}${bedStr}`, labelTheme);
+        label.position.set(0, size + (fac.facility_type === 'HOSPITAL' ? 12 : 8), 0);
         group.add(label);
 
         group.userData = { type: 'FACILITY', entityType: 'FACILITY', data: fac };
@@ -704,8 +724,32 @@ const HolographicCanvas = ({
         ]);
         group.add(new THREE.Line(borderGeo, new THREE.LineBasicMaterial({ color: 0x00ffaa })));
 
-        const label = createFloatingLabel(pLot.name, `PARKING • ${pLot.parking_capacity || 400} cars`, '#00ffaa');
-        label.position.set(0, 10, 0);
+        // 3D Occupancy Status Gauge
+        const cap = pLot.total_capacity || pLot.parking_capacity || 400;
+        const occPct = pLot.current_occupancy_percent || 62;
+        const freeSpaces = pLot.available_spaces ?? Math.max(0, Math.round(cap * (1 - occPct / 100)));
+        const occColor = occPct >= 85 ? 0xff3344 : (occPct >= 65 ? 0xffaa00 : 0x00ffaa);
+        const occThemeHex = occPct >= 85 ? '#ff3344' : (occPct >= 65 ? '#ffaa00' : '#00ffaa');
+
+        // Occupancy Fill Bar above parking plane
+        const barW = 32;
+        const fillW = Math.max(1, (occPct / 100) * barW);
+        const bgBar = new THREE.Mesh(
+          new THREE.BoxGeometry(barW, 0.8, 1.2),
+          new THREE.MeshBasicMaterial({ color: 0x223344, transparent: true, opacity: 0.6 })
+        );
+        bgBar.position.set(0, 1.5, -12);
+        group.add(bgBar);
+
+        const fillBar = new THREE.Mesh(
+          new THREE.BoxGeometry(fillW, 0.9, 1.3),
+          new THREE.MeshBasicMaterial({ color: occColor })
+        );
+        fillBar.position.set(-barW / 2 + fillW / 2, 1.5, -12);
+        group.add(fillBar);
+
+        const label = createFloatingLabel(pLot.name, `PARKING: ${freeSpaces} free / ${cap} total (${occPct}%)`, occThemeHex);
+        label.position.set(0, 11, 0);
         group.add(label);
 
         group.userData = { type: 'TRANSPORT', entityType: 'TRANSPORT', data: pLot };
@@ -970,6 +1014,39 @@ const HolographicCanvas = ({
         clickableObjectsRef.current.push(camGroup);
         totalPolygons += 120;
       });
+    }
+
+    // 9. DYNAMIC ROUTE HIGHLIGHT LINE (Temple Centroid to Selected Facility / Transit / Parking)
+    if (selectedEntity && selectedEntity.latitude && selectedEntity.longitude) {
+      const { x: destX, z: destZ } = gpsToMeters(selectedEntity.latitude, selectedEntity.longitude, centerLat, centerLng);
+      if (Math.hypot(destX, destZ) > 5) {
+        const midX = destX / 2;
+        const midZ = destZ / 2;
+        const dist = Math.hypot(destX, destZ);
+        const arcHeight = Math.min(60, Math.max(15, dist * 0.15));
+
+        const curve = new THREE.QuadraticBezierCurve3(
+          new THREE.Vector3(0, 1.5, 0),
+          new THREE.Vector3(midX, arcHeight, midZ),
+          new THREE.Vector3(destX, 1.5, destZ)
+        );
+
+        const points = curve.getPoints(40);
+        const routeGeo = new THREE.BufferGeometry().setFromPoints(points);
+        const routeLine = new THREE.Line(
+          routeGeo,
+          new THREE.LineDashedMaterial({
+            color: 0x00f0ff,
+            linewidth: 2,
+            scale: 1,
+            dashSize: 4,
+            gapSize: 2
+          })
+        );
+        routeLine.computeLineDistances();
+        scene.add(routeLine);
+        meshesRef.current.push(routeLine);
+      }
     }
 
     if (onUpdateStats) {

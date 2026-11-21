@@ -26,6 +26,7 @@ const Simulation = lazy(() => import('./pages/Simulation'));
 const TempleMapPage = lazy(() => import('./pages/TempleMap'));
 const DataQualityDashboard = lazy(() => import('./pages/DataQualityDashboard'));
 const DigitalTwinPage = lazy(() => import('./pages/DigitalTwin'));
+const SurroundingIntelligence = lazy(() => import('./pages/SurroundingIntelligence'));
 const Analytics = lazy(() => import('./pages/Analytics'));
 const ModelPerformance = lazy(() => import('./pages/ModelPerformance'));
 const Pilgrims = lazy(() => import('./pages/Pilgrims'));
@@ -124,6 +125,12 @@ const AppRoutes = () => {
       <Route path="/digital-twin" element={
         <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY', 'MEDICAL', 'VOLUNTEER']}>
           <Layout><DigitalTwinPage /></Layout>
+        </ProtectedRoute>
+      } />
+
+      <Route path="/surroundings" element={
+        <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY', 'MEDICAL', 'VOLUNTEER']}>
+          <Layout><SurroundingIntelligence /></Layout>
         </ProtectedRoute>
       } />
 

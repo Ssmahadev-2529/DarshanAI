@@ -159,10 +159,10 @@ const DigitalTwinPage = () => {
         setBoundary(geoRes.value.data.boundaries[0]);
       }
       if (zonesRes.status === 'fulfilled') setZones(zonesRes.value.data || []);
-      if (roadsRes.status === 'fulfilled') setRoads(roadsRes.value.data || []);
-      if (facRes.status === 'fulfilled') setFacilities(facRes.value.data || []);
-      if (transRes.status === 'fulfilled') setTransport(transRes.value.data || []);
-      if (parkRes.status === 'fulfilled') setParking(parkRes.value.data || []);
+      if (roadsRes.status === 'fulfilled') setRoads(Array.isArray(roadsRes.value.data) ? roadsRes.value.data : (roadsRes.value.data?.roads || []));
+      if (facRes.status === 'fulfilled') setFacilities(Array.isArray(facRes.value.data) ? facRes.value.data : (facRes.value.data?.facilities || []));
+      if (transRes.status === 'fulfilled') setTransport(Array.isArray(transRes.value.data) ? transRes.value.data : (transRes.value.data?.transit_nodes || []));
+      if (parkRes.status === 'fulfilled') setParking(Array.isArray(parkRes.value.data) ? parkRes.value.data : (parkRes.value.data?.parking_lots || []));
       if (camsRes.status === 'fulfilled') setCameras(camsRes.value.data || []);
       if (hmRes.status === 'fulfilled') setHeatmapData(hmRes.value.data);
       if (hmPredRes.status === 'fulfilled') setHeatmapPredictions(hmRes.value.data?.horizons ? hmRes.value.data : hmPredRes.value.data);

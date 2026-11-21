@@ -28,7 +28,7 @@ from backend.models.gis import (
 from backend.services.temple_data_service import seed_multi_temple_gis_foundation
 from backend.services.auth_service import get_password_hash
 
-from backend.routers import auth, temples, dashboard, ml, simulation, alerts, pilgrims, cctv, analytics, predictions, cameras, heatmap
+from backend.routers import auth, temples, dashboard, ml, simulation, alerts, pilgrims, cctv, analytics, predictions, cameras, heatmap, surroundings
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -52,6 +52,7 @@ app.add_middleware(
 
 # Include Routers
 app.include_router(auth.router, prefix=settings.API_V1_STR)
+app.include_router(surroundings.router, prefix=settings.API_V1_STR)
 app.include_router(temples.router, prefix=settings.API_V1_STR)
 app.include_router(dashboard.router, prefix=settings.API_V1_STR)
 app.include_router(ml.router, prefix=settings.API_V1_STR)
