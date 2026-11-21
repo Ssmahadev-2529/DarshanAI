@@ -32,6 +32,23 @@ def get_current_user(
         raise credentials_exception
     return user
 
+optional_security = HTTPBearer(auto_error=False)
+
+def get_optional_user(
+    credentials: HTTPAuthorizationCredentials = Depends(optional_security),
+    db: Session = Depends(get_db)
+):
+    if not credentials:
+        return None
+    try:
+        payload = jwt.decode(credentials.credentials, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        email: str = payload.get("sub")
+        if email:
+            return db.query(User).filter(User.email == email).first()
+    except Exception:
+        return None
+    return None
+
 def require_role(allowed_roles: list[str]):
     def role_checker(current_user: User = Depends(get_current_user)):
         if current_user.role not in allowed_roles and current_user.role != "SUPER_ADMIN":

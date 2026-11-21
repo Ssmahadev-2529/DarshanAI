@@ -12,6 +12,20 @@ from backend.models.user import User
 from backend.models.alert import Alert
 from backend.models.pilgrim import Pilgrim
 from backend.models.cctv import CCTVCamera, LiveCrowdMeasurement, SimulationRun
+from backend.models.crowd import CrowdObservation
+from backend.models.prediction import PredictionLog
+from backend.models.gis import (
+    DataSource,
+    TempleLocation,
+    TempleBoundary,
+    TempleBuilding,
+    SurroundingFacility,
+    TransportLocation,
+    GeographicalFeature,
+    Temple3DAsset,
+    DataQualityReport
+)
+from backend.services.temple_data_service import seed_multi_temple_gis_foundation
 from backend.services.auth_service import get_password_hash
 
 from backend.routers import auth, temples, dashboard, ml, simulation, alerts, pilgrims, cctv
@@ -382,6 +396,9 @@ def seed_database():
             ]
             db.add_all(pilgrims)
             db.commit()
+
+        # 6. Seed DARSHANAI 2.0 Real-World GIS Multi-Temple Foundation
+        seed_multi_temple_gis_foundation(db)
 
         print("[SEEDING] Database initialization complete.")
     except Exception as e:

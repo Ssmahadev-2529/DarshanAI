@@ -19,18 +19,4 @@ class CrowdObservation(Base):
     staff_count = Column(Integer, default=20)
     zone_data = Column(JSON, nullable=True)
 
-class TempleZone(Base):
-    __tablename__ = "temple_zones"
-
-    id = Column(Integer, primary_key=True, index=True)
-    temple_id = Column(String(50), ForeignKey("temples.temple_id"), nullable=False, index=True)
-    zone_code = Column(String(50), nullable=False)
-    name = Column(String(100), nullable=False)
-    capacity = Column(Integer, default=2000)
-    current_visitors = Column(Integer, default=0)
-    queue_length = Column(Integer, default=0)
-    entry_rate = Column(Integer, default=0)
-    exit_rate = Column(Integer, default=0)
-    waiting_time = Column(Float, default=0.0)
-    risk_level = Column(String(30), default="LOW")
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+from backend.models.zone import TempleZone

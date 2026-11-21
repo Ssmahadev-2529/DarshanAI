@@ -24,6 +24,7 @@ const Predictions = lazy(() => import('./pages/Predictions'));
 const RiskAnalysis = lazy(() => import('./pages/RiskAnalysis'));
 const Simulation = lazy(() => import('./pages/Simulation'));
 const TempleMapPage = lazy(() => import('./pages/TempleMap'));
+const DataQualityDashboard = lazy(() => import('./pages/DataQualityDashboard'));
 const Analytics = lazy(() => import('./pages/Analytics'));
 const ModelPerformance = lazy(() => import('./pages/ModelPerformance'));
 const Pilgrims = lazy(() => import('./pages/Pilgrims'));
@@ -110,6 +111,12 @@ const AppRoutes = () => {
       <Route path="/temple-map" element={
         <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY', 'MEDICAL', 'VOLUNTEER']}>
           <Layout><TempleMapPage /></Layout>
+        </ProtectedRoute>
+      } />
+
+      <Route path="/data-quality" element={
+        <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY']}>
+          <Layout><DataQualityDashboard /></Layout>
         </ProtectedRoute>
       } />
 
