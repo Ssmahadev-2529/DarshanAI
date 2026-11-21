@@ -140,6 +140,7 @@ const HolographicCanvas = ({
   facilities = [],
   transport = [],
   parking = [],
+  cameras = [],
   layers = {
     buildings: true,
     boundaries: true,
@@ -149,7 +150,8 @@ const HolographicCanvas = ({
     commercial: true,
     amenities: true,
     parking: true,
-    crowdZones: true
+    crowdZones: true,
+    cameras: true
   },
   autoRotate = true,
   cameraPreset = null,
@@ -743,10 +745,123 @@ const HolographicCanvas = ({
       });
     }
 
+    // 8. CCTV CAMERAS & CONICAL FOV FRUSTUMS (Phase 8 CV Spatial Calibration)
+    if (layers.cameras && Array.isArray(cameras)) {
+      cameras.forEach(cam => {
+        if (!cam.latitude || !cam.longitude) return;
+        const { x, z } = gpsToMeters(cam.latitude, cam.longitude, centerLat, centerLng);
+        const camGroup = new THREE.Group();
+        camGroup.position.set(x, 0, z);
+
+        const isHighCrowd = cam.risk_level === 'CRITICAL' || cam.risk_level === 'HIGH' || (cam.density_percent || 0) > 65;
+        const themeColor = isHighCrowd ? 0xff3344 : 0x00f0ff;
+        const poleH = 7.0;
+
+        // Metallic Pylon Pole
+        const poleGeo = new THREE.CylinderGeometry(0.2, 0.25, poleH, 8);
+        const poleMat = new THREE.MeshStandardMaterial({ color: 0x334455, metalness: 0.8, roughness: 0.2 });
+        const poleMesh = new THREE.Mesh(poleGeo, poleMat);
+        poleMesh.position.y = poleH / 2;
+        camGroup.add(poleMesh);
+
+        // Camera Head Unit Box
+        const headGeo = new THREE.BoxGeometry(0.8, 0.5, 1.2);
+        const headMat = new THREE.MeshPhysicalMaterial({
+          color: themeColor,
+          emissive: themeColor,
+          emissiveIntensity: isHighCrowd ? 0.7 : 0.35,
+          transparent: true,
+          opacity: 0.9
+        });
+        const headMesh = new THREE.Mesh(headGeo, headMat);
+        headMesh.position.y = poleH;
+        
+        // Orientation angle relative to North
+        const orientationRad = ((cam.orientation_deg || 0) * Math.PI) / 180;
+        headMesh.rotation.y = -orientationRad;
+        camGroup.add(headMesh);
+
+        // Blinking Beacon Top Sphere
+        const beaconGeo = new THREE.SphereGeometry(0.2, 12, 12);
+        const beaconMat = new THREE.MeshBasicMaterial({ color: isHighCrowd ? 0xff0044 : 0x00ff88 });
+        const beacon = new THREE.Mesh(beaconGeo, beaconMat);
+        beacon.position.y = poleH + 0.45;
+        camGroup.add(beacon);
+
+        // Conical FOV Ground Projection Frustum
+        const fovDeg = cam.fov_deg || 75.0;
+        const halfFovRad = ((fovDeg / 2) * Math.PI) / 180;
+        const rangeMeters = 16.0;
+        const segments = 12;
+
+        const frustumVertices = [];
+        const frustumIndices = [];
+
+        // Apex at camera head
+        frustumVertices.push(0, poleH, 0); // index 0
+
+        // Ground Arc points
+        for (let s = 0; s <= segments; s++) {
+          const frac = s / segments;
+          const angle = -orientationRad - halfFovRad + (frac * 2 * halfFovRad);
+          const gx = Math.sin(angle) * rangeMeters;
+          const gz = -Math.cos(angle) * rangeMeters;
+          frustumVertices.push(gx, 0.15, gz); // index s + 1
+        }
+
+        // Triangles forming the 3D projection cone volume
+        for (let s = 1; s <= segments; s++) {
+          frustumIndices.push(0, s, s + 1);
+        }
+
+        const frustumGeo = new THREE.BufferGeometry();
+        frustumGeo.setAttribute('position', new THREE.Float32BufferAttribute(frustumVertices, 3));
+        frustumGeo.setIndex(frustumIndices);
+        frustumGeo.computeVertexNormals();
+
+        const frustumMat = new THREE.MeshBasicMaterial({
+          color: themeColor,
+          transparent: true,
+          opacity: isHighCrowd ? 0.32 : 0.16,
+          side: THREE.DoubleSide
+        });
+        const frustumMesh = new THREE.Mesh(frustumGeo, frustumMat);
+        camGroup.add(frustumMesh);
+
+        // Wireframe edges on the projection volume
+        const wireMat = new THREE.LineBasicMaterial({ color: themeColor, transparent: true, opacity: isHighCrowd ? 0.8 : 0.45 });
+        const frustumWire = new THREE.LineSegments(new THREE.WireframeGeometry(frustumGeo), wireMat);
+        camGroup.add(frustumWire);
+
+        // Visual Alert Illumination ring on ground when congested
+        if (isHighCrowd) {
+          const alertRingGeo = new THREE.RingGeometry(rangeMeters * 0.85, rangeMeters * 1.05, 24);
+          const alertRingMat = new THREE.MeshBasicMaterial({ color: 0xff3344, side: THREE.DoubleSide, transparent: true, opacity: 0.6 });
+          const alertRing = new THREE.Mesh(alertRingGeo, alertRingMat);
+          alertRing.rotation.x = -Math.PI / 2;
+          alertRing.position.set(0, 0.18, 0);
+          camGroup.add(alertRing);
+        }
+
+        // Floating Camera Telemetry Sprite Label
+        const labelText = `${cam.camera_id} • ${cam.name}`;
+        const labelSubtitle = `Observed: ${cam.person_count || 0} devotees | FOV: ${cam.fov_deg}°`;
+        const label = createFloatingLabel(labelText, labelSubtitle, isHighCrowd ? '#ff3344' : '#00f0ff');
+        label.position.set(0, poleH + 4.5, 0);
+        camGroup.add(label);
+
+        camGroup.userData = { type: 'CAMERA', entityType: 'CAMERA', data: cam };
+        scene.add(camGroup);
+        meshesRef.current.push(camGroup);
+        clickableObjectsRef.current.push(camGroup);
+        totalPolygons += 120;
+      });
+    }
+
     if (onUpdateStats) {
       onUpdateStats({ polyCount: totalPolygons + 1500 });
     }
-  }, [temple, buildings, zones, boundary, roads, facilities, transport, parking, layers, navLevel, selectedEntity, selectedFloor]);
+  }, [temple, buildings, zones, boundary, roads, facilities, transport, parking, cameras, layers, navLevel, selectedEntity, selectedFloor]);
 
   // Raycaster for Interactive Navigation Transitions
   const handlePointerDown = useCallback((event) => {

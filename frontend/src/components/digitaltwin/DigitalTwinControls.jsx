@@ -377,6 +377,20 @@ const DigitalTwinControls = ({
           >
             <ShieldAlert size={12} /> Crowd Zones ({availableCounts.zones || 0})
           </button>
+
+          {/* Layer 10: CCTV Vision Nodes (Phase 8 CV Calibration) */}
+          <button
+            onClick={() => onToggleLayer('cameras')}
+            className="btn btn-xs py-1 px-2 rounded d-flex align-items-center gap-1"
+            style={{
+              backgroundColor: layers.cameras ? 'rgba(0, 240, 255, 0.3)' : 'rgba(255, 255, 255, 0.05)',
+              border: `1px solid ${layers.cameras ? '#00f0ff' : 'rgba(255, 255, 255, 0.2)'}`,
+              color: layers.cameras ? '#00f0ff' : '#99AAB5',
+              fontSize: '0.68rem'
+            }}
+          >
+            <Camera size={12} /> CCTV Nodes ({availableCounts.cameras || 0})
+          </button>
         </div>
       </div>
     </>

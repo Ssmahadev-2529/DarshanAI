@@ -41,6 +41,7 @@ const DigitalTwinPage = () => {
   const [facilities, setFacilities] = useState([]);
   const [transport, setTransport] = useState([]);
   const [parking, setParking] = useState([]);
+  const [cameras, setCameras] = useState([]);
 
   // Phase 5 Multi-Level Navigation State
   // 1: REGIONAL VIEW, 2: TEMPLE CAMPUS, 3: BUILDING VIEW, 4: OPERATIONAL ZONE, 5: INTERIOR / FLOOR
@@ -60,7 +61,7 @@ const DigitalTwinPage = () => {
   // HUD Stats
   const [telemetry, setTelemetry] = useState({ fps: 60, polyCount: 16800 });
 
-  // Layer Visibility Matrix (Phase 4 Extended)
+  // Layer Visibility Matrix (Phase 4 & Phase 8 Extended)
   const [layers, setLayers] = useState({
     buildings: true,
     boundaries: true,
@@ -70,7 +71,8 @@ const DigitalTwinPage = () => {
     commercial: true,
     amenities: true,
     parking: true,
-    crowdZones: true
+    crowdZones: true,
+    cameras: true
   });
 
   // Check if Level 5 Interior / Floor Slicing is supported by verified data
@@ -118,12 +120,13 @@ const DigitalTwinPage = () => {
       setFacilities([]);
       setTransport([]);
       setParking([]);
+      setCameras([]);
       setSelectedEntity(null);
       setSearchQuery('');
       setNavLevel(2); // Reset to Campus View
       setSelectedFloor(1);
 
-      const [templeRes, bldRes, geoRes, zonesRes, roadsRes, facRes, transRes, parkRes] = await Promise.allSettled([
+      const [templeRes, bldRes, geoRes, zonesRes, roadsRes, facRes, transRes, parkRes, camsRes] = await Promise.allSettled([
         API.get(`/temples/${templeId}`),
         API.get(`/temples/${templeId}/buildings`),
         API.get(`/temples/${templeId}/geography`),
@@ -131,7 +134,8 @@ const DigitalTwinPage = () => {
         API.get(`/temples/${templeId}/roads`),
         API.get(`/temples/${templeId}/facilities`),
         API.get(`/temples/${templeId}/transport`),
-        API.get(`/temples/${templeId}/parking`)
+        API.get(`/temples/${templeId}/parking`),
+        API.get(`/cameras?temple_id=${templeId}`)
       ]);
 
       if (templeRes.status === 'fulfilled') setTemple(templeRes.value.data);
@@ -144,6 +148,7 @@ const DigitalTwinPage = () => {
       if (facRes.status === 'fulfilled') setFacilities(facRes.value.data || []);
       if (transRes.status === 'fulfilled') setTransport(transRes.value.data || []);
       if (parkRes.status === 'fulfilled') setParking(parkRes.value.data || []);
+      if (camsRes.status === 'fulfilled') setCameras(camsRes.value.data || []);
     } catch (err) {
       console.error(`Failed to load digital twin for ${templeId}:`, err);
     } finally {
@@ -197,16 +202,18 @@ const DigitalTwinPage = () => {
       ...parking.map(p => ({ ...p, entityType: 'TRANSPORT' })),
       ...roads.map(r => ({ ...r, entityType: 'ROAD' })),
       ...buildings.map(b => ({ ...b, entityType: 'BUILDING' })),
-      ...zones.map(z => ({ ...z, entityType: 'ZONE' }))
+      ...zones.map(z => ({ ...z, entityType: 'ZONE' })),
+      ...cameras.map(c => ({ ...c, entityType: 'CAMERA' }))
     ];
     return all.filter(item => 
       item.name?.toLowerCase().includes(q) ||
       item.facility_type?.toLowerCase().includes(q) ||
       item.transport_type?.toLowerCase().includes(q) ||
       item.building_type?.toLowerCase().includes(q) ||
-      item.zone_type?.toLowerCase().includes(q)
+      item.zone_type?.toLowerCase().includes(q) ||
+      item.camera_id?.toLowerCase().includes(q)
     ).slice(0, 8);
-  }, [searchQuery, facilities, transport, parking, roads, buildings, zones]);
+  }, [searchQuery, facilities, transport, parking, roads, buildings, zones, cameras]);
 
   // Layer element counts
   const availableCounts = useMemo(() => {
@@ -223,9 +230,10 @@ const DigitalTwinPage = () => {
       accommodations: commercialCount,
       amenities: amenityCount,
       parking: parking.length,
-      zones: zones.length
+      zones: zones.length,
+      cameras: cameras.length
     };
-  }, [buildings, boundary, roads, facilities, transport, parking, zones]);
+  }, [buildings, boundary, roads, facilities, transport, parking, zones, cameras]);
 
   if (loading) return <Loading />;
 
@@ -318,6 +326,7 @@ const DigitalTwinPage = () => {
           facilities={facilities}
           transport={transport}
           parking={parking}
+          cameras={cameras}
           layers={layers}
           autoRotate={autoRotate}
           cameraPreset={cameraPreset}

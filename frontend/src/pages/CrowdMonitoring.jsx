@@ -39,10 +39,19 @@ const CrowdMonitoring = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 
+  const TEMPLES = [
+    { id: 'TEMPLE-001', name: 'Somnath Jyotirlinga', location: 'Gujarat', defaultCam: 'CAM-101' },
+    { id: 'TEMPLE-002', name: 'Tirumala Venkateswara', location: 'Tirupati', defaultCam: 'CAM-201' },
+    { id: 'TEMPLE-003', name: 'Meenakshi Amman', location: 'Madurai', defaultCam: 'CAM-301' },
+    { id: 'TEMPLE-005', name: 'Kashi Vishwanath', location: 'Varanasi', defaultCam: 'CAM-501' }
+  ];
+
+  const [selectedTempleId, setSelectedTempleId] = useState(user?.temple_id || 'TEMPLE-001');
   const [cameras, setCameras] = useState([]);
-  const [selectedCamId, setSelectedCamId] = useState('CAM-001');
+  const [selectedCamId, setSelectedCamId] = useState('CAM-101');
   const [analytics, setAnalytics] = useState(null);
   const [predictions, setPredictions] = useState(null);
+  const [templeCrowdObs, setTempleCrowdObs] = useState(null);
   const [loading, setLoading] = useState(true);
   const [changingSource, setChangingSource] = useState(false);
   const [error, setError] = useState(null);
@@ -161,18 +170,23 @@ const CrowdMonitoring = () => {
     isFetchingRef.current = true;
 
     try {
-      const targetCam = selectedCamId || 'CAM-001';
+      const targetCam = selectedCamId || 'CAM-101';
 
-      // Parallelize all 4 telemetry requests in a single round-trip cycle
-      const [camsResult, anaResult, predResult, f4Result] = await Promise.allSettled([
-        API.get('/cctv/cameras'),
+      // Parallelize all 5 telemetry requests in a single round-trip cycle
+      const [camsResult, anaResult, predResult, f4Result, crowdObsResult] = await Promise.allSettled([
+        API.get(`/cameras?temple_id=${selectedTempleId}`),
         API.get(`/cctv/cameras/${targetCam}/analytics`),
         API.get(`/cctv/predictions?camera_id=${targetCam}`),
-        API.get(`/cctv/yolo-opencv/analytics?camera_id=${targetCam}`)
+        API.get(`/cctv/yolo-opencv/analytics?camera_id=${targetCam}`),
+        API.get(`/temples/${selectedTempleId}/crowd-observations`)
       ]);
 
       if (camsResult.status === 'fulfilled') {
-        setCameras(camsResult.value.data || []);
+        const fetchedCams = camsResult.value.data || [];
+        setCameras(fetchedCams);
+        if (fetchedCams.length > 0 && !fetchedCams.some(c => c.camera_id === selectedCamId)) {
+          setSelectedCamId(fetchedCams[0].camera_id);
+        }
       }
       if (anaResult.status === 'fulfilled') {
         setAnalytics(anaResult.value.data);
@@ -182,6 +196,9 @@ const CrowdMonitoring = () => {
       }
       if (f4Result.status === 'fulfilled') {
         setFrame4Analytics(f4Result.value.data);
+      }
+      if (crowdObsResult.status === 'fulfilled') {
+        setTempleCrowdObs(crowdObsResult.value.data);
       }
 
       setError(null);
@@ -198,7 +215,16 @@ const CrowdMonitoring = () => {
     fetchCCTVData();
     const interval = setInterval(fetchCCTVData, 4000);
     return () => clearInterval(interval);
-  }, [selectedCamId]);
+  }, [selectedCamId, selectedTempleId]);
+
+  const handleTempleSelect = (templeId) => {
+    setSelectedTempleId(templeId);
+    const tmpl = TEMPLES.find(t => t.id === templeId);
+    if (tmpl) {
+      setSelectedCamId(tmpl.defaultCam);
+    }
+    setStreamKey(Date.now());
+  };
 
   const handleCameraSelect = (camId) => {
     setSelectedCamId(camId);
@@ -517,8 +543,44 @@ const CrowdMonitoring = () => {
         </div>
       )}
 
+      {/* Temple Selection Strip (Phase 8 Multi-Temple Vision Support) */}
+      <div className="d-flex flex-wrap gap-2 mb-2 align-items-center">
+        <span className="small text-muted fw-bold me-1">TEMPLE CAMPUS:</span>
+        {TEMPLES.map(tmpl => (
+          <button
+            key={tmpl.id}
+            onClick={() => handleTempleSelect(tmpl.id)}
+            className={`btn btn-sm py-1 px-3 rounded-pill fw-semibold shadow-sm transition-all ${
+              selectedTempleId === tmpl.id
+                ? 'btn-maroon text-gold'
+                : 'btn-outline-secondary bg-white'
+            }`}
+            style={{ fontSize: '0.78rem' }}
+          >
+            {tmpl.name} ({tmpl.location})
+          </button>
+        ))}
+      </div>
+
+      {/* Mandatory Test Footage & Privacy Protection Disclaimer Banner */}
+      <div 
+        className="alert mb-3 py-2 px-3 rounded-3 d-flex align-items-center justify-content-between flex-wrap gap-2 shadow-sm"
+        style={{ backgroundColor: 'rgba(255, 140, 0, 0.12)', border: '1px solid rgba(255, 140, 0, 0.4)', color: '#854d0e' }}
+      >
+        <div className="d-flex align-items-center gap-2">
+          <AlertTriangle size={18} className="text-warning flex-shrink-0" />
+          <small style={{ fontSize: '0.76rem' }}>
+            <strong>BENCHMARKING & EVALUATION NOTICE:</strong> All video streams utilize authorized developer test footage for deep learning evaluation. 
+            <strong> STRICT PRIVACY ENFORCEMENT:</strong> Zero facial recognition, biometric identity scanning, or tracking of individual worshippers.
+          </small>
+        </div>
+        <span className="badge bg-dark text-warning border border-warning px-2 py-1" style={{ fontSize: '0.65rem' }}>
+          TEST FOOTAGE HUD WATERMARKED
+        </span>
+      </div>
+
       {/* Camera Navigation Strip */}
-      <div className="d-flex flex-wrap gap-2 mb-3 align-items-center">
+      <div className="d-flex flex-wrap gap-2 mb-2 align-items-center">
         <span className="small text-muted fw-bold me-1">ACTIVE CORRIDORS:</span>
         {cameras.map(cam => (
           <button
@@ -535,6 +597,34 @@ const CrowdMonitoring = () => {
           </button>
         ))}
       </div>
+
+      {/* Spatial Calibration & Ground Topology Telemetry Bar */}
+      {(() => {
+        const camObj = cameras.find(c => c.camera_id === selectedCamId) || cameras[0];
+        if (!camObj) return null;
+        return (
+          <div className="p-2 px-3 mb-3 rounded bg-white border border-beige shadow-sm d-flex flex-wrap align-items-center justify-content-between gap-3 text-muted small" style={{ fontSize: '0.75rem' }}>
+            <div className="d-flex align-items-center gap-2 flex-wrap">
+              <span>Sensor: <strong className="text-dark">{camObj.camera_id} ({camObj.name})</strong></span>
+              <span>•</span>
+              <span>Zone: <strong className="text-maroon">{camObj.zone_code}</strong></span>
+              <span>•</span>
+              <span>GPS: <code className="text-primary">{camObj.latitude?.toFixed(4)}° N, {camObj.longitude?.toFixed(4)}° E</code></span>
+            </div>
+            <div className="d-flex align-items-center gap-2 flex-wrap">
+              <span>Azimuth: <strong className="text-dark">{camObj.orientation_deg || 0}° N</strong></span>
+              <span>•</span>
+              <span>FOV: <strong className="text-dark">{camObj.fov_deg || 75}°</strong></span>
+              <span>•</span>
+              <span>Footprint: <strong className="text-dark">{camObj.coverage_area_sqm || 350} m²</strong></span>
+              <span>•</span>
+              <span className={`badge ${camObj.calibration_status === 'CALIBRATED' ? 'bg-success' : 'bg-warning text-dark'}`} style={{ fontSize: '0.65rem' }}>
+                {camObj.calibration_status || 'CALIBRATED'}
+              </span>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ========================================================================= */}
       {/* 4-FRAME CROWD INTELLIGENCE DISPLAY MATRIX                                 */}
