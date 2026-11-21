@@ -79,6 +79,7 @@ class SurroundingFacilityResponse(BaseModel):
     latitude: float
     longitude: float
     distance_meters: int
+    straight_line_distance_meters: Optional[int] = None
     contact_phone: Optional[str] = None
     operating_hours: str
     address: Optional[str] = None
@@ -97,6 +98,7 @@ class TransportLocationResponse(BaseModel):
     latitude: float
     longitude: float
     distance_meters: int
+    straight_line_distance_meters: Optional[int] = None
     parking_capacity: Optional[int] = None
     contact_number: Optional[str] = None
     data_classification: str

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   RotateCw, 
   Eye, 
@@ -14,7 +14,13 @@ import {
   HeartPulse, 
   RefreshCw,
   Camera,
-  Activity
+  Activity,
+  Search,
+  Shield,
+  Home,
+  Droplets,
+  Navigation,
+  X
 } from 'lucide-react';
 
 const DigitalTwinControls = ({
@@ -28,43 +34,119 @@ const DigitalTwinControls = ({
   onToggleLayer,
   availableCounts = {},
   fps = 60,
-  polyCount = 12500,
-  temple
+  polyCount = 14500,
+  temple,
+  searchQuery = '',
+  onSearchChange = () => {},
+  searchResults = [],
+  onSelectSearchResult = () => {}
 }) => {
+  const [showSearch, setShowSearch] = useState(false);
+
   return (
     <>
-      {/* Top Left: Holographic HUD Status Badge */}
+      {/* Top Left: Holographic HUD Status Badge & Search Trigger */}
       <div 
         className="position-absolute top-0 start-0 m-3 p-2 rounded-3"
         style={{
           zIndex: 1040,
-          backgroundColor: 'rgba(10, 25, 47, 0.85)',
-          backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(0, 240, 255, 0.3)',
-          boxShadow: '0 0 15px rgba(0, 240, 255, 0.15)',
+          backgroundColor: 'rgba(10, 25, 47, 0.88)',
+          backdropFilter: 'blur(12px)',
+          border: '1px solid rgba(0, 240, 255, 0.35)',
+          boxShadow: '0 0 20px rgba(0, 240, 255, 0.2)',
           color: '#E2F1F8',
-          fontSize: '0.75rem'
+          fontSize: '0.75rem',
+          maxWidth: '380px'
         }}
       >
-        <div className="d-flex align-items-center gap-2 mb-1">
-          <span 
-            className="d-inline-block rounded-circle"
-            style={{ 
-              width: '8px', 
-              height: '8px', 
-              backgroundColor: '#00f0ff',
-              boxShadow: '0 0 8px #00f0ff' 
+        <div className="d-flex align-items-center justify-content-between gap-2 mb-1">
+          <div className="d-flex align-items-center gap-2">
+            <span 
+              className="d-inline-block rounded-circle"
+              style={{ 
+                width: '8px', 
+                height: '8px', 
+                backgroundColor: '#00f0ff',
+                boxShadow: '0 0 8px #00f0ff' 
+              }}
+            />
+            <strong style={{ color: '#00f0ff', letterSpacing: '0.5px' }}>HOLOGRAPHIC DIGITAL TWIN 2.0</strong>
+          </div>
+          <button
+            onClick={() => setShowSearch(!showSearch)}
+            className="btn btn-xs py-0 px-2 rounded d-flex align-items-center gap-1"
+            style={{
+              backgroundColor: showSearch ? 'rgba(0, 240, 255, 0.25)' : 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(0, 240, 255, 0.4)',
+              color: '#00f0ff',
+              fontSize: '0.68rem'
             }}
-          />
-          <strong style={{ color: '#00f0ff', letterSpacing: '0.5px' }}>HOLOGRAPHIC DIGITAL TWIN ENGINE</strong>
+          >
+            <Search size={11} /> {showSearch ? 'Hide Search' : 'Search Surroundings'}
+          </button>
         </div>
-        <div className="d-flex flex-wrap gap-2 text-muted" style={{ fontSize: '0.7rem' }}>
+
+        <div className="d-flex flex-wrap gap-2 text-muted mb-1" style={{ fontSize: '0.7rem' }}>
           <span>FPS: <strong className="text-white">{fps}</strong></span>
           <span>•</span>
-          <span>Polygons: <strong className="text-white">{polyCount.toLocaleString()}</strong></span>
+          <span>Mesh Polygons: <strong className="text-white">{polyCount.toLocaleString()}</strong></span>
           <span>•</span>
-          <span>GPS: <strong className="text-cyan">{temple?.latitude?.toFixed(4)}° N, {temple?.longitude?.toFixed(4)}° E</strong></span>
+          <span>Anchor: <strong className="text-cyan">{temple?.latitude?.toFixed(4)}° N, {temple?.longitude?.toFixed(4)}° E</strong></span>
         </div>
+
+        {/* Nearby Facilities Search Box */}
+        {showSearch && (
+          <div className="mt-2 pt-2 border-top border-secondary">
+            <div className="input-group input-group-sm">
+              <span className="input-group-text bg-dark border-secondary text-cyan p-1">
+                <Search size={13} />
+              </span>
+              <input
+                type="text"
+                className="form-control form-control-sm bg-dark border-secondary text-white py-1"
+                placeholder="Filter hospitals, police, parking, transit, roads..."
+                value={searchQuery}
+                onChange={e => onSearchChange(e.target.value)}
+                style={{ fontSize: '0.72rem' }}
+              />
+              {searchQuery && (
+                <button 
+                  onClick={() => onSearchChange('')} 
+                  className="btn btn-dark border-secondary text-muted p-1"
+                >
+                  <X size={13} />
+                </button>
+              )}
+            </div>
+
+            {/* Search Results Dropdown */}
+            {searchResults.length > 0 && (
+              <div 
+                className="rounded mt-1 p-1 overflow-auto" 
+                style={{ maxHeight: '160px', backgroundColor: 'rgba(5, 15, 30, 0.95)', border: '1px solid rgba(0, 240, 255, 0.3)' }}
+              >
+                {searchResults.map((item, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => onSelectSearchResult(item)}
+                    className="p-1 px-2 rounded hover-bg-ivory cursor-pointer d-flex align-items-center justify-content-between mb-1"
+                    style={{ cursor: 'pointer', fontSize: '0.72rem' }}
+                  >
+                    <div>
+                      <strong className="text-cyan d-block">{item.name}</strong>
+                      <small className="text-muted">{item.facility_type || item.transport_type || item.building_type || 'Feature'}</small>
+                    </div>
+                    {item.distance_meters && (
+                      <span className="badge bg-secondary" style={{ fontSize: '0.62rem' }}>
+                        {item.distance_meters > 1000 ? `${(item.distance_meters / 1000).toFixed(1)} km` : `${item.distance_meters} m`}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Top Right: Camera Presets & View Controls */}
@@ -76,7 +158,7 @@ const DigitalTwinControls = ({
           onClick={() => onSetCameraView('aerial')}
           className="btn btn-sm d-flex align-items-center gap-1 shadow-sm"
           style={{
-            backgroundColor: 'rgba(10, 25, 47, 0.85)',
+            backgroundColor: 'rgba(10, 25, 47, 0.88)',
             border: '1px solid rgba(0, 240, 255, 0.4)',
             color: '#E2F1F8',
             fontSize: '0.72rem',
@@ -91,7 +173,7 @@ const DigitalTwinControls = ({
           onClick={() => onSetCameraView('ground')}
           className="btn btn-sm d-flex align-items-center gap-1 shadow-sm"
           style={{
-            backgroundColor: 'rgba(10, 25, 47, 0.85)',
+            backgroundColor: 'rgba(10, 25, 47, 0.88)',
             border: '1px solid rgba(0, 240, 255, 0.4)',
             color: '#E2F1F8',
             fontSize: '0.72rem',
@@ -106,7 +188,7 @@ const DigitalTwinControls = ({
           onClick={onResetCamera}
           className="btn btn-sm d-flex align-items-center gap-1 shadow-sm"
           style={{
-            backgroundColor: 'rgba(10, 25, 47, 0.85)',
+            backgroundColor: 'rgba(10, 25, 47, 0.88)',
             border: '1px solid rgba(0, 240, 255, 0.4)',
             color: '#E2F1F8',
             fontSize: '0.72rem',
@@ -121,7 +203,7 @@ const DigitalTwinControls = ({
           onClick={onToggleAutoRotate}
           className={`btn btn-sm d-flex align-items-center gap-1 shadow-sm ${autoRotate ? 'active' : ''}`}
           style={{
-            backgroundColor: autoRotate ? 'rgba(0, 240, 255, 0.25)' : 'rgba(10, 25, 47, 0.85)',
+            backgroundColor: autoRotate ? 'rgba(0, 240, 255, 0.25)' : 'rgba(10, 25, 47, 0.88)',
             border: `1px solid ${autoRotate ? '#00f0ff' : 'rgba(0, 240, 255, 0.4)'}`,
             color: autoRotate ? '#00f0ff' : '#E2F1F8',
             fontSize: '0.72rem',
@@ -136,7 +218,7 @@ const DigitalTwinControls = ({
           onClick={onToggleFullscreen}
           className="btn btn-sm d-flex align-items-center gap-1 shadow-sm"
           style={{
-            backgroundColor: 'rgba(10, 25, 47, 0.85)',
+            backgroundColor: 'rgba(10, 25, 47, 0.88)',
             border: '1px solid rgba(0, 240, 255, 0.4)',
             color: '#E2F1F8',
             fontSize: '0.72rem',
@@ -148,34 +230,34 @@ const DigitalTwinControls = ({
         </button>
       </div>
 
-      {/* Bottom Left: Digital Twin Layer Filter Matrix */}
+      {/* Bottom Left: Extended Geographical Layer Filter Matrix (Phase 4) */}
       <div 
         className="position-absolute bottom-0 start-0 m-3 p-2 rounded-3"
         style={{
           zIndex: 1040,
-          backgroundColor: 'rgba(10, 25, 47, 0.88)',
-          backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(0, 240, 255, 0.3)',
-          boxShadow: '0 0 15px rgba(0, 240, 255, 0.15)',
-          maxWidth: '520px'
+          backgroundColor: 'rgba(10, 25, 47, 0.90)',
+          backdropFilter: 'blur(12px)',
+          border: '1px solid rgba(0, 240, 255, 0.35)',
+          boxShadow: '0 0 20px rgba(0, 240, 255, 0.2)',
+          maxWidth: '680px'
         }}
       >
         <div className="d-flex align-items-center justify-content-between mb-2">
           <small className="fw-bold d-flex align-items-center gap-1" style={{ color: '#00f0ff', fontSize: '0.72rem' }}>
-            <Layers size={14} /> HOLOGRAPHIC DIGITAL TWIN LAYERS
+            <Layers size={14} /> SPATIAL DIGITAL TWIN LAYERS (CAMPUS & SURROUNDINGS)
           </small>
           <span className="badge" style={{ backgroundColor: 'rgba(0, 240, 255, 0.15)', color: '#00f0ff', fontSize: '0.62rem' }}>
-            Interactive Filters
+            Phase 4 Spatial Filtering
           </span>
         </div>
 
         <div className="d-flex flex-wrap gap-1">
-          {/* Layer 1: Buildings */}
+          {/* Layer 1: Campus Structures */}
           <button
             onClick={() => onToggleLayer('buildings')}
             className="btn btn-xs py-1 px-2 rounded d-flex align-items-center gap-1"
             style={{
-              backgroundColor: layers.buildings ? 'rgba(0, 240, 255, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+              backgroundColor: layers.buildings ? 'rgba(0, 240, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)',
               border: `1px solid ${layers.buildings ? '#00f0ff' : 'rgba(255, 255, 255, 0.2)'}`,
               color: layers.buildings ? '#00f0ff' : '#99AAB5',
               fontSize: '0.68rem'
@@ -184,12 +266,12 @@ const DigitalTwinControls = ({
             <Building size={12} /> Structures ({availableCounts.buildings || 0})
           </button>
 
-          {/* Layer 2: Campus Boundaries */}
+          {/* Layer 2: Boundaries */}
           <button
             onClick={() => onToggleLayer('boundaries')}
             className="btn btn-xs py-1 px-2 rounded d-flex align-items-center gap-1"
             style={{
-              backgroundColor: layers.boundaries ? 'rgba(0, 240, 255, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+              backgroundColor: layers.boundaries ? 'rgba(0, 240, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)',
               border: `1px solid ${layers.boundaries ? '#00f0ff' : 'rgba(255, 255, 255, 0.2)'}`,
               color: layers.boundaries ? '#00f0ff' : '#99AAB5',
               fontSize: '0.68rem'
@@ -198,74 +280,102 @@ const DigitalTwinControls = ({
             <MapPin size={12} /> Boundaries
           </button>
 
-          {/* Layer 3: Entrances and Exits */}
+          {/* Layer 3: Roads Network (Phase 4 Transport) */}
           <button
-            onClick={() => onToggleLayer('entrances')}
+            onClick={() => onToggleLayer('roads')}
             className="btn btn-xs py-1 px-2 rounded d-flex align-items-center gap-1"
             style={{
-              backgroundColor: layers.entrances ? 'rgba(0, 240, 255, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-              border: `1px solid ${layers.entrances ? '#00f0ff' : 'rgba(255, 255, 255, 0.2)'}`,
-              color: layers.entrances ? '#00f0ff' : '#99AAB5',
+              backgroundColor: layers.roads ? 'rgba(0, 229, 255, 0.3)' : 'rgba(255, 255, 255, 0.05)',
+              border: `1px solid ${layers.roads ? '#00e5ff' : 'rgba(255, 255, 255, 0.2)'}`,
+              color: layers.roads ? '#00e5ff' : '#99AAB5',
               fontSize: '0.68rem'
             }}
           >
-            <Footprints size={12} /> Portals & Exits
+            <Navigation size={12} /> Road Network ({availableCounts.roads || 0})
           </button>
 
-          {/* Layer 4: Internal Pathways */}
+          {/* Layer 4: Emergency Facilities (Hospitals, Police, Fire) */}
           <button
-            onClick={() => onToggleLayer('pathways')}
+            onClick={() => onToggleLayer('emergency')}
             className="btn btn-xs py-1 px-2 rounded d-flex align-items-center gap-1"
             style={{
-              backgroundColor: layers.pathways ? 'rgba(0, 240, 255, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-              border: `1px solid ${layers.pathways ? '#00f0ff' : 'rgba(255, 255, 255, 0.2)'}`,
-              color: layers.pathways ? '#00f0ff' : '#99AAB5',
+              backgroundColor: layers.emergency ? 'rgba(255, 51, 102, 0.3)' : 'rgba(255, 255, 255, 0.05)',
+              border: `1px solid ${layers.emergency ? '#ff3366' : 'rgba(255, 255, 255, 0.2)'}`,
+              color: layers.emergency ? '#ff3366' : '#99AAB5',
               fontSize: '0.68rem'
             }}
           >
-            <Compass size={12} /> Processional Corridors
+            <HeartPulse size={12} /> Emergency Hubs ({availableCounts.emergency || 0})
           </button>
 
-          {/* Layer 5: Queue Complexes */}
+          {/* Layer 5: Transit & Access (Rail, Bus, Air) */}
           <button
-            onClick={() => onToggleLayer('queueComplexes')}
+            onClick={() => onToggleLayer('transport')}
             className="btn btn-xs py-1 px-2 rounded d-flex align-items-center gap-1"
             style={{
-              backgroundColor: layers.queueComplexes ? 'rgba(0, 240, 255, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-              border: `1px solid ${layers.queueComplexes ? '#00f0ff' : 'rgba(255, 255, 255, 0.2)'}`,
-              color: layers.queueComplexes ? '#00f0ff' : '#99AAB5',
+              backgroundColor: layers.transport ? 'rgba(0, 136, 255, 0.3)' : 'rgba(255, 255, 255, 0.05)',
+              border: `1px solid ${layers.transport ? '#0088ff' : 'rgba(255, 255, 255, 0.2)'}`,
+              color: layers.transport ? '#0088ff' : '#99AAB5',
               fontSize: '0.68rem'
             }}
           >
-            <Activity size={12} /> Queue Complexes
+            <Footprints size={12} /> Transit Nodes ({availableCounts.transport || 0})
           </button>
 
-          {/* Layer 6: Crowd Monitoring Zones */}
+          {/* Layer 6: Pilgrim Accommodations / Dharamshalas */}
+          <button
+            onClick={() => onToggleLayer('commercial')}
+            className="btn btn-xs py-1 px-2 rounded d-flex align-items-center gap-1"
+            style={{
+              backgroundColor: layers.commercial ? 'rgba(255, 187, 0, 0.3)' : 'rgba(255, 255, 255, 0.05)',
+              border: `1px solid ${layers.commercial ? '#ffbb00' : 'rgba(255, 255, 255, 0.2)'}`,
+              color: layers.commercial ? '#ffbb00' : '#99AAB5',
+              fontSize: '0.68rem'
+            }}
+          >
+            <Home size={12} /> Accommodations ({availableCounts.accommodations || 0})
+          </button>
+
+          {/* Layer 7: Public Amenities (RO Water, Sanitations) */}
+          <button
+            onClick={() => onToggleLayer('amenities')}
+            className="btn btn-xs py-1 px-2 rounded d-flex align-items-center gap-1"
+            style={{
+              backgroundColor: layers.amenities ? 'rgba(0, 240, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)',
+              border: `1px solid ${layers.amenities ? '#00f0ff' : 'rgba(255, 255, 255, 0.2)'}`,
+              color: layers.amenities ? '#00f0ff' : '#99AAB5',
+              fontSize: '0.68rem'
+            }}
+          >
+            <Droplets size={12} /> Public Amenities ({availableCounts.amenities || 0})
+          </button>
+
+          {/* Layer 8: Parking Facilities */}
+          <button
+            onClick={() => onToggleLayer('parking')}
+            className="btn btn-xs py-1 px-2 rounded d-flex align-items-center gap-1"
+            style={{
+              backgroundColor: layers.parking ? 'rgba(0, 255, 170, 0.3)' : 'rgba(255, 255, 255, 0.05)',
+              border: `1px solid ${layers.parking ? '#00ffaa' : 'rgba(255, 255, 255, 0.2)'}`,
+              color: layers.parking ? '#00ffaa' : '#99AAB5',
+              fontSize: '0.68rem'
+            }}
+          >
+            <Car size={12} /> Parking Lots ({availableCounts.parking || 0})
+          </button>
+
+          {/* Layer 9: Crowd Monitoring Zones */}
           <button
             onClick={() => onToggleLayer('crowdZones')}
             className="btn btn-xs py-1 px-2 rounded d-flex align-items-center gap-1"
             style={{
-              backgroundColor: layers.crowdZones ? 'rgba(0, 240, 255, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-              border: `1px solid ${layers.crowdZones ? '#00f0ff' : 'rgba(255, 255, 255, 0.2)'}`,
-              color: layers.crowdZones ? '#00f0ff' : '#99AAB5',
+              backgroundColor: layers.crowdZones ? 'rgba(56, 239, 125, 0.25)' : 'rgba(255, 255, 255, 0.05)',
+              border: `1px solid ${layers.crowdZones ? '#38ef7d' : 'rgba(255, 255, 255, 0.2)'}`,
+              color: layers.crowdZones ? '#38ef7d' : '#99AAB5',
               fontSize: '0.68rem'
             }}
           >
             <ShieldAlert size={12} /> Crowd Zones ({availableCounts.zones || 0})
-          </button>
-
-          {/* Layer 7: Surrounding Facilities & Roads */}
-          <button
-            onClick={() => onToggleLayer('surroundings')}
-            className="btn btn-xs py-1 px-2 rounded d-flex align-items-center gap-1"
-            style={{
-              backgroundColor: layers.surroundings ? 'rgba(0, 240, 255, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-              border: `1px solid ${layers.surroundings ? '#00f0ff' : 'rgba(255, 255, 255, 0.2)'}`,
-              color: layers.surroundings ? '#00f0ff' : '#99AAB5',
-              fontSize: '0.68rem'
-            }}
-          >
-            <HeartPulse size={12} /> Surroundings ({availableCounts.facilities || 0})
           </button>
         </div>
       </div>

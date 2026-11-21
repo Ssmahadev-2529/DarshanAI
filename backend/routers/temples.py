@@ -3,6 +3,18 @@ from sqlalchemy.orm import Session
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 import json
+import math
+
+def calculate_haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> int:
+    """Calculates true straight-line geodesic distance in meters on WGS84 sphere."""
+    R = 6371000  # meters
+    phi1 = math.radians(lat1)
+    phi2 = math.radians(lat2)
+    delta_phi = math.radians(lat2 - lat1)
+    delta_lambda = math.radians(lon2 - lon1)
+    a = math.sin(delta_phi / 2)**2 + math.cos(phi1) * math.cos(phi2) * math.sin(delta_lambda / 2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    return int(R * c)
 
 from backend.database import get_db
 from backend.models.temple import Temple
@@ -330,12 +342,29 @@ def get_temple_zones(temple_id: str, db: Session = Depends(get_db)):
 
 @router.get("/{temple_id}/surroundings", response_model=TempleSurroundingsResponse)
 def get_temple_surroundings(temple_id: str, db: Session = Depends(get_db)):
-    """Retrieve verified hospitals, police stations, emergency facilities, railway stations, and parking lots in the temple buffer zone."""
+    """Retrieve verified hospitals, police stations, emergency facilities, railway stations, and parking lots in the temple buffer zone with straight-line & road network distances."""
     temple = _find_temple_or_404(temple_id, db)
     facilities = db.query(SurroundingFacility).filter(SurroundingFacility.temple_id == temple.temple_id).all()
     transport = db.query(TransportLocation).filter(TransportLocation.temple_id == temple.temple_id).all()
 
-    hospitals_count = sum(1 for f in facilities if f.facility_type == "HOSPITAL")
+    # Calculate straight-line Haversine geodesic distances dynamically
+    enriched_facilities = []
+    for f in facilities:
+        f_resp = SurroundingFacilityResponse.from_orm(f)
+        f_resp.straight_line_distance_meters = calculate_haversine_distance(
+            temple.latitude, temple.longitude, f.latitude, f.longitude
+        )
+        enriched_facilities.append(f_resp)
+
+    enriched_transport = []
+    for t in transport:
+        t_resp = TransportLocationResponse.from_orm(t)
+        t_resp.straight_line_distance_meters = calculate_haversine_distance(
+            temple.latitude, temple.longitude, t.latitude, t.longitude
+        )
+        enriched_transport.append(t_resp)
+
+    hospitals_count = sum(1 for f in facilities if f.facility_type in ("HOSPITAL", "CLINIC"))
     police_count = sum(1 for f in facilities if f.facility_type == "POLICE_STATION")
     railway_count = sum(1 for t in transport if t.transport_type == "RAILWAY_STATION")
     bus_count = sum(1 for t in transport if t.transport_type == "BUS_TERMINAL")
@@ -347,8 +376,8 @@ def get_temple_surroundings(temple_id: str, db: Session = Depends(get_db)):
     return TempleSurroundingsResponse(
         temple_id=temple.temple_id,
         temple_name=temple.name,
-        emergency_facilities=facilities,
-        transport_nodes=transport,
+        emergency_facilities=enriched_facilities,
+        transport_nodes=enriched_transport,
         hospitals_count=hospitals_count,
         police_stations_count=police_count,
         railway_stations_count=railway_count,
@@ -357,6 +386,71 @@ def get_temple_surroundings(temple_id: str, db: Session = Depends(get_db)):
         total_parking_capacity=total_parking_capacity,
         data_classification=classification
     )
+
+@router.get("/{temple_id}/roads", response_model=List[GeographicalFeatureResponse])
+def get_temple_roads(temple_id: str, db: Session = Depends(get_db)):
+    """Retrieve verified road network geometries, Mada streets, arterial corridors, and pedestrian walkways."""
+    temple = _find_temple_or_404(temple_id, db)
+    return db.query(GeographicalFeature).filter(
+        GeographicalFeature.temple_id == temple.temple_id,
+        GeographicalFeature.feature_type.in_(["SURROUNDING_ROAD", "MADA_STREET", "PEDESTRIAN_PATHWAY", "HIGHWAY"])
+    ).all()
+
+@router.get("/{temple_id}/facilities", response_model=List[SurroundingFacilityResponse])
+def get_temple_facilities(
+    temple_id: str, 
+    facility_type: Optional[str] = None, 
+    db: Session = Depends(get_db)
+):
+    """Retrieve verified public emergency facilities, hospitals, police aid posts, fire stations, and pilgrim accommodations."""
+    temple = _find_temple_or_404(temple_id, db)
+    query = db.query(SurroundingFacility).filter(SurroundingFacility.temple_id == temple.temple_id)
+    if facility_type:
+        query = query.filter(SurroundingFacility.facility_type == facility_type.upper())
+    
+    facilities = query.all()
+    results = []
+    for f in facilities:
+        resp = SurroundingFacilityResponse.from_orm(f)
+        resp.straight_line_distance_meters = calculate_haversine_distance(
+            temple.latitude, temple.longitude, f.latitude, f.longitude
+        )
+        results.append(resp)
+    return results
+
+@router.get("/{temple_id}/transport", response_model=List[TransportLocationResponse])
+def get_temple_transport(temple_id: str, db: Session = Depends(get_db)):
+    """Retrieve verified transit hubs, railway stations, bus stands, and airport connectivity nodes."""
+    temple = _find_temple_or_404(temple_id, db)
+    transports = db.query(TransportLocation).filter(
+        TransportLocation.temple_id == temple.temple_id,
+        TransportLocation.transport_type != "PARKING_LOT"
+    ).all()
+    results = []
+    for t in transports:
+        resp = TransportLocationResponse.from_orm(t)
+        resp.straight_line_distance_meters = calculate_haversine_distance(
+            temple.latitude, temple.longitude, t.latitude, t.longitude
+        )
+        results.append(resp)
+    return results
+
+@router.get("/{temple_id}/parking", response_model=List[TransportLocationResponse])
+def get_temple_parking(temple_id: str, db: Session = Depends(get_db)):
+    """Retrieve verified authorized parking complexes, multi-level lots, and vehicle capacity metrics."""
+    temple = _find_temple_or_404(temple_id, db)
+    parkings = db.query(TransportLocation).filter(
+        TransportLocation.temple_id == temple.temple_id,
+        TransportLocation.transport_type == "PARKING_LOT"
+    ).all()
+    results = []
+    for p in parkings:
+        resp = TransportLocationResponse.from_orm(p)
+        resp.straight_line_distance_meters = calculate_haversine_distance(
+            temple.latitude, temple.longitude, p.latitude, p.longitude
+        )
+        results.append(resp)
+    return results
 
 @router.get("/{temple_id}/data-sources", response_model=List[DataSourceResponse])
 def get_temple_data_sources(temple_id: str, db: Session = Depends(get_db)):

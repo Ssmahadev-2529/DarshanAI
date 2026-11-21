@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
 import API from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import Loading from '../components/Loading';
@@ -17,7 +17,10 @@ import {
   ShieldCheck, 
   Maximize2,
   Info,
-  Activity
+  Activity,
+  HeartPulse,
+  Navigation,
+  Car
 } from 'lucide-react';
 
 const DigitalTwinPage = () => {
@@ -28,34 +31,40 @@ const DigitalTwinPage = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Active Temple Datasets
+  // Active Temple Datasets (Phase 4 Extended Spatial Foundation)
   const [temple, setTemple] = useState(null);
   const [buildings, setBuildings] = useState([]);
   const [boundary, setBoundary] = useState(null);
   const [zones, setZones] = useState([]);
-  const [surroundings, setSurroundings] = useState({ facilities: [], transport: [] });
-  const [assets3D, setAssets3D] = useState([]);
+  const [roads, setRoads] = useState([]);
+  const [facilities, setFacilities] = useState([]);
+  const [transport, setTransport] = useState([]);
+  const [parking, setParking] = useState([]);
 
   // Interactive 3D States
-  const [selectedBuilding, setSelectedBuilding] = useState(null);
-  const [selectedZone, setSelectedZone] = useState(null);
+  const [selectedEntity, setSelectedEntity] = useState(null);
   const [autoRotate, setAutoRotate] = useState(true);
   const [cameraPreset, setCameraPreset] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef(null);
 
-  // HUD Stats
-  const [telemetry, setTelemetry] = useState({ fps: 60, polyCount: 14800 });
+  // Search State for Nearby Surroundings
+  const [searchQuery, setSearchQuery] = useState('');
 
-  // Layer Visibility State (Phase 3 Requirement #7)
+  // HUD Stats
+  const [telemetry, setTelemetry] = useState({ fps: 60, polyCount: 16800 });
+
+  // Phase 4 Extended Layer Visibility Matrix
   const [layers, setLayers] = useState({
     buildings: true,
     boundaries: true,
-    entrances: true,
-    pathways: true,
-    queueComplexes: true,
-    crowdZones: true,
-    surroundings: true
+    roads: true,
+    emergency: true,
+    transport: true,
+    commercial: true,
+    amenities: true,
+    parking: true,
+    crowdZones: true
   });
 
   // Fetch list of registered temples
@@ -70,25 +79,30 @@ const DigitalTwinPage = () => {
     }
   };
 
-  // Fetch all GIS and 3D datasets for selected temple
+  // Fetch all GIS, Surroundings, Roads, Facilities, and 3D datasets for selected temple
   const loadTempleDigitalTwin = async (templeId) => {
     try {
       setRefreshing(true);
-      // Clean previously loaded structures immediately to prevent model leakage
+      // Clean previously loaded structures immediately to prevent cross-temple leakage
       setBuildings([]);
       setBoundary(null);
       setZones([]);
-      setAssets3D([]);
-      setSelectedBuilding(null);
-      setSelectedZone(null);
+      setRoads([]);
+      setFacilities([]);
+      setTransport([]);
+      setParking([]);
+      setSelectedEntity(null);
+      setSearchQuery('');
 
-      const [templeRes, bldRes, geoRes, zonesRes, surrRes, assetsRes] = await Promise.allSettled([
+      const [templeRes, bldRes, geoRes, zonesRes, roadsRes, facRes, transRes, parkRes] = await Promise.allSettled([
         API.get(`/temples/${templeId}`),
         API.get(`/temples/${templeId}/buildings`),
         API.get(`/temples/${templeId}/geography`),
         API.get(`/temples/${templeId}/zones`),
-        API.get(`/temples/${templeId}/surroundings`),
-        API.get(`/temples/${templeId}/3d-assets`)
+        API.get(`/temples/${templeId}/roads`),
+        API.get(`/temples/${templeId}/facilities`),
+        API.get(`/temples/${templeId}/transport`),
+        API.get(`/temples/${templeId}/parking`)
       ]);
 
       if (templeRes.status === 'fulfilled') setTemple(templeRes.value.data);
@@ -97,8 +111,10 @@ const DigitalTwinPage = () => {
         setBoundary(geoRes.value.data.boundaries[0]);
       }
       if (zonesRes.status === 'fulfilled') setZones(zonesRes.value.data || []);
-      if (surrRes.status === 'fulfilled') setSurroundings(surrRes.value.data || {});
-      if (assetsRes.status === 'fulfilled') setAssets3D(assetsRes.value.data || []);
+      if (roadsRes.status === 'fulfilled') setRoads(roadsRes.value.data || []);
+      if (facRes.status === 'fulfilled') setFacilities(facRes.value.data || []);
+      if (transRes.status === 'fulfilled') setTransport(transRes.value.data || []);
+      if (parkRes.status === 'fulfilled') setParking(parkRes.value.data || []);
     } catch (err) {
       console.error(`Failed to load digital twin for ${templeId}:`, err);
     } finally {
@@ -139,9 +155,46 @@ const DigitalTwinPage = () => {
 
   const handleSetCameraView = (viewType) => {
     setCameraPreset(viewType);
-    // Reset preset trigger after short interval
     setTimeout(() => setCameraPreset(null), 800);
   };
+
+  // Nearby facility search filter
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim() || searchQuery.length < 2) return [];
+    const q = searchQuery.toLowerCase();
+    const all = [
+      ...facilities.map(f => ({ ...f, entityType: 'FACILITY' })),
+      ...transport.map(t => ({ ...t, entityType: 'TRANSPORT' })),
+      ...parking.map(p => ({ ...p, entityType: 'TRANSPORT' })),
+      ...roads.map(r => ({ ...r, entityType: 'ROAD' })),
+      ...buildings.map(b => ({ ...b, entityType: 'BUILDING' }))
+    ];
+    return all.filter(item => 
+      item.name?.toLowerCase().includes(q) ||
+      item.facility_type?.toLowerCase().includes(q) ||
+      item.transport_type?.toLowerCase().includes(q) ||
+      item.building_type?.toLowerCase().includes(q)
+    ).slice(0, 8);
+  }, [searchQuery, facilities, transport, parking, roads, buildings]);
+
+  // Layer element counts
+  const availableCounts = useMemo(() => {
+    const emergencyCount = facilities.filter(f => ['HOSPITAL', 'CLINIC', 'POLICE_STATION', 'FIRE_STATION'].includes(f.facility_type)).length;
+    const commercialCount = facilities.filter(f => f.facility_type === 'PILGRIM_ACCOMMODATION').length;
+    const amenityCount = facilities.filter(f => f.facility_type === 'PUBLIC_AMENITY').length;
+
+    return {
+      buildings: buildings.length,
+      boundaries: boundary ? 1 : 0,
+      roads: roads.length,
+      emergency: emergencyCount,
+      transport: transport.length,
+      accommodations: commercialCount,
+      amenities: amenityCount,
+      parking: parking.length,
+      zones: zones.length
+    };
+  }, [buildings, boundary, roads, facilities, transport, parking, zones]);
 
   if (loading) return <Loading />;
 
@@ -151,10 +204,10 @@ const DigitalTwinPage = () => {
       <div className="d-flex flex-wrap align-items-center justify-content-between mb-3 gap-2">
         <div>
           <h4 className="fw-bold text-maroon m-0 d-flex align-items-center gap-2">
-            <Boxes size={26} className="text-maroon" /> Holographic 3D Digital Twin Command Center
+            <Boxes size={26} className="text-maroon" /> Holographic 3D Digital Twin — Campus & Surroundings
           </h4>
           <small className="text-muted">
-            Interactive WebGL 3D spatial twin with verified building heights, Dravidian & Nagara architecture, laser scanning, and zone telemetry
+            Phase 4: Full-campus architectural models, verified road networks, hospitals, police stations, transit hubs, and straight-line vs. road distance calculations
           </small>
         </div>
 
@@ -217,11 +270,11 @@ const DigitalTwinPage = () => {
         ref={containerRef}
         className="position-relative flex-grow-1 rounded-3 overflow-hidden shadow-lg border"
         style={{ 
-          height: isFullscreen ? '100vh' : '620px', 
+          height: isFullscreen ? '100vh' : '630px', 
           minHeight: '520px',
           borderColor: '#00f0ff',
           backgroundColor: '#040914',
-          boxShadow: '0 0 35px rgba(0, 240, 255, 0.2)'
+          boxShadow: '0 0 35px rgba(0, 240, 255, 0.22)'
         }}
       >
         {/* Core Three.js WebGL Holographic Engine */}
@@ -230,19 +283,15 @@ const DigitalTwinPage = () => {
           buildings={buildings}
           zones={zones}
           boundary={boundary}
-          facilities={surroundings.facilities || []}
+          roads={roads}
+          facilities={facilities}
+          transport={transport}
+          parking={parking}
           layers={layers}
           autoRotate={autoRotate}
           cameraPreset={cameraPreset}
-          selectedBuilding={selectedBuilding}
-          onSelectBuilding={(bld) => {
-            setSelectedBuilding(bld);
-            setSelectedZone(null);
-          }}
-          onSelectZone={(z) => {
-            setSelectedZone(z);
-            setSelectedBuilding(null);
-          }}
+          selectedEntity={selectedEntity}
+          onSelectEntity={(ent) => setSelectedEntity(ent)}
           onUpdateStats={setTelemetry}
         />
 
@@ -256,37 +305,36 @@ const DigitalTwinPage = () => {
           onToggleFullscreen={handleToggleFullscreen}
           layers={layers}
           onToggleLayer={handleToggleLayer}
-          availableCounts={{
-            buildings: buildings.length,
-            zones: zones.length,
-            facilities: (surroundings.facilities?.length || 0) + (surroundings.transport?.length || 0)
-          }}
+          availableCounts={availableCounts}
           fps={telemetry.fps}
           polyCount={telemetry.polyCount}
           temple={temple}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          searchResults={searchResults}
+          onSelectSearchResult={(item) => {
+            setSelectedEntity(item);
+            setSearchQuery('');
+          }}
         />
 
-        {/* Selected Building / Zone Inspector HUD Panel */}
-        {(selectedBuilding || selectedZone) && (
+        {/* Selected Entity (Building, Facility, Road, Transport) Inspector HUD Panel */}
+        {selectedEntity && (
           <BuildingInfoPanel
-            building={selectedBuilding}
-            zone={selectedZone}
+            entity={selectedEntity}
             temple={temple}
-            onClose={() => {
-              setSelectedBuilding(null);
-              setSelectedZone(null);
-            }}
-            onFocusBuilding={(bld) => setSelectedBuilding(bld)}
+            onClose={() => setSelectedEntity(null)}
+            onFocusEntity={(ent) => setSelectedEntity(ent)}
           />
         )}
       </div>
 
-      {/* Bottom Technical Provenance & Classification Notice */}
+      {/* Technical Provenance & Distance Notice */}
       <div className="mt-3 p-3 rounded bg-ivory border border-gold small text-dark-brown d-flex flex-wrap align-items-center justify-content-between gap-2">
         <div className="d-flex align-items-center gap-2">
           <Info size={18} className="text-maroon flex-shrink-0" />
           <span>
-            <strong>Architectural Provenance Guarantee:</strong> Procedural 3D holographic structures are derived directly from verified cadastral surveys, official state temple trust gazettes, and OpenStreetMap GPS coordinates. No generic or fabricated models are displayed.
+            <strong>Phase 4 Spatial Provenance Guarantee:</strong> Surrounding road networks and public facilities are rendered strictly from verified OpenStreetMap alignments and state gazette coordinates. Straight-line geodesic distance is calculated via the Haversine formula; road network distance reflects surveyed physical routes.
           </span>
         </div>
         <div className="d-flex align-items-center gap-1">
