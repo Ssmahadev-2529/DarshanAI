@@ -141,6 +141,8 @@ const HolographicCanvas = ({
   transport = [],
   parking = [],
   cameras = [],
+  heatmapData = null,
+  heatmapMode = 'CURRENT',
   layers = {
     buildings: true,
     boundaries: true,
@@ -151,7 +153,8 @@ const HolographicCanvas = ({
     amenities: true,
     parking: true,
     crowdZones: true,
-    cameras: true
+    cameras: true,
+    heatmap: true
   },
   autoRotate = true,
   cameraPreset = null,
@@ -420,7 +423,11 @@ const HolographicCanvas = ({
     });
 
     const edgeLineMat = new THREE.LineBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.9, linewidth: 1.5 });
-    const isSelected = (item) => selectedEntity && selectedEntity.id === item.id;
+    const isSelected = (item) => selectedEntity && (
+      selectedEntity.id === item.id ||
+      (selectedEntity.zone_code && (selectedEntity.zone_code === item.zone_code || selectedEntity.zone_code === item.zone_id)) ||
+      (selectedEntity.zone_id && (selectedEntity.zone_id === item.zone_code || selectedEntity.zone_id === item.zone_id))
+    );
 
     let totalPolygons = 0;
 
@@ -709,39 +716,146 @@ const HolographicCanvas = ({
       });
     }
 
-    // 7. CROWD MONITORING ZONES (With Level 4 Zone Focus Highlight)
-    if (layers.crowdZones && Array.isArray(zones)) {
+    // 7. 3D SPATIAL CROWD HEATMAP & DENSITY PILLARS (Phase 9 Implementation)
+    const showHeatmapLayer = layers.heatmap !== false && (layers.crowdZones !== false);
+    if (showHeatmapLayer && Array.isArray(zones)) {
+      const hmMap = {};
+      if (heatmapData?.zones) {
+        heatmapData.zones.forEach(hz => {
+          hmMap[hz.zone_id] = hz;
+        });
+      }
+
       zones.forEach(zone => {
         const { x, z } = gpsToMeters(zone.latitude, zone.longitude, centerLat, centerLng);
         const zoneSelected = isSelected(zone);
+        const hm = hmMap[zone.zone_code] || {};
 
-        let zoneColor = 0x38ef7d;
-        if (zone.risk_level === 'CRITICAL' || zone.occupancy_percent > 80) zoneColor = 0xff3838;
-        else if (zone.risk_level === 'HIGH' || zone.occupancy_percent > 60) zoneColor = 0xffaa00;
-        if (zoneSelected) zoneColor = 0x00f0ff;
+        // Extract verified telemetry
+        const count = hm.observed_people_count ?? hm.predicted_people_count ?? (zone.current_crowd || 0);
+        const density = hm.estimated_crowd_density ?? hm.predicted_crowd_density ?? null;
+        const util = hm.capacity_utilization_percent ?? hm.predicted_capacity_utilization ?? null;
+        const risk = hm.congestion_risk ?? hm.predicted_congestion_risk ?? (zone.risk_level || 'NORMAL');
+
+        // Color coding per Section 3
+        let zoneHex = 0x38ef7d;
+        let themeHex = '#38ef7d';
+        if (risk === 'CRITICAL') { zoneHex = 0xef4444; themeHex = '#ef4444'; }
+        else if (risk === 'HIGH') { zoneHex = 0xf97316; themeHex = '#f97316'; }
+        else if (risk === 'MODERATE') { zoneHex = 0xf59e0b; themeHex = '#f59e0b'; }
+        else if (risk === 'NORMAL') { zoneHex = 0x38ef7d; themeHex = '#38ef7d'; }
+        else if (risk === 'UNKNOWN') { zoneHex = 0x94a3b8; themeHex = '#94a3b8'; }
+
+        if (zoneSelected) {
+          zoneHex = 0x00f0ff;
+          themeHex = '#00f0ff';
+        }
 
         const zoneGroup = new THREE.Group();
-        const zoneMesh = new THREE.Mesh(
-          new THREE.CircleGeometry(16, 32), 
-          new THREE.MeshBasicMaterial({ color: zoneColor, transparent: true, opacity: zoneSelected ? 0.5 : 0.28, side: THREE.DoubleSide })
-        );
-        zoneMesh.rotation.x = -Math.PI / 2;
-        zoneMesh.position.set(x, 0.2, z);
-        zoneGroup.add(zoneMesh);
+        zoneGroup.position.set(x, 0, z);
 
-        const ring = new THREE.Mesh(new THREE.RingGeometry(15.6, 16.4, 32), new THREE.MeshBasicMaterial({ color: zoneColor, side: THREE.DoubleSide }));
-        ring.rotation.x = -Math.PI / 2;
-        ring.position.set(x, 0.25, z);
-        zoneGroup.add(ring);
+        // Radius scaled to usable area (12m to 24m)
+        const radius = Math.max(12, Math.min(24, Math.sqrt((zone.usable_area_sqm || 400) / Math.PI) * 0.95));
 
-        const label = createFloatingLabel(zone.name, `Queue: ${zone.queue_length || 0} • ${zone.occupancy_percent || 0}%`, zoneSelected ? '#00f0ff' : '#38ef7d');
-        label.position.set(x, 14, z);
+        // 1. Transparent Radial Heat Surface (Ground plane)
+        const heatGeo = new THREE.CircleGeometry(radius, 32);
+        const heatMat = new THREE.MeshBasicMaterial({
+          color: zoneHex,
+          transparent: true,
+          opacity: zoneSelected ? 0.45 : 0.22,
+          side: THREE.DoubleSide
+        });
+        const heatMesh = new THREE.Mesh(heatGeo, heatMat);
+        heatMesh.rotation.x = -Math.PI / 2;
+        heatMesh.position.y = 0.22;
+        zoneGroup.add(heatMesh);
+
+        // 2. Glowing Holographic Zone Boundary Ring
+        const ringGeo = new THREE.RingGeometry(radius - 0.5, radius + 0.5, 32);
+        const ringMat = new THREE.MeshBasicMaterial({ color: zoneHex, side: THREE.DoubleSide, transparent: true, opacity: 0.85 });
+        const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+        ringMesh.rotation.x = -Math.PI / 2;
+        ringMesh.position.y = 0.25;
+        zoneGroup.add(ringMesh);
+
+        // 3. Elevated Density Indicator Pillar (Volumetric Light Cylinder)
+        const pillarH = density !== null 
+          ? Math.max(4.0, Math.min(24.0, density * 5.0)) 
+          : Math.max(4.0, Math.min(18.0, (count / 80.0) * 3.0));
+
+        const pillarGeo = new THREE.CylinderGeometry(radius * 0.65, radius * 0.82, pillarH, 16, 1, true);
+        const pillarMat = new THREE.MeshPhysicalMaterial({
+          color: zoneHex,
+          emissive: zoneHex,
+          emissiveIntensity: zoneSelected ? 0.6 : 0.25,
+          transparent: true,
+          opacity: zoneSelected ? 0.38 : 0.18,
+          side: THREE.DoubleSide
+        });
+        const pillarMesh = new THREE.Mesh(pillarGeo, pillarMat);
+        pillarMesh.position.y = pillarH / 2;
+        zoneGroup.add(pillarMesh);
+
+        // Wireframe edges on the density pillar
+        const wireGeo = new THREE.WireframeGeometry(pillarGeo);
+        const wireMat = new THREE.LineBasicMaterial({ color: zoneHex, transparent: true, opacity: zoneSelected ? 0.6 : 0.28 });
+        const wireMesh = new THREE.LineSegments(wireGeo, wireMat);
+        wireMesh.position.y = pillarH / 2;
+        zoneGroup.add(wireMesh);
+
+        // 4. Scanning Ring Wave around pillar
+        const scanRingGeo = new THREE.RingGeometry(radius * 0.72 - 0.3, radius * 0.72 + 0.3, 24);
+        const scanRing = new THREE.Mesh(scanRingGeo, new THREE.MeshBasicMaterial({ color: zoneHex, side: THREE.DoubleSide, transparent: true, opacity: 0.7 }));
+        scanRing.rotation.x = -Math.PI / 2;
+        scanRing.position.y = pillarH * 0.75;
+        zoneGroup.add(scanRing);
+
+        // 5. Selected-Zone Highlight Beacon
+        if (zoneSelected) {
+          const selectBeaconGeo = new THREE.CylinderGeometry(0.5, 0.5, 50, 8);
+          const selectBeaconMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.5 });
+          const beacon = new THREE.Mesh(selectBeaconGeo, selectBeaconMat);
+          beacon.position.y = 25;
+          zoneGroup.add(beacon);
+
+          const selectRingGeo = new THREE.RingGeometry(radius + 1.5, radius + 2.5, 32);
+          const selectRingMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide });
+          const selectRing = new THREE.Mesh(selectRingGeo, selectRingMat);
+          selectRing.rotation.x = -Math.PI / 2;
+          selectRing.position.y = 0.28;
+          zoneGroup.add(selectRing);
+        }
+
+        // 6. Floating 3D Count & Density Billboard Sprite Label
+        let modeTag = '[LIVE]';
+        if (heatmapMode === 'HISTORICAL') modeTag = '[HISTORICAL]';
+        else if (heatmapMode && heatmapMode.startsWith('PRED_')) modeTag = `[PRED +${heatmapMode.replace('PRED_', '')}m]`;
+
+        const titleText = `${zone.name} ${modeTag}`;
+        const densityStr = density !== null ? `${density} p/m²` : 'Area Unverified';
+        const utilStr = util !== null ? `${util}% Cap` : '';
+        const subtitleText = `${count} devotees • ${densityStr} • ${risk} ${utilStr}`;
+        const label = createFloatingLabel(titleText, subtitleText, themeHex);
+        label.position.set(0, pillarH + 6.0, 0);
         zoneGroup.add(label);
 
-        zoneGroup.userData = { type: 'ZONE', entityType: 'ZONE', data: zone };
+        // Aggregate complete telemetry for click inspector
+        const enrichedZoneData = {
+          ...zone,
+          heatmap: hm,
+          count,
+          density,
+          utilization: util,
+          risk,
+          modeTag,
+          themeHex
+        };
+
+        zoneGroup.userData = { type: 'ZONE', entityType: 'ZONE', data: enrichedZoneData };
         scene.add(zoneGroup);
         meshesRef.current.push(zoneGroup);
         clickableObjectsRef.current.push(zoneGroup);
+        totalPolygons += 180;
       });
     }
 
@@ -861,7 +975,7 @@ const HolographicCanvas = ({
     if (onUpdateStats) {
       onUpdateStats({ polyCount: totalPolygons + 1500 });
     }
-  }, [temple, buildings, zones, boundary, roads, facilities, transport, parking, cameras, layers, navLevel, selectedEntity, selectedFloor]);
+  }, [temple, buildings, zones, boundary, roads, facilities, transport, parking, cameras, heatmapData, heatmapMode, layers, navLevel, selectedEntity, selectedFloor]);
 
   // Raycaster for Interactive Navigation Transitions
   const handlePointerDown = useCallback((event) => {

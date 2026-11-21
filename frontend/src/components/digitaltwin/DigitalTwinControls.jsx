@@ -20,6 +20,7 @@ import {
   Home,
   Droplets,
   Navigation,
+  Flame,
   X
 } from 'lucide-react';
 
@@ -390,6 +391,20 @@ const DigitalTwinControls = ({
             }}
           >
             <Camera size={12} /> CCTV Nodes ({availableCounts.cameras || 0})
+          </button>
+
+          {/* Layer 11: 3D Spatial Crowd Heatmap (Phase 9) */}
+          <button
+            onClick={() => onToggleLayer('heatmap')}
+            className="btn btn-xs py-1 px-2 rounded d-flex align-items-center gap-1"
+            style={{
+              backgroundColor: layers.heatmap ? 'rgba(245, 158, 11, 0.35)' : 'rgba(255, 255, 255, 0.05)',
+              border: `1px solid ${layers.heatmap ? '#f59e0b' : 'rgba(255, 255, 255, 0.2)'}`,
+              color: layers.heatmap ? '#f59e0b' : '#99AAB5',
+              fontSize: '0.68rem'
+            }}
+          >
+            <Flame size={12} /> Crowd Heatmap ({availableCounts.heatmap || availableCounts.zones || 0})
           </button>
         </div>
       </div>

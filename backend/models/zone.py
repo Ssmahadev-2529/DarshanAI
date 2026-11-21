@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, JSON
 from backend.database import Base
 
 class TempleZone(Base):
@@ -14,6 +14,10 @@ class TempleZone(Base):
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
     capacity = Column(Integer, default=2000)
+    usable_area_sqm = Column(Float, nullable=True) # Verified usable square meters for crowd density calculation
+    data_classification = Column(String(50), default="SURVEY_VERIFIED") # SURVEY_VERIFIED, GIS_MEASURED, APPROXIMATE, UNVERIFIED
+    polygon_coordinates = Column(JSON, nullable=True) # GeoJSON boundary or footprint polygon
+    methodology_notes = Column(String(250), nullable=True) # Provenance and calculation notes
     is_verified = Column(Boolean, default=True) # True = Verified GPS, False = Operational Simulation
     icon_type = Column(String(50), default="MapPin")
     staff_assigned = Column(Integer, default=5)

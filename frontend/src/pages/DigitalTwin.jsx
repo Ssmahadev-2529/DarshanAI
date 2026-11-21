@@ -6,6 +6,7 @@ import HolographicCanvas from '../components/digitaltwin/HolographicCanvas';
 import BuildingInfoPanel from '../components/digitaltwin/BuildingInfoPanel';
 import DigitalTwinControls from '../components/digitaltwin/DigitalTwinControls';
 import NavigationLevelBar, { NAV_LEVELS } from '../components/digitaltwin/NavigationLevelBar';
+import HeatmapControls, { HEATMAP_MODES } from '../components/digitaltwin/HeatmapControls';
 import { ClassificationBadge } from './DataQualityDashboard';
 import { 
   Boxes, 
@@ -43,6 +44,13 @@ const DigitalTwinPage = () => {
   const [parking, setParking] = useState([]);
   const [cameras, setCameras] = useState([]);
 
+  // Phase 9 3D Spatial Crowd Heatmap State
+  const [heatmapMode, setHeatmapMode] = useState(HEATMAP_MODES.CURRENT);
+  const [replayHour, setReplayHour] = useState(12);
+  const [heatmapData, setHeatmapData] = useState(null);
+  const [heatmapPredictions, setHeatmapPredictions] = useState(null);
+  const [heatmapHistory, setHeatmapHistory] = useState(null);
+
   // Phase 5 Multi-Level Navigation State
   // 1: REGIONAL VIEW, 2: TEMPLE CAMPUS, 3: BUILDING VIEW, 4: OPERATIONAL ZONE, 5: INTERIOR / FLOOR
   const [navLevel, setNavLevel] = useState(2);
@@ -72,7 +80,8 @@ const DigitalTwinPage = () => {
     amenities: true,
     parking: true,
     crowdZones: true,
-    cameras: true
+    cameras: true,
+    heatmap: true
   });
 
   // Check if Level 5 Interior / Floor Slicing is supported by verified data
@@ -121,12 +130,15 @@ const DigitalTwinPage = () => {
       setTransport([]);
       setParking([]);
       setCameras([]);
+      setHeatmapData(null);
+      setHeatmapPredictions(null);
+      setHeatmapHistory(null);
       setSelectedEntity(null);
       setSearchQuery('');
       setNavLevel(2); // Reset to Campus View
       setSelectedFloor(1);
 
-      const [templeRes, bldRes, geoRes, zonesRes, roadsRes, facRes, transRes, parkRes, camsRes] = await Promise.allSettled([
+      const [templeRes, bldRes, geoRes, zonesRes, roadsRes, facRes, transRes, parkRes, camsRes, hmRes, hmPredRes, hmHistRes] = await Promise.allSettled([
         API.get(`/temples/${templeId}`),
         API.get(`/temples/${templeId}/buildings`),
         API.get(`/temples/${templeId}/geography`),
@@ -135,7 +147,10 @@ const DigitalTwinPage = () => {
         API.get(`/temples/${templeId}/facilities`),
         API.get(`/temples/${templeId}/transport`),
         API.get(`/temples/${templeId}/parking`),
-        API.get(`/cameras?temple_id=${templeId}`)
+        API.get(`/cameras?temple_id=${templeId}`),
+        API.get(`/temples/${templeId}/heatmap`),
+        API.get(`/temples/${templeId}/heatmap/predictions`),
+        API.get(`/temples/${templeId}/heatmap/history?hour=${replayHour}`)
       ]);
 
       if (templeRes.status === 'fulfilled') setTemple(templeRes.value.data);
@@ -149,6 +164,9 @@ const DigitalTwinPage = () => {
       if (transRes.status === 'fulfilled') setTransport(transRes.value.data || []);
       if (parkRes.status === 'fulfilled') setParking(parkRes.value.data || []);
       if (camsRes.status === 'fulfilled') setCameras(camsRes.value.data || []);
+      if (hmRes.status === 'fulfilled') setHeatmapData(hmRes.value.data);
+      if (hmPredRes.status === 'fulfilled') setHeatmapPredictions(hmRes.value.data?.horizons ? hmRes.value.data : hmPredRes.value.data);
+      if (hmHistRes.status === 'fulfilled') setHeatmapHistory(hmHistRes.value.data);
     } catch (err) {
       console.error(`Failed to load digital twin for ${templeId}:`, err);
     } finally {
@@ -166,6 +184,25 @@ const DigitalTwinPage = () => {
       loadTempleDigitalTwin(selectedTempleId);
     }
   }, [selectedTempleId]);
+
+  // Handle Historical Replay Hour Change
+  useEffect(() => {
+    if (heatmapMode === HEATMAP_MODES.HISTORICAL && selectedTempleId) {
+      API.get(`/temples/${selectedTempleId}/heatmap/history?hour=${replayHour}`)
+        .then(res => setHeatmapHistory(res.data))
+        .catch(err => console.error('Failed to load historical replay:', err));
+    }
+  }, [replayHour, selectedTempleId, heatmapMode]);
+
+  // Compute active heatmap dataset based on temporal mode
+  const activeHeatmapData = useMemo(() => {
+    if (heatmapMode === HEATMAP_MODES.CURRENT) return heatmapData;
+    if (heatmapMode === HEATMAP_MODES.HISTORICAL) return heatmapHistory || heatmapData;
+    if (heatmapMode === HEATMAP_MODES.PRED_15) return heatmapPredictions?.horizons?.['15m'] || heatmapData;
+    if (heatmapMode === HEATMAP_MODES.PRED_30) return heatmapPredictions?.horizons?.['30m'] || heatmapData;
+    if (heatmapMode === HEATMAP_MODES.PRED_60) return heatmapPredictions?.horizons?.['60m'] || heatmapData;
+    return heatmapData;
+  }, [heatmapMode, heatmapData, heatmapHistory, heatmapPredictions]);
 
   const handleTempleChange = (newTempleId) => {
     setSelectedTempleId(newTempleId);
@@ -231,9 +268,10 @@ const DigitalTwinPage = () => {
       amenities: amenityCount,
       parking: parking.length,
       zones: zones.length,
-      cameras: cameras.length
+      cameras: cameras.length,
+      heatmap: heatmapData?.zones?.length || 0
     };
-  }, [buildings, boundary, roads, facilities, transport, parking, zones, cameras]);
+  }, [buildings, boundary, roads, facilities, transport, parking, zones, cameras, heatmapData]);
 
   if (loading) return <Loading />;
 
@@ -327,6 +365,8 @@ const DigitalTwinPage = () => {
           transport={transport}
           parking={parking}
           cameras={cameras}
+          heatmapData={activeHeatmapData}
+          heatmapMode={heatmapMode}
           layers={layers}
           autoRotate={autoRotate}
           cameraPreset={cameraPreset}
@@ -380,6 +420,18 @@ const DigitalTwinPage = () => {
             if (item.entityType === 'BUILDING') setNavLevel(3);
             else if (item.entityType === 'ZONE') setNavLevel(4);
           }}
+        />
+
+        {/* Phase 9 3D Spatial Crowd Heatmap Floating Controls */}
+        <HeatmapControls
+          showHeatmap={layers.heatmap !== false}
+          onToggleHeatmap={() => handleToggleLayer('heatmap')}
+          currentMode={heatmapMode}
+          onChangeMode={(mode) => setHeatmapMode(mode)}
+          replayHour={replayHour}
+          onChangeReplayHour={(h) => setReplayHour(h)}
+          predictionMeta={heatmapPredictions}
+          activeTempleName={temple?.name || 'Temple'}
         />
 
         {/* Selected Entity Inspector HUD Panel */}
