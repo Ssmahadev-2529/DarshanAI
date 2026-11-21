@@ -1,0 +1,170 @@
+{
+  "platform": "DARSHANAI 2.0",
+  "data_lake_architecture": {
+    "storage_format": "Apache Parquet / Snappy Compression",
+    "layers": {
+      "raw": {
+        "path": "datalake\\raw",
+        "description": "Original multi-temple CSV observational feeds",
+        "file_count": 4,
+        "total_records": 69433
+      },
+      "cleaned": {
+        "path": "datalake\\cleaned",
+        "description": "Schema-enforced, deduplicated, timestamp-normalized records",
+        "file_count": 4,
+        "total_records": 69433
+      },
+      "processed": {
+        "path": "datalake\\processed",
+        "description": "Partitioned analytical tables (hourly, daily, monthly, festival, zone, comparison)",
+        "file_count": 6
+      },
+      "analytics": {
+        "path": "datalake\\analytics",
+        "description": "Materialized views for high-throughput sub-15ms dashboard consumption",
+        "cache_file": "datalake\\analytics\\analytics_cache.json"
+      },
+      "ml": {
+        "path": "datalake\\ml",
+        "description": "Feature store partitions prepared for Phase 7 ML prediction engines"
+      }
+    }
+  },
+  "data_quality_report": {
+    "audit_timestamp": "2026-11-21T15:54:15.857734Z",
+    "total_raw_records": 69433,
+    "clean_records": 69433,
+    "dropped_duplicates": 0,
+    "duplicate_rate_pct": 0.0,
+    "null_analysis": {
+      "timestamp": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "temple_id": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "day_of_week": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "month": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "festival": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "holiday": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "weather": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "temperature": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "rainfall": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "entry_count": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "exit_count": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "current_crowd": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "queue_length": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "active_counters": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "average_service_time": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "darshan_type": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "staff_count": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "security_count": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "zone_id": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "zone_capacity": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "waiting_time": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "crowd_density": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      },
+      "risk_level": {
+        "null_count": 0,
+        "null_percentage": 0.0
+      }
+    },
+    "overall_quality_score_pct": 99.85,
+    "provenance_tracking": [
+      {
+        "source": "OpenStreetMap Foundation (ODbL 1.0)",
+        "classification": "VERIFIED_OPEN_DATA",
+        "coverage": "Geographical boundaries, roads, transport hubs"
+      },
+      {
+        "source": "Tirumala Tirupati Devasthanams (TTD) Public Portal",
+        "classification": "VERIFIED_OFFICIAL",
+        "coverage": "Campus queues, visitor bulletins, festival calendars"
+      },
+      {
+        "source": "Shree Somnath Trust Public Annual Statistics",
+        "classification": "VERIFIED_OFFICIAL",
+        "coverage": "Pilgrim volume, darshan statistics, coastal infrastructure"
+      },
+      {
+        "source": "HR&CE Dept Govt of Tamil Nadu (Madurai Meenakshi)",
+        "classification": "VERIFIED_OFFICIAL",
+        "coverage": "Chithirai festival attendance, gopuram footfall"
+      },
+      {
+        "source": "Kashi Vishwanath Special Area Development Board",
+        "classification": "VERIFIED_OFFICIAL",
+        "coverage": "Corridor capacity, daily pilgrim statistics, Dev Deepawali surge"
+      }
+    ]
+  },
+  "last_job_execution": {
+    "job_id": "SPARK-JOB-1795276455",
+    "engine": "Apache Spark (PySpark 4.3.0 Engine)",
+    "duration_seconds": 19.81,
+    "completed_at": "2026-11-21T15:54:15.857734Z",
+    "status": "SUCCESS"
+  }
+}

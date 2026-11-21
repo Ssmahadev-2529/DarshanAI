@@ -1,0 +1,17 @@
+temple_id,festival_name,start_date,end_date,darshan_type,historical_daily_avg,festival_daily_surge,surge_multiplier,source
+TEMPLE-001,Maha Shivratri,2025-02-26,2025-02-28,Continuous 42h Darshan,24000,115000,4.79,Shree Somnath Trust Public Annual Report 2024
+TEMPLE-001,Shravan Month Somwar,2025-07-28,2025-08-25,Special Jalabhishek,24000,65000,2.71,Shree Somnath Trust Public Annual Report 2024
+TEMPLE-001,Kartik Purnima Mela,2025-11-04,2025-11-06,Oceanfront Deepotsav,24000,72000,3.0,Shree Somnath Trust Public Annual Report 2024
+TEMPLE-001,Diwali & Gujarati New Year,2025-10-20,2025-10-23,Annakut Mahotsav,24000,85000,3.54,Shree Somnath Trust Public Annual Report 2024
+TEMPLE-002,Vaikunta Ekadasi,2025-01-10,2025-01-19,Vaikunta Dwaram Darshan,70000,145000,2.07,TTD Official Public Release / Statistical Bulletin
+TEMPLE-002,Srivari Salakatla Brahmotsavam,2025-09-24,2025-10-02,Garuda Seva Vahana Seva,70000,185000,2.64,TTD Official Public Release / Statistical Bulletin
+TEMPLE-002,Rathasapthami,2025-02-04,2025-02-04,One-Day Brahmotsavam (7 Vahanams),70000,160000,2.29,TTD Official Public Release / Statistical Bulletin
+TEMPLE-002,Ugadi Telugu New Year,2025-03-30,2025-03-30,Panchanga Sravanam Darshan,70000,95000,1.36,TTD Official Public Release / Statistical Bulletin
+TEMPLE-003,Chithirai Thiruvizha,2025-04-10,2025-04-22,Celestial Wedding & Therottam,35000,210000,6.0,HR&CE Dept Govt of Tamil Nadu Annual Statistics
+TEMPLE-003,Navratri Kolu Mahotsavam,2025-09-22,2025-10-02,Kolu Procession & Special Alankaram,35000,78000,2.23,HR&CE Dept Govt of Tamil Nadu Annual Statistics
+TEMPLE-003,Float Festival (Theppam),2025-01-13,2025-01-14,Mariamman Teppakulam Procession,35000,92000,2.63,HR&CE Dept Govt of Tamil Nadu Annual Statistics
+TEMPLE-003,Aavani Moola Festival,2025-08-18,2025-08-28,Tiruvilayadal Leela Recitation,35000,58000,1.66,HR&CE Dept Govt of Tamil Nadu Annual Statistics
+TEMPLE-005,Maha Shivratri,2025-02-26,2025-02-28,Char Pahar Aarti & Continuous Darshan,65000,380000,5.85,Kashi Vishwanath Special Area Development Board
+TEMPLE-005,Dev Deepawali,2025-11-05,2025-11-06,Ganga Ghat Deepotsav & Aarti,65000,290000,4.46,Kashi Vishwanath Special Area Development Board
+TEMPLE-005,Shravan Month Sawan Somwar,2025-07-28,2025-08-25,Kanwar Yatra Jalabhishek,65000,220000,3.38,Kashi Vishwanath Special Area Development Board
+TEMPLE-005,Rangbhari Ekadasi,2025-03-10,2025-03-10,Shiva Parvati Gulal Utsav,65000,125000,1.92,Kashi Vishwanath Special Area Development Board

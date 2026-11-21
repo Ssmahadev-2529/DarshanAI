@@ -1,0 +1,3912 @@
+{
+  "pipeline_metadata": {
+    "engine": "Apache Spark (PySpark 4.3.0 Engine)",
+    "spark_version": "4.3.0",
+    "execution_timestamp": "2026-11-21T15:54:15.838177Z",
+    "execution_duration_seconds": 19.79,
+    "status": "COMPLETED_SUCCESS",
+    "total_raw_records": 69433,
+    "total_cleaned_records": 69433,
+    "dropped_duplicates": 0
+  },
+  "temple_overviews": {
+    "TEMPLE-001": {
+      "temple_id": "TEMPLE-001",
+      "temple_name": "Somnath Jyotirlinga Temple",
+      "kpi_summary": {
+        "temple_id": "TEMPLE-001",
+        "temple_name": "Somnath Jyotirlinga Temple",
+        "total_recorded_entries": 18539165,
+        "daily_average_visitors": 51213,
+        "peak_concurrent_crowd": 7478,
+        "avg_queue_wait_minutes": 21.8,
+        "top_festival": "Maha Shivratri",
+        "festival_surge_multiplier": 4.79,
+        "peak_to_average_ratio": 2.51,
+        "busiest_window": "08:00 - 11:30 AM & 05:30 - 08:00 PM"
+      },
+      "hourly_trends": [
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 0,
+          "hour_formatted": "00:00",
+          "avg_entry_rate": 906.0,
+          "avg_crowd": 2545,
+          "p95_crowd": 3462,
+          "avg_waiting_time": 22.6,
+          "max_waiting_time": 66.3,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 1,
+          "hour_formatted": "01:00",
+          "avg_entry_rate": 914.2,
+          "avg_crowd": 2559,
+          "p95_crowd": 3504,
+          "avg_waiting_time": 22.3,
+          "max_waiting_time": 67.4,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 2,
+          "hour_formatted": "02:00",
+          "avg_entry_rate": 922.8,
+          "avg_crowd": 2580,
+          "p95_crowd": 3552,
+          "avg_waiting_time": 22.2,
+          "max_waiting_time": 70.1,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 3,
+          "hour_formatted": "03:00",
+          "avg_entry_rate": 917.2,
+          "avg_crowd": 2569,
+          "p95_crowd": 3486,
+          "avg_waiting_time": 22.7,
+          "max_waiting_time": 64.3,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 4,
+          "hour_formatted": "04:00",
+          "avg_entry_rate": 903.5,
+          "avg_crowd": 2529,
+          "p95_crowd": 3508,
+          "avg_waiting_time": 22.0,
+          "max_waiting_time": 62.2,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 5,
+          "hour_formatted": "05:00",
+          "avg_entry_rate": 917.1,
+          "avg_crowd": 2563,
+          "p95_crowd": 3424,
+          "avg_waiting_time": 22.9,
+          "max_waiting_time": 67.7,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 6,
+          "hour_formatted": "06:00",
+          "avg_entry_rate": 918.5,
+          "avg_crowd": 2572,
+          "p95_crowd": 3510,
+          "avg_waiting_time": 22.5,
+          "max_waiting_time": 57.2,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 7,
+          "hour_formatted": "07:00",
+          "avg_entry_rate": 1266.2,
+          "avg_crowd": 3543,
+          "p95_crowd": 4743,
+          "avg_waiting_time": 21.6,
+          "max_waiting_time": 91.3,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 8,
+          "hour_formatted": "08:00",
+          "avg_entry_rate": 1273.2,
+          "avg_crowd": 3564,
+          "p95_crowd": 4764,
+          "avg_waiting_time": 21.4,
+          "max_waiting_time": 85.8,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 9,
+          "hour_formatted": "09:00",
+          "avg_entry_rate": 1283.6,
+          "avg_crowd": 3594,
+          "p95_crowd": 4911,
+          "avg_waiting_time": 21.6,
+          "max_waiting_time": 73.4,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 10,
+          "hour_formatted": "10:00",
+          "avg_entry_rate": 1273.2,
+          "avg_crowd": 3554,
+          "p95_crowd": 4848,
+          "avg_waiting_time": 20.5,
+          "max_waiting_time": 64.0,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 11,
+          "hour_formatted": "11:00",
+          "avg_entry_rate": 1288.2,
+          "avg_crowd": 3598,
+          "p95_crowd": 4854,
+          "avg_waiting_time": 20.8,
+          "max_waiting_time": 58.6,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 12,
+          "hour_formatted": "12:00",
+          "avg_entry_rate": 918.9,
+          "avg_crowd": 2578,
+          "p95_crowd": 3587,
+          "avg_waiting_time": 22.0,
+          "max_waiting_time": 62.6,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 13,
+          "hour_formatted": "13:00",
+          "avg_entry_rate": 908.8,
+          "avg_crowd": 2539,
+          "p95_crowd": 3428,
+          "avg_waiting_time": 21.8,
+          "max_waiting_time": 59.6,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 14,
+          "hour_formatted": "14:00",
+          "avg_entry_rate": 911.9,
+          "avg_crowd": 2554,
+          "p95_crowd": 3476,
+          "avg_waiting_time": 21.9,
+          "max_waiting_time": 62.4,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 15,
+          "hour_formatted": "15:00",
+          "avg_entry_rate": 906.5,
+          "avg_crowd": 2539,
+          "p95_crowd": 3493,
+          "avg_waiting_time": 22.5,
+          "max_waiting_time": 57.4,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 16,
+          "hour_formatted": "16:00",
+          "avg_entry_rate": 1288.5,
+          "avg_crowd": 3608,
+          "p95_crowd": 4890,
+          "avg_waiting_time": 21.2,
+          "max_waiting_time": 86.3,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 17,
+          "hour_formatted": "17:00",
+          "avg_entry_rate": 1274.5,
+          "avg_crowd": 3567,
+          "p95_crowd": 4810,
+          "avg_waiting_time": 21.5,
+          "max_waiting_time": 75.9,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 18,
+          "hour_formatted": "18:00",
+          "avg_entry_rate": 1270.1,
+          "avg_crowd": 3557,
+          "p95_crowd": 4732,
+          "avg_waiting_time": 20.9,
+          "max_waiting_time": 79.8,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 19,
+          "hour_formatted": "19:00",
+          "avg_entry_rate": 1269.8,
+          "avg_crowd": 3555,
+          "p95_crowd": 4756,
+          "avg_waiting_time": 20.8,
+          "max_waiting_time": 78.8,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 20,
+          "hour_formatted": "20:00",
+          "avg_entry_rate": 1256.4,
+          "avg_crowd": 3512,
+          "p95_crowd": 4644,
+          "avg_waiting_time": 20.6,
+          "max_waiting_time": 65.5,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 21,
+          "hour_formatted": "21:00",
+          "avg_entry_rate": 912.7,
+          "avg_crowd": 2556,
+          "p95_crowd": 3559,
+          "avg_waiting_time": 22.6,
+          "max_waiting_time": 61.0,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 22,
+          "hour_formatted": "22:00",
+          "avg_entry_rate": 917.4,
+          "avg_crowd": 2574,
+          "p95_crowd": 3561,
+          "avg_waiting_time": 22.1,
+          "max_waiting_time": 57.9,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "hour": 23,
+          "hour_formatted": "23:00",
+          "avg_entry_rate": 914.1,
+          "avg_crowd": 2555,
+          "p95_crowd": 3505,
+          "avg_waiting_time": 22.8,
+          "max_waiting_time": 63.7,
+          "is_peak_hour": false
+        }
+      ],
+      "recent_daily_trends": [
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-11-29",
+          "total_entries": 60006,
+          "avg_crowd": 3502,
+          "peak_crowd": 4634,
+          "avg_wait_minutes": 25.8,
+          "max_wait_minutes": 51.0,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-11-30",
+          "total_entries": 67691,
+          "avg_crowd": 3563,
+          "peak_crowd": 4545,
+          "avg_wait_minutes": 25.7,
+          "max_wait_minutes": 51.3,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-01",
+          "total_entries": 43199,
+          "avg_crowd": 2680,
+          "peak_crowd": 3523,
+          "avg_wait_minutes": 19.2,
+          "max_wait_minutes": 41.3,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-02",
+          "total_entries": 40557,
+          "avg_crowd": 2534,
+          "peak_crowd": 3641,
+          "avg_wait_minutes": 18.6,
+          "max_wait_minutes": 37.9,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-03",
+          "total_entries": 45127,
+          "avg_crowd": 2580,
+          "peak_crowd": 3474,
+          "avg_wait_minutes": 19.1,
+          "max_wait_minutes": 42.1,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-04",
+          "total_entries": 47651,
+          "avg_crowd": 2613,
+          "peak_crowd": 3594,
+          "avg_wait_minutes": 20.5,
+          "max_wait_minutes": 43.3,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-05",
+          "total_entries": 44947,
+          "avg_crowd": 2564,
+          "peak_crowd": 3539,
+          "avg_wait_minutes": 18.0,
+          "max_wait_minutes": 37.1,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-06",
+          "total_entries": 62530,
+          "avg_crowd": 3539,
+          "peak_crowd": 4831,
+          "avg_wait_minutes": 27.3,
+          "max_wait_minutes": 50.6,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-07",
+          "total_entries": 64705,
+          "avg_crowd": 3484,
+          "peak_crowd": 4756,
+          "avg_wait_minutes": 26.0,
+          "max_wait_minutes": 51.4,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-08",
+          "total_entries": 34198,
+          "avg_crowd": 2505,
+          "peak_crowd": 3614,
+          "avg_wait_minutes": 19.3,
+          "max_wait_minutes": 41.4,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-09",
+          "total_entries": 48524,
+          "avg_crowd": 2618,
+          "peak_crowd": 3554,
+          "avg_wait_minutes": 18.4,
+          "max_wait_minutes": 36.5,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-10",
+          "total_entries": 38256,
+          "avg_crowd": 2757,
+          "peak_crowd": 3498,
+          "avg_wait_minutes": 18.4,
+          "max_wait_minutes": 44.2,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-11",
+          "total_entries": 45554,
+          "avg_crowd": 2705,
+          "peak_crowd": 3576,
+          "avg_wait_minutes": 17.3,
+          "max_wait_minutes": 37.3,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-12",
+          "total_entries": 40102,
+          "avg_crowd": 2679,
+          "peak_crowd": 3619,
+          "avg_wait_minutes": 17.3,
+          "max_wait_minutes": 36.1,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-13",
+          "total_entries": 70253,
+          "avg_crowd": 3510,
+          "peak_crowd": 4640,
+          "avg_wait_minutes": 26.3,
+          "max_wait_minutes": 53.5,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-14",
+          "total_entries": 68368,
+          "avg_crowd": 3603,
+          "peak_crowd": 4656,
+          "avg_wait_minutes": 26.6,
+          "max_wait_minutes": 53.3,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-15",
+          "total_entries": 44502,
+          "avg_crowd": 2614,
+          "peak_crowd": 3624,
+          "avg_wait_minutes": 17.7,
+          "max_wait_minutes": 39.0,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-16",
+          "total_entries": 44280,
+          "avg_crowd": 2582,
+          "peak_crowd": 3670,
+          "avg_wait_minutes": 17.5,
+          "max_wait_minutes": 32.5,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-17",
+          "total_entries": 55164,
+          "avg_crowd": 2684,
+          "peak_crowd": 3604,
+          "avg_wait_minutes": 18.2,
+          "max_wait_minutes": 40.4,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-18",
+          "total_entries": 45932,
+          "avg_crowd": 2619,
+          "peak_crowd": 3690,
+          "avg_wait_minutes": 18.6,
+          "max_wait_minutes": 38.6,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-19",
+          "total_entries": 44561,
+          "avg_crowd": 2707,
+          "peak_crowd": 3568,
+          "avg_wait_minutes": 18.9,
+          "max_wait_minutes": 40.9,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-20",
+          "total_entries": 67488,
+          "avg_crowd": 3484,
+          "peak_crowd": 4745,
+          "avg_wait_minutes": 27.7,
+          "max_wait_minutes": 53.3,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-21",
+          "total_entries": 55121,
+          "avg_crowd": 3618,
+          "peak_crowd": 4768,
+          "avg_wait_minutes": 31.1,
+          "max_wait_minutes": 56.5,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-22",
+          "total_entries": 42600,
+          "avg_crowd": 2643,
+          "peak_crowd": 3621,
+          "avg_wait_minutes": 17.0,
+          "max_wait_minutes": 34.3,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-23",
+          "total_entries": 46731,
+          "avg_crowd": 2703,
+          "peak_crowd": 3648,
+          "avg_wait_minutes": 20.2,
+          "max_wait_minutes": 39.2,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-24",
+          "total_entries": 39826,
+          "avg_crowd": 2579,
+          "peak_crowd": 3510,
+          "avg_wait_minutes": 17.5,
+          "max_wait_minutes": 34.7,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-25",
+          "total_entries": 47714,
+          "avg_crowd": 2610,
+          "peak_crowd": 3516,
+          "avg_wait_minutes": 19.1,
+          "max_wait_minutes": 35.0,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-26",
+          "total_entries": 46272,
+          "avg_crowd": 2537,
+          "peak_crowd": 3549,
+          "avg_wait_minutes": 19.0,
+          "max_wait_minutes": 38.5,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-27",
+          "total_entries": 70609,
+          "avg_crowd": 3581,
+          "peak_crowd": 4805,
+          "avg_wait_minutes": 26.4,
+          "max_wait_minutes": 50.3,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "date": "2025-12-28",
+          "total_entries": 9801,
+          "avg_crowd": 3020,
+          "peak_crowd": 3472,
+          "avg_wait_minutes": 28.2,
+          "max_wait_minutes": 40.4,
+          "high_risk_incidents": 0
+        }
+      ],
+      "monthly_distribution": [
+        {
+          "temple_id": "TEMPLE-001",
+          "month_num": 1,
+          "month_name": "Jan",
+          "total_visitors": 1550722,
+          "avg_crowd": 2868,
+          "avg_wait": 20.7
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "month_num": 2,
+          "month_name": "Feb",
+          "total_visitors": 1410298,
+          "avg_crowd": 2876,
+          "avg_wait": 20.5
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "month_num": 3,
+          "month_name": "Mar",
+          "total_visitors": 1559265,
+          "avg_crowd": 2993,
+          "avg_wait": 21.9
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "month_num": 4,
+          "month_name": "Apr",
+          "total_visitors": 1476778,
+          "avg_crowd": 2858,
+          "avg_wait": 21.3
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "month_num": 5,
+          "month_name": "May",
+          "total_visitors": 1553481,
+          "avg_crowd": 2863,
+          "avg_wait": 21.1
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "month_num": 6,
+          "month_name": "Jun",
+          "total_visitors": 1467519,
+          "avg_crowd": 2886,
+          "avg_wait": 21.5
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "month_num": 7,
+          "month_name": "Jul",
+          "total_visitors": 1486568,
+          "avg_crowd": 2830,
+          "avg_wait": 20.6
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "month_num": 8,
+          "month_name": "Aug",
+          "total_visitors": 1553938,
+          "avg_crowd": 2937,
+          "avg_wait": 21.8
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "month_num": 9,
+          "month_name": "Sep",
+          "total_visitors": 1491417,
+          "avg_crowd": 2845,
+          "avg_wait": 20.8
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "month_num": 10,
+          "month_name": "Oct",
+          "total_visitors": 1930765,
+          "avg_crowd": 3542,
+          "avg_wait": 25.6
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "month_num": 11,
+          "month_name": "Nov",
+          "total_visitors": 1703842,
+          "avg_crowd": 3308,
+          "avg_wait": 24.7
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "month_num": 12,
+          "month_name": "Dec",
+          "total_visitors": 1354572,
+          "avg_crowd": 2882,
+          "avg_wait": 21.0
+        }
+      ],
+      "zone_hotspots": [
+        {
+          "temple_id": "TEMPLE-001",
+          "zone_id": "darshan_hall",
+          "zone_name": "Darshan Hall",
+          "capacity": 2500,
+          "avg_crowd": 2959,
+          "peak_crowd": 7478,
+          "avg_density": 0.237,
+          "avg_waiting": 21.6,
+          "max_waiting": 71.7,
+          "congestion_rate_pct": 0.58,
+          "is_critical_hotspot": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "zone_id": "exit_gates",
+          "zone_name": "Exit Gates",
+          "capacity": 2000,
+          "avg_crowd": 3004,
+          "peak_crowd": 7381,
+          "avg_density": 0.3,
+          "avg_waiting": 22.2,
+          "max_waiting": 85.8,
+          "congestion_rate_pct": 1.12,
+          "is_critical_hotspot": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "zone_id": "main_entrance",
+          "zone_name": "Main Entrance",
+          "capacity": 3000,
+          "avg_crowd": 2967,
+          "peak_crowd": 7302,
+          "avg_density": 0.198,
+          "avg_waiting": 21.5,
+          "max_waiting": 70.1,
+          "congestion_rate_pct": 0.81,
+          "is_critical_hotspot": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "zone_id": "parking_lot",
+          "zone_name": "Parking Lot",
+          "capacity": 5000,
+          "avg_crowd": 2986,
+          "peak_crowd": 7321,
+          "avg_density": 0.119,
+          "avg_waiting": 21.9,
+          "max_waiting": 86.3,
+          "congestion_rate_pct": 0.98,
+          "is_critical_hotspot": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "zone_id": "prasadam_area",
+          "zone_name": "Prasadam Area",
+          "capacity": 2000,
+          "avg_crowd": 2973,
+          "peak_crowd": 7170,
+          "avg_density": 0.297,
+          "avg_waiting": 21.9,
+          "max_waiting": 74.1,
+          "congestion_rate_pct": 0.77,
+          "is_critical_hotspot": false
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "zone_id": "queue_area",
+          "zone_name": "Queue Area",
+          "capacity": 4500,
+          "avg_crowd": 2970,
+          "peak_crowd": 7370,
+          "avg_density": 0.132,
+          "avg_waiting": 21.8,
+          "max_waiting": 91.3,
+          "congestion_rate_pct": 0.94,
+          "is_critical_hotspot": false
+        }
+      ],
+      "festivals": [
+        {
+          "temple_id": "TEMPLE-001",
+          "festival_name": "Maha Shivratri",
+          "start_date": "2025-02-26",
+          "end_date": "2025-02-28",
+          "darshan_type": "Continuous 42h Darshan",
+          "historical_daily_avg": 24000,
+          "festival_daily_surge": 115000,
+          "surge_multiplier": 4.79,
+          "source": "Shree Somnath Trust Public Annual Report 2024"
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "festival_name": "Shravan Month Somwar",
+          "start_date": "2025-07-28",
+          "end_date": "2025-08-25",
+          "darshan_type": "Special Jalabhishek",
+          "historical_daily_avg": 24000,
+          "festival_daily_surge": 65000,
+          "surge_multiplier": 2.71,
+          "source": "Shree Somnath Trust Public Annual Report 2024"
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "festival_name": "Kartik Purnima Mela",
+          "start_date": "2025-11-04",
+          "end_date": "2025-11-06",
+          "darshan_type": "Oceanfront Deepotsav",
+          "historical_daily_avg": 24000,
+          "festival_daily_surge": 72000,
+          "surge_multiplier": 3.0,
+          "source": "Shree Somnath Trust Public Annual Report 2024"
+        },
+        {
+          "temple_id": "TEMPLE-001",
+          "festival_name": "Diwali & Gujarati New Year",
+          "start_date": "2025-10-20",
+          "end_date": "2025-10-23",
+          "darshan_type": "Annakut Mahotsav",
+          "historical_daily_avg": 24000,
+          "festival_daily_surge": 85000,
+          "surge_multiplier": 3.54,
+          "source": "Shree Somnath Trust Public Annual Report 2024"
+        }
+      ]
+    },
+    "TEMPLE-002": {
+      "temple_id": "TEMPLE-002",
+      "temple_name": "Tirumala Tirupati Devasthanams",
+      "kpi_summary": {
+        "temple_id": "TEMPLE-002",
+        "temple_name": "Tirumala Tirupati Devasthanams",
+        "total_recorded_entries": 18536030,
+        "daily_average_visitors": 51204,
+        "peak_concurrent_crowd": 7407,
+        "avg_queue_wait_minutes": 21.7,
+        "top_festival": "Srivari Salakatla Brahmotsavam",
+        "festival_surge_multiplier": 2.64,
+        "peak_to_average_ratio": 2.49,
+        "busiest_window": "08:00 - 11:30 AM & 05:30 - 08:00 PM"
+      },
+      "hourly_trends": [
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 0,
+          "hour_formatted": "00:00",
+          "avg_entry_rate": 909.0,
+          "avg_crowd": 2542,
+          "p95_crowd": 3479,
+          "avg_waiting_time": 22.0,
+          "max_waiting_time": 61.6,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 1,
+          "hour_formatted": "01:00",
+          "avg_entry_rate": 911.2,
+          "avg_crowd": 2551,
+          "p95_crowd": 3523,
+          "avg_waiting_time": 22.1,
+          "max_waiting_time": 62.8,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 2,
+          "hour_formatted": "02:00",
+          "avg_entry_rate": 908.5,
+          "avg_crowd": 2542,
+          "p95_crowd": 3480,
+          "avg_waiting_time": 22.6,
+          "max_waiting_time": 64.1,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 3,
+          "hour_formatted": "03:00",
+          "avg_entry_rate": 904.3,
+          "avg_crowd": 2539,
+          "p95_crowd": 3472,
+          "avg_waiting_time": 22.2,
+          "max_waiting_time": 60.9,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 4,
+          "hour_formatted": "04:00",
+          "avg_entry_rate": 925.4,
+          "avg_crowd": 2587,
+          "p95_crowd": 3510,
+          "avg_waiting_time": 22.8,
+          "max_waiting_time": 65.1,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 5,
+          "hour_formatted": "05:00",
+          "avg_entry_rate": 900.4,
+          "avg_crowd": 2521,
+          "p95_crowd": 3501,
+          "avg_waiting_time": 21.6,
+          "max_waiting_time": 56.1,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 6,
+          "hour_formatted": "06:00",
+          "avg_entry_rate": 917.2,
+          "avg_crowd": 2570,
+          "p95_crowd": 3466,
+          "avg_waiting_time": 22.3,
+          "max_waiting_time": 70.8,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 7,
+          "hour_formatted": "07:00",
+          "avg_entry_rate": 1288.4,
+          "avg_crowd": 3607,
+          "p95_crowd": 4947,
+          "avg_waiting_time": 21.6,
+          "max_waiting_time": 91.7,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 8,
+          "hour_formatted": "08:00",
+          "avg_entry_rate": 1285.7,
+          "avg_crowd": 3595,
+          "p95_crowd": 5069,
+          "avg_waiting_time": 20.5,
+          "max_waiting_time": 80.1,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 9,
+          "hour_formatted": "09:00",
+          "avg_entry_rate": 1276.9,
+          "avg_crowd": 3576,
+          "p95_crowd": 4812,
+          "avg_waiting_time": 21.2,
+          "max_waiting_time": 85.4,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 10,
+          "hour_formatted": "10:00",
+          "avg_entry_rate": 1252.4,
+          "avg_crowd": 3498,
+          "p95_crowd": 4664,
+          "avg_waiting_time": 20.7,
+          "max_waiting_time": 71.7,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 11,
+          "hour_formatted": "11:00",
+          "avg_entry_rate": 1265.3,
+          "avg_crowd": 3547,
+          "p95_crowd": 4836,
+          "avg_waiting_time": 20.9,
+          "max_waiting_time": 70.6,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 12,
+          "hour_formatted": "12:00",
+          "avg_entry_rate": 910.0,
+          "avg_crowd": 2551,
+          "p95_crowd": 3523,
+          "avg_waiting_time": 22.3,
+          "max_waiting_time": 61.3,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 13,
+          "hour_formatted": "13:00",
+          "avg_entry_rate": 907.8,
+          "avg_crowd": 2541,
+          "p95_crowd": 3517,
+          "avg_waiting_time": 22.2,
+          "max_waiting_time": 61.7,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 14,
+          "hour_formatted": "14:00",
+          "avg_entry_rate": 915.9,
+          "avg_crowd": 2565,
+          "p95_crowd": 3584,
+          "avg_waiting_time": 22.7,
+          "max_waiting_time": 65.5,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 15,
+          "hour_formatted": "15:00",
+          "avg_entry_rate": 921.7,
+          "avg_crowd": 2580,
+          "p95_crowd": 3731,
+          "avg_waiting_time": 22.9,
+          "max_waiting_time": 65.4,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 16,
+          "hour_formatted": "16:00",
+          "avg_entry_rate": 1272.1,
+          "avg_crowd": 3565,
+          "p95_crowd": 4810,
+          "avg_waiting_time": 21.4,
+          "max_waiting_time": 68.4,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 17,
+          "hour_formatted": "17:00",
+          "avg_entry_rate": 1270.1,
+          "avg_crowd": 3557,
+          "p95_crowd": 4757,
+          "avg_waiting_time": 20.8,
+          "max_waiting_time": 65.1,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 18,
+          "hour_formatted": "18:00",
+          "avg_entry_rate": 1275.9,
+          "avg_crowd": 3573,
+          "p95_crowd": 4822,
+          "avg_waiting_time": 21.1,
+          "max_waiting_time": 88.1,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 19,
+          "hour_formatted": "19:00",
+          "avg_entry_rate": 1290.7,
+          "avg_crowd": 3602,
+          "p95_crowd": 4963,
+          "avg_waiting_time": 20.9,
+          "max_waiting_time": 87.5,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 20,
+          "hour_formatted": "20:00",
+          "avg_entry_rate": 1289.4,
+          "avg_crowd": 3611,
+          "p95_crowd": 4956,
+          "avg_waiting_time": 21.5,
+          "max_waiting_time": 74.6,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 21,
+          "hour_formatted": "21:00",
+          "avg_entry_rate": 902.3,
+          "avg_crowd": 2524,
+          "p95_crowd": 3417,
+          "avg_waiting_time": 21.5,
+          "max_waiting_time": 61.6,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 22,
+          "hour_formatted": "22:00",
+          "avg_entry_rate": 900.5,
+          "avg_crowd": 2521,
+          "p95_crowd": 3472,
+          "avg_waiting_time": 21.7,
+          "max_waiting_time": 55.4,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "hour": 23,
+          "hour_formatted": "23:00",
+          "avg_entry_rate": 921.6,
+          "avg_crowd": 2581,
+          "p95_crowd": 3533,
+          "avg_waiting_time": 22.6,
+          "max_waiting_time": 57.9,
+          "is_peak_hour": false
+        }
+      ],
+      "recent_daily_trends": [
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-11-29",
+          "total_entries": 54171,
+          "avg_crowd": 3426,
+          "peak_crowd": 4759,
+          "avg_wait_minutes": 25.9,
+          "max_wait_minutes": 52.2,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-11-30",
+          "total_entries": 57570,
+          "avg_crowd": 3429,
+          "peak_crowd": 4589,
+          "avg_wait_minutes": 28.3,
+          "max_wait_minutes": 55.5,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-01",
+          "total_entries": 49045,
+          "avg_crowd": 2612,
+          "peak_crowd": 3626,
+          "avg_wait_minutes": 19.9,
+          "max_wait_minutes": 42.3,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-02",
+          "total_entries": 36550,
+          "avg_crowd": 2617,
+          "peak_crowd": 3702,
+          "avg_wait_minutes": 18.8,
+          "max_wait_minutes": 38.6,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-03",
+          "total_entries": 48249,
+          "avg_crowd": 2647,
+          "peak_crowd": 3531,
+          "avg_wait_minutes": 20.6,
+          "max_wait_minutes": 39.1,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-04",
+          "total_entries": 47656,
+          "avg_crowd": 2542,
+          "peak_crowd": 3423,
+          "avg_wait_minutes": 17.4,
+          "max_wait_minutes": 41.9,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-05",
+          "total_entries": 49388,
+          "avg_crowd": 2609,
+          "peak_crowd": 3667,
+          "avg_wait_minutes": 20.2,
+          "max_wait_minutes": 39.8,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-06",
+          "total_entries": 65900,
+          "avg_crowd": 3528,
+          "peak_crowd": 4745,
+          "avg_wait_minutes": 28.0,
+          "max_wait_minutes": 52.4,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-07",
+          "total_entries": 59709,
+          "avg_crowd": 3478,
+          "peak_crowd": 4467,
+          "avg_wait_minutes": 27.7,
+          "max_wait_minutes": 49.4,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-08",
+          "total_entries": 52622,
+          "avg_crowd": 2676,
+          "peak_crowd": 3548,
+          "avg_wait_minutes": 20.6,
+          "max_wait_minutes": 42.2,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-09",
+          "total_entries": 47161,
+          "avg_crowd": 2595,
+          "peak_crowd": 3628,
+          "avg_wait_minutes": 20.2,
+          "max_wait_minutes": 38.1,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-10",
+          "total_entries": 38968,
+          "avg_crowd": 2480,
+          "peak_crowd": 3379,
+          "avg_wait_minutes": 18.1,
+          "max_wait_minutes": 39.4,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-11",
+          "total_entries": 42640,
+          "avg_crowd": 2596,
+          "peak_crowd": 3465,
+          "avg_wait_minutes": 19.0,
+          "max_wait_minutes": 40.5,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-12",
+          "total_entries": 47396,
+          "avg_crowd": 2651,
+          "peak_crowd": 3585,
+          "avg_wait_minutes": 17.7,
+          "max_wait_minutes": 42.8,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-13",
+          "total_entries": 60954,
+          "avg_crowd": 3607,
+          "peak_crowd": 4695,
+          "avg_wait_minutes": 25.0,
+          "max_wait_minutes": 51.6,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-14",
+          "total_entries": 60341,
+          "avg_crowd": 3508,
+          "peak_crowd": 4736,
+          "avg_wait_minutes": 25.2,
+          "max_wait_minutes": 53.6,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-15",
+          "total_entries": 43357,
+          "avg_crowd": 2617,
+          "peak_crowd": 3664,
+          "avg_wait_minutes": 17.8,
+          "max_wait_minutes": 38.9,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-16",
+          "total_entries": 44769,
+          "avg_crowd": 2625,
+          "peak_crowd": 3706,
+          "avg_wait_minutes": 19.1,
+          "max_wait_minutes": 36.4,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-17",
+          "total_entries": 45023,
+          "avg_crowd": 2658,
+          "peak_crowd": 3640,
+          "avg_wait_minutes": 18.3,
+          "max_wait_minutes": 36.7,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-18",
+          "total_entries": 37524,
+          "avg_crowd": 2591,
+          "peak_crowd": 3652,
+          "avg_wait_minutes": 20.0,
+          "max_wait_minutes": 37.4,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-19",
+          "total_entries": 40992,
+          "avg_crowd": 2564,
+          "peak_crowd": 3562,
+          "avg_wait_minutes": 17.9,
+          "max_wait_minutes": 40.1,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-20",
+          "total_entries": 62138,
+          "avg_crowd": 3538,
+          "peak_crowd": 4819,
+          "avg_wait_minutes": 24.6,
+          "max_wait_minutes": 55.4,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-21",
+          "total_entries": 51358,
+          "avg_crowd": 3491,
+          "peak_crowd": 4620,
+          "avg_wait_minutes": 26.8,
+          "max_wait_minutes": 52.6,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-22",
+          "total_entries": 49042,
+          "avg_crowd": 2598,
+          "peak_crowd": 3578,
+          "avg_wait_minutes": 19.2,
+          "max_wait_minutes": 41.7,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-23",
+          "total_entries": 52244,
+          "avg_crowd": 2602,
+          "peak_crowd": 3399,
+          "avg_wait_minutes": 19.8,
+          "max_wait_minutes": 39.5,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-24",
+          "total_entries": 48870,
+          "avg_crowd": 2660,
+          "peak_crowd": 3468,
+          "avg_wait_minutes": 15.9,
+          "max_wait_minutes": 33.4,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-25",
+          "total_entries": 53542,
+          "avg_crowd": 2526,
+          "peak_crowd": 3622,
+          "avg_wait_minutes": 17.7,
+          "max_wait_minutes": 32.2,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-26",
+          "total_entries": 46015,
+          "avg_crowd": 2673,
+          "peak_crowd": 3458,
+          "avg_wait_minutes": 17.6,
+          "max_wait_minutes": 38.6,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-27",
+          "total_entries": 52109,
+          "avg_crowd": 3452,
+          "peak_crowd": 4622,
+          "avg_wait_minutes": 26.9,
+          "max_wait_minutes": 48.0,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "date": "2025-12-28",
+          "total_entries": 18250,
+          "avg_crowd": 3043,
+          "peak_crowd": 3461,
+          "avg_wait_minutes": 27.8,
+          "max_wait_minutes": 44.7,
+          "high_risk_incidents": 0
+        }
+      ],
+      "monthly_distribution": [
+        {
+          "temple_id": "TEMPLE-002",
+          "month_num": 1,
+          "month_name": "Jan",
+          "total_visitors": 1504259,
+          "avg_crowd": 2838,
+          "avg_wait": 20.7
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "month_num": 2,
+          "month_name": "Feb",
+          "total_visitors": 1395437,
+          "avg_crowd": 2869,
+          "avg_wait": 20.8
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "month_num": 3,
+          "month_name": "Mar",
+          "total_visitors": 1613609,
+          "avg_crowd": 3017,
+          "avg_wait": 22.0
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "month_num": 4,
+          "month_name": "Apr",
+          "total_visitors": 1538826,
+          "avg_crowd": 2884,
+          "avg_wait": 20.8
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "month_num": 5,
+          "month_name": "May",
+          "total_visitors": 1533323,
+          "avg_crowd": 2890,
+          "avg_wait": 21.1
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "month_num": 6,
+          "month_name": "Jun",
+          "total_visitors": 1497395,
+          "avg_crowd": 2914,
+          "avg_wait": 21.4
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "month_num": 7,
+          "month_name": "Jul",
+          "total_visitors": 1517130,
+          "avg_crowd": 2868,
+          "avg_wait": 20.6
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "month_num": 8,
+          "month_name": "Aug",
+          "total_visitors": 1548021,
+          "avg_crowd": 2895,
+          "avg_wait": 21.2
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "month_num": 9,
+          "month_name": "Sep",
+          "total_visitors": 1406588,
+          "avg_crowd": 2845,
+          "avg_wait": 20.7
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "month_num": 10,
+          "month_name": "Oct",
+          "total_visitors": 1915627,
+          "avg_crowd": 3566,
+          "avg_wait": 25.8
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "month_num": 11,
+          "month_name": "Nov",
+          "total_visitors": 1714003,
+          "avg_crowd": 3303,
+          "avg_wait": 24.9
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "month_num": 12,
+          "month_name": "Dec",
+          "total_visitors": 1351812,
+          "avg_crowd": 2836,
+          "avg_wait": 20.8
+        }
+      ],
+      "zone_hotspots": [
+        {
+          "temple_id": "TEMPLE-002",
+          "zone_id": "darshan_hall",
+          "zone_name": "Darshan Hall",
+          "capacity": 2500,
+          "avg_crowd": 2988,
+          "peak_crowd": 7407,
+          "avg_density": 0.239,
+          "avg_waiting": 21.9,
+          "max_waiting": 82.1,
+          "congestion_rate_pct": 1.2,
+          "is_critical_hotspot": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "zone_id": "exit_gates",
+          "zone_name": "Exit Gates",
+          "capacity": 2000,
+          "avg_crowd": 2993,
+          "peak_crowd": 7168,
+          "avg_density": 0.299,
+          "avg_waiting": 21.9,
+          "max_waiting": 71.4,
+          "congestion_rate_pct": 0.75,
+          "is_critical_hotspot": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "zone_id": "main_entrance",
+          "zone_name": "Main Entrance",
+          "capacity": 3000,
+          "avg_crowd": 2952,
+          "peak_crowd": 7296,
+          "avg_density": 0.197,
+          "avg_waiting": 21.6,
+          "max_waiting": 88.1,
+          "congestion_rate_pct": 0.63,
+          "is_critical_hotspot": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "zone_id": "parking_lot",
+          "zone_name": "Parking Lot",
+          "capacity": 5000,
+          "avg_crowd": 2988,
+          "peak_crowd": 7253,
+          "avg_density": 0.12,
+          "avg_waiting": 21.8,
+          "max_waiting": 78.4,
+          "congestion_rate_pct": 1.06,
+          "is_critical_hotspot": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "zone_id": "prasadam_area",
+          "zone_name": "Prasadam Area",
+          "capacity": 2000,
+          "avg_crowd": 2966,
+          "peak_crowd": 7376,
+          "avg_density": 0.297,
+          "avg_waiting": 21.5,
+          "max_waiting": 85.1,
+          "congestion_rate_pct": 0.75,
+          "is_critical_hotspot": false
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "zone_id": "queue_area",
+          "zone_name": "Queue Area",
+          "capacity": 4500,
+          "avg_crowd": 2994,
+          "peak_crowd": 7391,
+          "avg_density": 0.133,
+          "avg_waiting": 21.8,
+          "max_waiting": 91.7,
+          "congestion_rate_pct": 1.34,
+          "is_critical_hotspot": false
+        }
+      ],
+      "festivals": [
+        {
+          "temple_id": "TEMPLE-002",
+          "festival_name": "Vaikunta Ekadasi",
+          "start_date": "2025-01-10",
+          "end_date": "2025-01-19",
+          "darshan_type": "Vaikunta Dwaram Darshan",
+          "historical_daily_avg": 70000,
+          "festival_daily_surge": 145000,
+          "surge_multiplier": 2.07,
+          "source": "TTD Official Public Release / Statistical Bulletin"
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "festival_name": "Srivari Salakatla Brahmotsavam",
+          "start_date": "2025-09-24",
+          "end_date": "2025-10-02",
+          "darshan_type": "Garuda Seva Vahana Seva",
+          "historical_daily_avg": 70000,
+          "festival_daily_surge": 185000,
+          "surge_multiplier": 2.64,
+          "source": "TTD Official Public Release / Statistical Bulletin"
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "festival_name": "Rathasapthami",
+          "start_date": "2025-02-04",
+          "end_date": "2025-02-04",
+          "darshan_type": "One-Day Brahmotsavam (7 Vahanams)",
+          "historical_daily_avg": 70000,
+          "festival_daily_surge": 160000,
+          "surge_multiplier": 2.29,
+          "source": "TTD Official Public Release / Statistical Bulletin"
+        },
+        {
+          "temple_id": "TEMPLE-002",
+          "festival_name": "Ugadi Telugu New Year",
+          "start_date": "2025-03-30",
+          "end_date": "2025-03-30",
+          "darshan_type": "Panchanga Sravanam Darshan",
+          "historical_daily_avg": 70000,
+          "festival_daily_surge": 95000,
+          "surge_multiplier": 1.36,
+          "source": "TTD Official Public Release / Statistical Bulletin"
+        }
+      ]
+    },
+    "TEMPLE-003": {
+      "temple_id": "TEMPLE-003",
+      "temple_name": "Meenakshi Amman Temple",
+      "kpi_summary": {
+        "temple_id": "TEMPLE-003",
+        "temple_name": "Meenakshi Amman Temple",
+        "total_recorded_entries": 18248705,
+        "daily_average_visitors": 50410,
+        "peak_concurrent_crowd": 7413,
+        "avg_queue_wait_minutes": 21.7,
+        "top_festival": "Chithirai Thiruvizha",
+        "festival_surge_multiplier": 6.0,
+        "peak_to_average_ratio": 2.49,
+        "busiest_window": "08:00 - 11:30 AM & 05:30 - 08:00 PM"
+      },
+      "hourly_trends": [
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 0,
+          "hour_formatted": "00:00",
+          "avg_entry_rate": 913.3,
+          "avg_crowd": 2555,
+          "p95_crowd": 3478,
+          "avg_waiting_time": 22.5,
+          "max_waiting_time": 61.5,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 1,
+          "hour_formatted": "01:00",
+          "avg_entry_rate": 916.2,
+          "avg_crowd": 2570,
+          "p95_crowd": 3489,
+          "avg_waiting_time": 22.3,
+          "max_waiting_time": 66.4,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 2,
+          "hour_formatted": "02:00",
+          "avg_entry_rate": 906.7,
+          "avg_crowd": 2543,
+          "p95_crowd": 3564,
+          "avg_waiting_time": 22.1,
+          "max_waiting_time": 70.0,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 3,
+          "hour_formatted": "03:00",
+          "avg_entry_rate": 909.7,
+          "avg_crowd": 2548,
+          "p95_crowd": 3504,
+          "avg_waiting_time": 22.1,
+          "max_waiting_time": 63.0,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 4,
+          "hour_formatted": "04:00",
+          "avg_entry_rate": 907.6,
+          "avg_crowd": 2544,
+          "p95_crowd": 3469,
+          "avg_waiting_time": 21.9,
+          "max_waiting_time": 59.1,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 5,
+          "hour_formatted": "05:00",
+          "avg_entry_rate": 919.1,
+          "avg_crowd": 2565,
+          "p95_crowd": 3523,
+          "avg_waiting_time": 22.0,
+          "max_waiting_time": 63.9,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 6,
+          "hour_formatted": "06:00",
+          "avg_entry_rate": 908.4,
+          "avg_crowd": 2541,
+          "p95_crowd": 3565,
+          "avg_waiting_time": 21.8,
+          "max_waiting_time": 58.1,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 7,
+          "hour_formatted": "07:00",
+          "avg_entry_rate": 1280.0,
+          "avg_crowd": 3578,
+          "p95_crowd": 4819,
+          "avg_waiting_time": 21.4,
+          "max_waiting_time": 68.7,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 8,
+          "hour_formatted": "08:00",
+          "avg_entry_rate": 1267.1,
+          "avg_crowd": 3548,
+          "p95_crowd": 4716,
+          "avg_waiting_time": 21.2,
+          "max_waiting_time": 82.6,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 9,
+          "hour_formatted": "09:00",
+          "avg_entry_rate": 1267.9,
+          "avg_crowd": 3556,
+          "p95_crowd": 4698,
+          "avg_waiting_time": 21.0,
+          "max_waiting_time": 67.5,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 10,
+          "hour_formatted": "10:00",
+          "avg_entry_rate": 1292.2,
+          "avg_crowd": 3620,
+          "p95_crowd": 5060,
+          "avg_waiting_time": 21.6,
+          "max_waiting_time": 57.1,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 11,
+          "hour_formatted": "11:00",
+          "avg_entry_rate": 1286.0,
+          "avg_crowd": 3600,
+          "p95_crowd": 4772,
+          "avg_waiting_time": 20.9,
+          "max_waiting_time": 65.6,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 12,
+          "hour_formatted": "12:00",
+          "avg_entry_rate": 911.5,
+          "avg_crowd": 2551,
+          "p95_crowd": 3489,
+          "avg_waiting_time": 21.9,
+          "max_waiting_time": 66.3,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 13,
+          "hour_formatted": "13:00",
+          "avg_entry_rate": 912.7,
+          "avg_crowd": 2552,
+          "p95_crowd": 3509,
+          "avg_waiting_time": 21.9,
+          "max_waiting_time": 59.4,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 14,
+          "hour_formatted": "14:00",
+          "avg_entry_rate": 910.3,
+          "avg_crowd": 2543,
+          "p95_crowd": 3497,
+          "avg_waiting_time": 21.9,
+          "max_waiting_time": 56.7,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 15,
+          "hour_formatted": "15:00",
+          "avg_entry_rate": 909.0,
+          "avg_crowd": 2537,
+          "p95_crowd": 3412,
+          "avg_waiting_time": 22.0,
+          "max_waiting_time": 60.7,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 16,
+          "hour_formatted": "16:00",
+          "avg_entry_rate": 1277.4,
+          "avg_crowd": 3580,
+          "p95_crowd": 4798,
+          "avg_waiting_time": 21.3,
+          "max_waiting_time": 79.2,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 17,
+          "hour_formatted": "17:00",
+          "avg_entry_rate": 1285.4,
+          "avg_crowd": 3595,
+          "p95_crowd": 4915,
+          "avg_waiting_time": 21.4,
+          "max_waiting_time": 80.1,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 18,
+          "hour_formatted": "18:00",
+          "avg_entry_rate": 1282.5,
+          "avg_crowd": 3580,
+          "p95_crowd": 4900,
+          "avg_waiting_time": 21.5,
+          "max_waiting_time": 91.1,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 19,
+          "hour_formatted": "19:00",
+          "avg_entry_rate": 1264.2,
+          "avg_crowd": 3539,
+          "p95_crowd": 4740,
+          "avg_waiting_time": 20.6,
+          "max_waiting_time": 60.8,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 20,
+          "hour_formatted": "20:00",
+          "avg_entry_rate": 1281.2,
+          "avg_crowd": 3592,
+          "p95_crowd": 4894,
+          "avg_waiting_time": 21.0,
+          "max_waiting_time": 75.5,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 21,
+          "hour_formatted": "21:00",
+          "avg_entry_rate": 916.5,
+          "avg_crowd": 2565,
+          "p95_crowd": 3454,
+          "avg_waiting_time": 22.1,
+          "max_waiting_time": 62.6,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 22,
+          "hour_formatted": "22:00",
+          "avg_entry_rate": 916.5,
+          "avg_crowd": 2566,
+          "p95_crowd": 3455,
+          "avg_waiting_time": 22.5,
+          "max_waiting_time": 65.0,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "hour": 23,
+          "hour_formatted": "23:00",
+          "avg_entry_rate": 910.2,
+          "avg_crowd": 2552,
+          "p95_crowd": 3510,
+          "avg_waiting_time": 22.3,
+          "max_waiting_time": 61.8,
+          "is_peak_hour": false
+        }
+      ],
+      "recent_daily_trends": [
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-11-29",
+          "total_entries": 67167,
+          "avg_crowd": 3633,
+          "peak_crowd": 4732,
+          "avg_wait_minutes": 27.1,
+          "max_wait_minutes": 58.8,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-11-30",
+          "total_entries": 54667,
+          "avg_crowd": 3504,
+          "peak_crowd": 4769,
+          "avg_wait_minutes": 26.4,
+          "max_wait_minutes": 58.7,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-01",
+          "total_entries": 42668,
+          "avg_crowd": 2580,
+          "peak_crowd": 3535,
+          "avg_wait_minutes": 17.2,
+          "max_wait_minutes": 32.0,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-02",
+          "total_entries": 57478,
+          "avg_crowd": 2677,
+          "peak_crowd": 3684,
+          "avg_wait_minutes": 20.6,
+          "max_wait_minutes": 44.0,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-03",
+          "total_entries": 42640,
+          "avg_crowd": 2713,
+          "peak_crowd": 3734,
+          "avg_wait_minutes": 19.5,
+          "max_wait_minutes": 36.0,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-04",
+          "total_entries": 39002,
+          "avg_crowd": 2689,
+          "peak_crowd": 3546,
+          "avg_wait_minutes": 19.2,
+          "max_wait_minutes": 36.8,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-05",
+          "total_entries": 39558,
+          "avg_crowd": 2647,
+          "peak_crowd": 3677,
+          "avg_wait_minutes": 18.2,
+          "max_wait_minutes": 37.0,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-06",
+          "total_entries": 53859,
+          "avg_crowd": 3595,
+          "peak_crowd": 4750,
+          "avg_wait_minutes": 26.7,
+          "max_wait_minutes": 52.5,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-07",
+          "total_entries": 57488,
+          "avg_crowd": 3651,
+          "peak_crowd": 4630,
+          "avg_wait_minutes": 25.8,
+          "max_wait_minutes": 52.3,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-08",
+          "total_entries": 49699,
+          "avg_crowd": 2714,
+          "peak_crowd": 3731,
+          "avg_wait_minutes": 20.2,
+          "max_wait_minutes": 40.3,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-09",
+          "total_entries": 38778,
+          "avg_crowd": 2664,
+          "peak_crowd": 3573,
+          "avg_wait_minutes": 17.7,
+          "max_wait_minutes": 43.8,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-10",
+          "total_entries": 57293,
+          "avg_crowd": 2637,
+          "peak_crowd": 3584,
+          "avg_wait_minutes": 17.0,
+          "max_wait_minutes": 42.3,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-11",
+          "total_entries": 46789,
+          "avg_crowd": 2593,
+          "peak_crowd": 3631,
+          "avg_wait_minutes": 20.3,
+          "max_wait_minutes": 40.9,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-12",
+          "total_entries": 47745,
+          "avg_crowd": 2558,
+          "peak_crowd": 3598,
+          "avg_wait_minutes": 17.0,
+          "max_wait_minutes": 41.1,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-13",
+          "total_entries": 50509,
+          "avg_crowd": 3434,
+          "peak_crowd": 4657,
+          "avg_wait_minutes": 25.9,
+          "max_wait_minutes": 51.7,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-14",
+          "total_entries": 54448,
+          "avg_crowd": 3551,
+          "peak_crowd": 4722,
+          "avg_wait_minutes": 26.2,
+          "max_wait_minutes": 51.3,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-15",
+          "total_entries": 45891,
+          "avg_crowd": 2593,
+          "peak_crowd": 3651,
+          "avg_wait_minutes": 18.1,
+          "max_wait_minutes": 37.3,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-16",
+          "total_entries": 44681,
+          "avg_crowd": 2611,
+          "peak_crowd": 3512,
+          "avg_wait_minutes": 18.0,
+          "max_wait_minutes": 32.6,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-17",
+          "total_entries": 36085,
+          "avg_crowd": 2594,
+          "peak_crowd": 3566,
+          "avg_wait_minutes": 18.1,
+          "max_wait_minutes": 36.3,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-18",
+          "total_entries": 50451,
+          "avg_crowd": 2611,
+          "peak_crowd": 3571,
+          "avg_wait_minutes": 17.3,
+          "max_wait_minutes": 37.4,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-19",
+          "total_entries": 48551,
+          "avg_crowd": 2559,
+          "peak_crowd": 3605,
+          "avg_wait_minutes": 18.8,
+          "max_wait_minutes": 41.5,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-20",
+          "total_entries": 50430,
+          "avg_crowd": 3414,
+          "peak_crowd": 4565,
+          "avg_wait_minutes": 29.1,
+          "max_wait_minutes": 51.7,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-21",
+          "total_entries": 74133,
+          "avg_crowd": 3455,
+          "peak_crowd": 4740,
+          "avg_wait_minutes": 27.4,
+          "max_wait_minutes": 54.3,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-22",
+          "total_entries": 42659,
+          "avg_crowd": 2611,
+          "peak_crowd": 3548,
+          "avg_wait_minutes": 18.5,
+          "max_wait_minutes": 38.0,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-23",
+          "total_entries": 37260,
+          "avg_crowd": 2613,
+          "peak_crowd": 3600,
+          "avg_wait_minutes": 20.8,
+          "max_wait_minutes": 43.0,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-24",
+          "total_entries": 45078,
+          "avg_crowd": 2529,
+          "peak_crowd": 3596,
+          "avg_wait_minutes": 20.0,
+          "max_wait_minutes": 40.0,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-25",
+          "total_entries": 31227,
+          "avg_crowd": 2570,
+          "peak_crowd": 3579,
+          "avg_wait_minutes": 18.1,
+          "max_wait_minutes": 38.3,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-26",
+          "total_entries": 42623,
+          "avg_crowd": 2639,
+          "peak_crowd": 3715,
+          "avg_wait_minutes": 20.2,
+          "max_wait_minutes": 41.4,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-27",
+          "total_entries": 57808,
+          "avg_crowd": 3426,
+          "peak_crowd": 4598,
+          "avg_wait_minutes": 27.4,
+          "max_wait_minutes": 52.6,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "date": "2025-12-28",
+          "total_entries": 15105,
+          "avg_crowd": 3013,
+          "peak_crowd": 3394,
+          "avg_wait_minutes": 27.8,
+          "max_wait_minutes": 46.9,
+          "high_risk_incidents": 0
+        }
+      ],
+      "monthly_distribution": [
+        {
+          "temple_id": "TEMPLE-003",
+          "month_num": 1,
+          "month_name": "Jan",
+          "total_visitors": 1475483,
+          "avg_crowd": 2861,
+          "avg_wait": 20.7
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "month_num": 2,
+          "month_name": "Feb",
+          "total_visitors": 1337081,
+          "avg_crowd": 2881,
+          "avg_wait": 21.4
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "month_num": 3,
+          "month_name": "Mar",
+          "total_visitors": 1625968,
+          "avg_crowd": 3016,
+          "avg_wait": 21.6
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "month_num": 4,
+          "month_name": "Apr",
+          "total_visitors": 1388791,
+          "avg_crowd": 2817,
+          "avg_wait": 20.4
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "month_num": 5,
+          "month_name": "May",
+          "total_visitors": 1495964,
+          "avg_crowd": 2871,
+          "avg_wait": 20.9
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "month_num": 6,
+          "month_name": "Jun",
+          "total_visitors": 1493472,
+          "avg_crowd": 2869,
+          "avg_wait": 21.3
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "month_num": 7,
+          "month_name": "Jul",
+          "total_visitors": 1534220,
+          "avg_crowd": 2838,
+          "avg_wait": 20.7
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "month_num": 8,
+          "month_name": "Aug",
+          "total_visitors": 1543441,
+          "avg_crowd": 2912,
+          "avg_wait": 21.1
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "month_num": 9,
+          "month_name": "Sep",
+          "total_visitors": 1506356,
+          "avg_crowd": 2868,
+          "avg_wait": 20.8
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "month_num": 10,
+          "month_name": "Oct",
+          "total_visitors": 1841457,
+          "avg_crowd": 3594,
+          "avg_wait": 25.6
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "month_num": 11,
+          "month_name": "Nov",
+          "total_visitors": 1706536,
+          "avg_crowd": 3344,
+          "avg_wait": 25.1
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "month_num": 12,
+          "month_name": "Dec",
+          "total_visitors": 1299936,
+          "avg_crowd": 2843,
+          "avg_wait": 20.9
+        }
+      ],
+      "zone_hotspots": [
+        {
+          "temple_id": "TEMPLE-003",
+          "zone_id": "darshan_hall",
+          "zone_name": "Darshan Hall",
+          "capacity": 2500,
+          "avg_crowd": 2970,
+          "peak_crowd": 7342,
+          "avg_density": 0.238,
+          "avg_waiting": 21.7,
+          "max_waiting": 82.3,
+          "congestion_rate_pct": 1.06,
+          "is_critical_hotspot": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "zone_id": "exit_gates",
+          "zone_name": "Exit Gates",
+          "capacity": 2000,
+          "avg_crowd": 2966,
+          "peak_crowd": 7264,
+          "avg_density": 0.297,
+          "avg_waiting": 21.4,
+          "max_waiting": 80.1,
+          "congestion_rate_pct": 0.96,
+          "is_critical_hotspot": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "zone_id": "main_entrance",
+          "zone_name": "Main Entrance",
+          "capacity": 3000,
+          "avg_crowd": 2981,
+          "peak_crowd": 7361,
+          "avg_density": 0.199,
+          "avg_waiting": 21.8,
+          "max_waiting": 70.2,
+          "congestion_rate_pct": 0.72,
+          "is_critical_hotspot": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "zone_id": "parking_lot",
+          "zone_name": "Parking Lot",
+          "capacity": 5000,
+          "avg_crowd": 2985,
+          "peak_crowd": 7413,
+          "avg_density": 0.119,
+          "avg_waiting": 21.7,
+          "max_waiting": 91.1,
+          "congestion_rate_pct": 1.29,
+          "is_critical_hotspot": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "zone_id": "prasadam_area",
+          "zone_name": "Prasadam Area",
+          "capacity": 2000,
+          "avg_crowd": 2980,
+          "peak_crowd": 7297,
+          "avg_density": 0.298,
+          "avg_waiting": 22.1,
+          "max_waiting": 70.0,
+          "congestion_rate_pct": 0.66,
+          "is_critical_hotspot": false
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "zone_id": "queue_area",
+          "zone_name": "Queue Area",
+          "capacity": 4500,
+          "avg_crowd": 2983,
+          "peak_crowd": 7353,
+          "avg_density": 0.133,
+          "avg_waiting": 21.7,
+          "max_waiting": 68.5,
+          "congestion_rate_pct": 1.02,
+          "is_critical_hotspot": false
+        }
+      ],
+      "festivals": [
+        {
+          "temple_id": "TEMPLE-003",
+          "festival_name": "Chithirai Thiruvizha",
+          "start_date": "2025-04-10",
+          "end_date": "2025-04-22",
+          "darshan_type": "Celestial Wedding & Therottam",
+          "historical_daily_avg": 35000,
+          "festival_daily_surge": 210000,
+          "surge_multiplier": 6.0,
+          "source": "HR&CE Dept Govt of Tamil Nadu Annual Statistics"
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "festival_name": "Navratri Kolu Mahotsavam",
+          "start_date": "2025-09-22",
+          "end_date": "2025-10-02",
+          "darshan_type": "Kolu Procession & Special Alankaram",
+          "historical_daily_avg": 35000,
+          "festival_daily_surge": 78000,
+          "surge_multiplier": 2.23,
+          "source": "HR&CE Dept Govt of Tamil Nadu Annual Statistics"
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "festival_name": "Float Festival (Theppam)",
+          "start_date": "2025-01-13",
+          "end_date": "2025-01-14",
+          "darshan_type": "Mariamman Teppakulam Procession",
+          "historical_daily_avg": 35000,
+          "festival_daily_surge": 92000,
+          "surge_multiplier": 2.63,
+          "source": "HR&CE Dept Govt of Tamil Nadu Annual Statistics"
+        },
+        {
+          "temple_id": "TEMPLE-003",
+          "festival_name": "Aavani Moola Festival",
+          "start_date": "2025-08-18",
+          "end_date": "2025-08-28",
+          "darshan_type": "Tiruvilayadal Leela Recitation",
+          "historical_daily_avg": 35000,
+          "festival_daily_surge": 58000,
+          "surge_multiplier": 1.66,
+          "source": "HR&CE Dept Govt of Tamil Nadu Annual Statistics"
+        }
+      ]
+    },
+    "TEMPLE-005": {
+      "temple_id": "TEMPLE-005",
+      "temple_name": "Kashi Vishwanath Temple & Corridor",
+      "kpi_summary": {
+        "temple_id": "TEMPLE-005",
+        "temple_name": "Kashi Vishwanath Temple & Corridor",
+        "total_recorded_entries": 21311403,
+        "daily_average_visitors": 58871,
+        "peak_concurrent_crowd": 8225,
+        "avg_queue_wait_minutes": 20.7,
+        "top_festival": "Maha Shivratri",
+        "festival_surge_multiplier": 5.85,
+        "peak_to_average_ratio": 2.51,
+        "busiest_window": "08:00 - 11:30 AM & 05:30 - 08:00 PM"
+      },
+      "hourly_trends": [
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 0,
+          "hour_formatted": "00:00",
+          "avg_entry_rate": 1041.4,
+          "avg_crowd": 2799,
+          "p95_crowd": 3807,
+          "avg_waiting_time": 21.5,
+          "max_waiting_time": 63.0,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 1,
+          "hour_formatted": "01:00",
+          "avg_entry_rate": 1050.8,
+          "avg_crowd": 2814,
+          "p95_crowd": 3854,
+          "avg_waiting_time": 21.2,
+          "max_waiting_time": 64.0,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 2,
+          "hour_formatted": "02:00",
+          "avg_entry_rate": 1060.8,
+          "avg_crowd": 2838,
+          "p95_crowd": 3907,
+          "avg_waiting_time": 21.1,
+          "max_waiting_time": 66.6,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 3,
+          "hour_formatted": "03:00",
+          "avg_entry_rate": 1054.2,
+          "avg_crowd": 2826,
+          "p95_crowd": 3834,
+          "avg_waiting_time": 21.6,
+          "max_waiting_time": 61.1,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 4,
+          "hour_formatted": "04:00",
+          "avg_entry_rate": 1038.6,
+          "avg_crowd": 2781,
+          "p95_crowd": 3859,
+          "avg_waiting_time": 20.9,
+          "max_waiting_time": 59.1,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 5,
+          "hour_formatted": "05:00",
+          "avg_entry_rate": 1054.2,
+          "avg_crowd": 2818,
+          "p95_crowd": 3766,
+          "avg_waiting_time": 21.8,
+          "max_waiting_time": 64.3,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 6,
+          "hour_formatted": "06:00",
+          "avg_entry_rate": 1055.8,
+          "avg_crowd": 2828,
+          "p95_crowd": 3861,
+          "avg_waiting_time": 21.4,
+          "max_waiting_time": 54.3,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 7,
+          "hour_formatted": "07:00",
+          "avg_entry_rate": 1455.7,
+          "avg_crowd": 3896,
+          "p95_crowd": 5217,
+          "avg_waiting_time": 20.5,
+          "max_waiting_time": 86.7,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 8,
+          "hour_formatted": "08:00",
+          "avg_entry_rate": 1463.7,
+          "avg_crowd": 3920,
+          "p95_crowd": 5240,
+          "avg_waiting_time": 20.4,
+          "max_waiting_time": 81.5,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 9,
+          "hour_formatted": "09:00",
+          "avg_entry_rate": 1475.7,
+          "avg_crowd": 3953,
+          "p95_crowd": 5401,
+          "avg_waiting_time": 20.5,
+          "max_waiting_time": 69.7,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 10,
+          "hour_formatted": "10:00",
+          "avg_entry_rate": 1463.7,
+          "avg_crowd": 3909,
+          "p95_crowd": 5333,
+          "avg_waiting_time": 19.4,
+          "max_waiting_time": 60.8,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 11,
+          "hour_formatted": "11:00",
+          "avg_entry_rate": 1481.0,
+          "avg_crowd": 3957,
+          "p95_crowd": 5339,
+          "avg_waiting_time": 19.8,
+          "max_waiting_time": 55.7,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 12,
+          "hour_formatted": "12:00",
+          "avg_entry_rate": 1056.3,
+          "avg_crowd": 2836,
+          "p95_crowd": 3945,
+          "avg_waiting_time": 20.9,
+          "max_waiting_time": 59.5,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 13,
+          "hour_formatted": "13:00",
+          "avg_entry_rate": 1044.6,
+          "avg_crowd": 2793,
+          "p95_crowd": 3770,
+          "avg_waiting_time": 20.7,
+          "max_waiting_time": 56.6,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 14,
+          "hour_formatted": "14:00",
+          "avg_entry_rate": 1048.2,
+          "avg_crowd": 2809,
+          "p95_crowd": 3823,
+          "avg_waiting_time": 20.8,
+          "max_waiting_time": 59.3,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 15,
+          "hour_formatted": "15:00",
+          "avg_entry_rate": 1041.9,
+          "avg_crowd": 2793,
+          "p95_crowd": 3843,
+          "avg_waiting_time": 21.4,
+          "max_waiting_time": 54.5,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 16,
+          "hour_formatted": "16:00",
+          "avg_entry_rate": 1481.3,
+          "avg_crowd": 3969,
+          "p95_crowd": 5378,
+          "avg_waiting_time": 20.1,
+          "max_waiting_time": 82.0,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 17,
+          "hour_formatted": "17:00",
+          "avg_entry_rate": 1465.2,
+          "avg_crowd": 3923,
+          "p95_crowd": 5291,
+          "avg_waiting_time": 20.4,
+          "max_waiting_time": 72.1,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 18,
+          "hour_formatted": "18:00",
+          "avg_entry_rate": 1460.1,
+          "avg_crowd": 3912,
+          "p95_crowd": 5204,
+          "avg_waiting_time": 19.9,
+          "max_waiting_time": 75.8,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 19,
+          "hour_formatted": "19:00",
+          "avg_entry_rate": 1459.8,
+          "avg_crowd": 3911,
+          "p95_crowd": 5231,
+          "avg_waiting_time": 19.7,
+          "max_waiting_time": 74.9,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 20,
+          "hour_formatted": "20:00",
+          "avg_entry_rate": 1444.3,
+          "avg_crowd": 3862,
+          "p95_crowd": 5108,
+          "avg_waiting_time": 19.6,
+          "max_waiting_time": 62.2,
+          "is_peak_hour": true
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 21,
+          "hour_formatted": "21:00",
+          "avg_entry_rate": 1049.1,
+          "avg_crowd": 2812,
+          "p95_crowd": 3915,
+          "avg_waiting_time": 21.4,
+          "max_waiting_time": 58.0,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 22,
+          "hour_formatted": "22:00",
+          "avg_entry_rate": 1054.5,
+          "avg_crowd": 2831,
+          "p95_crowd": 3917,
+          "avg_waiting_time": 21.0,
+          "max_waiting_time": 55.0,
+          "is_peak_hour": false
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "hour": 23,
+          "hour_formatted": "23:00",
+          "avg_entry_rate": 1050.7,
+          "avg_crowd": 2810,
+          "p95_crowd": 3855,
+          "avg_waiting_time": 21.7,
+          "max_waiting_time": 60.5,
+          "is_peak_hour": false
+        }
+      ],
+      "recent_daily_trends": [
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-11-29",
+          "total_entries": 68985,
+          "avg_crowd": 3852,
+          "peak_crowd": 5097,
+          "avg_wait_minutes": 24.5,
+          "max_wait_minutes": 48.4,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-11-30",
+          "total_entries": 77814,
+          "avg_crowd": 3919,
+          "peak_crowd": 4999,
+          "avg_wait_minutes": 24.4,
+          "max_wait_minutes": 48.7,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-01",
+          "total_entries": 49660,
+          "avg_crowd": 2947,
+          "peak_crowd": 3875,
+          "avg_wait_minutes": 18.2,
+          "max_wait_minutes": 39.2,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-02",
+          "total_entries": 46621,
+          "avg_crowd": 2787,
+          "peak_crowd": 4005,
+          "avg_wait_minutes": 17.7,
+          "max_wait_minutes": 36.0,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-03",
+          "total_entries": 51872,
+          "avg_crowd": 2838,
+          "peak_crowd": 3821,
+          "avg_wait_minutes": 18.2,
+          "max_wait_minutes": 40.0,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-04",
+          "total_entries": 54771,
+          "avg_crowd": 2874,
+          "peak_crowd": 3953,
+          "avg_wait_minutes": 19.5,
+          "max_wait_minutes": 41.1,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-05",
+          "total_entries": 51665,
+          "avg_crowd": 2821,
+          "peak_crowd": 3892,
+          "avg_wait_minutes": 17.1,
+          "max_wait_minutes": 35.2,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-06",
+          "total_entries": 71886,
+          "avg_crowd": 3893,
+          "peak_crowd": 5314,
+          "avg_wait_minutes": 25.9,
+          "max_wait_minutes": 48.1,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-07",
+          "total_entries": 74385,
+          "avg_crowd": 3832,
+          "peak_crowd": 5231,
+          "avg_wait_minutes": 24.7,
+          "max_wait_minutes": 48.8,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-08",
+          "total_entries": 39311,
+          "avg_crowd": 2755,
+          "peak_crowd": 3975,
+          "avg_wait_minutes": 18.3,
+          "max_wait_minutes": 39.3,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-09",
+          "total_entries": 55777,
+          "avg_crowd": 2879,
+          "peak_crowd": 3909,
+          "avg_wait_minutes": 17.5,
+          "max_wait_minutes": 34.7,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-10",
+          "total_entries": 43977,
+          "avg_crowd": 3032,
+          "peak_crowd": 3847,
+          "avg_wait_minutes": 17.5,
+          "max_wait_minutes": 42.0,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-11",
+          "total_entries": 52364,
+          "avg_crowd": 2975,
+          "peak_crowd": 3933,
+          "avg_wait_minutes": 16.4,
+          "max_wait_minutes": 35.4,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-12",
+          "total_entries": 46096,
+          "avg_crowd": 2947,
+          "peak_crowd": 3980,
+          "avg_wait_minutes": 16.4,
+          "max_wait_minutes": 34.3,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-13",
+          "total_entries": 80763,
+          "avg_crowd": 3861,
+          "peak_crowd": 5104,
+          "avg_wait_minutes": 25.0,
+          "max_wait_minutes": 50.8,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-14",
+          "total_entries": 78598,
+          "avg_crowd": 3963,
+          "peak_crowd": 5121,
+          "avg_wait_minutes": 25.3,
+          "max_wait_minutes": 50.6,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-15",
+          "total_entries": 51157,
+          "avg_crowd": 2875,
+          "peak_crowd": 3986,
+          "avg_wait_minutes": 16.8,
+          "max_wait_minutes": 37.0,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-16",
+          "total_entries": 50895,
+          "avg_crowd": 2839,
+          "peak_crowd": 4037,
+          "avg_wait_minutes": 16.6,
+          "max_wait_minutes": 30.9,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-17",
+          "total_entries": 63411,
+          "avg_crowd": 2952,
+          "peak_crowd": 3964,
+          "avg_wait_minutes": 17.3,
+          "max_wait_minutes": 38.4,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-18",
+          "total_entries": 52797,
+          "avg_crowd": 2880,
+          "peak_crowd": 4059,
+          "avg_wait_minutes": 17.7,
+          "max_wait_minutes": 36.7,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-19",
+          "total_entries": 51223,
+          "avg_crowd": 2977,
+          "peak_crowd": 3924,
+          "avg_wait_minutes": 17.9,
+          "max_wait_minutes": 38.9,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-20",
+          "total_entries": 77583,
+          "avg_crowd": 3832,
+          "peak_crowd": 5219,
+          "avg_wait_minutes": 26.3,
+          "max_wait_minutes": 50.6,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-21",
+          "total_entries": 63369,
+          "avg_crowd": 3979,
+          "peak_crowd": 5244,
+          "avg_wait_minutes": 29.5,
+          "max_wait_minutes": 53.7,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-22",
+          "total_entries": 48968,
+          "avg_crowd": 2907,
+          "peak_crowd": 3983,
+          "avg_wait_minutes": 16.2,
+          "max_wait_minutes": 32.6,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-23",
+          "total_entries": 53714,
+          "avg_crowd": 2973,
+          "peak_crowd": 4012,
+          "avg_wait_minutes": 19.2,
+          "max_wait_minutes": 37.2,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-24",
+          "total_entries": 45777,
+          "avg_crowd": 2836,
+          "peak_crowd": 3861,
+          "avg_wait_minutes": 16.6,
+          "max_wait_minutes": 33.0,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-25",
+          "total_entries": 54849,
+          "avg_crowd": 2871,
+          "peak_crowd": 3867,
+          "avg_wait_minutes": 18.1,
+          "max_wait_minutes": 33.2,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-26",
+          "total_entries": 53189,
+          "avg_crowd": 2790,
+          "peak_crowd": 3903,
+          "avg_wait_minutes": 18.1,
+          "max_wait_minutes": 36.6,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-27",
+          "total_entries": 81173,
+          "avg_crowd": 3939,
+          "peak_crowd": 5285,
+          "avg_wait_minutes": 25.1,
+          "max_wait_minutes": 47.8,
+          "high_risk_incidents": 0
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "date": "2025-12-28",
+          "total_entries": 11266,
+          "avg_crowd": 3322,
+          "peak_crowd": 3819,
+          "avg_wait_minutes": 26.8,
+          "max_wait_minutes": 38.4,
+          "high_risk_incidents": 0
+        }
+      ],
+      "monthly_distribution": [
+        {
+          "temple_id": "TEMPLE-005",
+          "month_num": 1,
+          "month_name": "Jan",
+          "total_visitors": 1782585,
+          "avg_crowd": 3155,
+          "avg_wait": 19.7
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "month_num": 2,
+          "month_name": "Feb",
+          "total_visitors": 1621158,
+          "avg_crowd": 3163,
+          "avg_wait": 19.4
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "month_num": 3,
+          "month_name": "Mar",
+          "total_visitors": 1792417,
+          "avg_crowd": 3292,
+          "avg_wait": 20.8
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "month_num": 4,
+          "month_name": "Apr",
+          "total_visitors": 1697599,
+          "avg_crowd": 3144,
+          "avg_wait": 20.2
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "month_num": 5,
+          "month_name": "May",
+          "total_visitors": 1785758,
+          "avg_crowd": 3149,
+          "avg_wait": 20.1
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "month_num": 6,
+          "month_name": "Jun",
+          "total_visitors": 1686954,
+          "avg_crowd": 3175,
+          "avg_wait": 20.4
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "month_num": 7,
+          "month_name": "Jul",
+          "total_visitors": 1708831,
+          "avg_crowd": 3112,
+          "avg_wait": 19.6
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "month_num": 8,
+          "month_name": "Aug",
+          "total_visitors": 1786278,
+          "avg_crowd": 3231,
+          "avg_wait": 20.7
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "month_num": 9,
+          "month_name": "Sep",
+          "total_visitors": 1714391,
+          "avg_crowd": 3129,
+          "avg_wait": 19.7
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "month_num": 10,
+          "month_name": "Oct",
+          "total_visitors": 2219623,
+          "avg_crowd": 3896,
+          "avg_wait": 24.4
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "month_num": 11,
+          "month_name": "Nov",
+          "total_visitors": 1958692,
+          "avg_crowd": 3639,
+          "avg_wait": 23.5
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "month_num": 12,
+          "month_name": "Dec",
+          "total_visitors": 1557117,
+          "avg_crowd": 3169,
+          "avg_wait": 19.9
+        }
+      ],
+      "zone_hotspots": [
+        {
+          "temple_id": "TEMPLE-005",
+          "zone_id": "corridor_spine",
+          "zone_name": "Corridor Spine",
+          "capacity": 5000,
+          "avg_crowd": 3271,
+          "peak_crowd": 8053,
+          "avg_density": 0.654,
+          "avg_waiting": 20.7,
+          "max_waiting": 69.4,
+          "congestion_rate_pct": 0.76,
+          "is_critical_hotspot": true
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "zone_id": "ganga_view_deck",
+          "zone_name": "Ganga View Deck",
+          "capacity": 3500,
+          "avg_crowd": 3287,
+          "peak_crowd": 8119,
+          "avg_density": 0.939,
+          "avg_waiting": 20.7,
+          "max_waiting": 75.0,
+          "congestion_rate_pct": 1.05,
+          "is_critical_hotspot": true
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "zone_id": "mandir_chowk",
+          "zone_name": "Mandir Chowk",
+          "capacity": 4000,
+          "avg_crowd": 3269,
+          "peak_crowd": 8126,
+          "avg_density": 0.817,
+          "avg_waiting": 21.0,
+          "max_waiting": 82.0,
+          "congestion_rate_pct": 1.02,
+          "is_critical_hotspot": true
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "zone_id": "sanctum_queue",
+          "zone_name": "Sanctum Queue",
+          "capacity": 2500,
+          "avg_crowd": 3267,
+          "peak_crowd": 8225,
+          "avg_density": 1.307,
+          "avg_waiting": 20.6,
+          "max_waiting": 86.7,
+          "congestion_rate_pct": 0.65,
+          "is_critical_hotspot": true
+        }
+      ],
+      "festivals": [
+        {
+          "temple_id": "TEMPLE-005",
+          "festival_name": "Maha Shivratri",
+          "start_date": "2025-02-26",
+          "end_date": "2025-02-28",
+          "darshan_type": "Char Pahar Aarti & Continuous Darshan",
+          "historical_daily_avg": 65000,
+          "festival_daily_surge": 380000,
+          "surge_multiplier": 5.85,
+          "source": "Kashi Vishwanath Special Area Development Board"
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "festival_name": "Dev Deepawali",
+          "start_date": "2025-11-05",
+          "end_date": "2025-11-06",
+          "darshan_type": "Ganga Ghat Deepotsav & Aarti",
+          "historical_daily_avg": 65000,
+          "festival_daily_surge": 290000,
+          "surge_multiplier": 4.46,
+          "source": "Kashi Vishwanath Special Area Development Board"
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "festival_name": "Shravan Month Sawan Somwar",
+          "start_date": "2025-07-28",
+          "end_date": "2025-08-25",
+          "darshan_type": "Kanwar Yatra Jalabhishek",
+          "historical_daily_avg": 65000,
+          "festival_daily_surge": 220000,
+          "surge_multiplier": 3.38,
+          "source": "Kashi Vishwanath Special Area Development Board"
+        },
+        {
+          "temple_id": "TEMPLE-005",
+          "festival_name": "Rangbhari Ekadasi",
+          "start_date": "2025-03-10",
+          "end_date": "2025-03-10",
+          "darshan_type": "Shiva Parvati Gulal Utsav",
+          "historical_daily_avg": 65000,
+          "festival_daily_surge": 125000,
+          "surge_multiplier": 1.92,
+          "source": "Kashi Vishwanath Special Area Development Board"
+        }
+      ]
+    }
+  },
+  "multi_temple_comparison": [
+    {
+      "temple_id": "TEMPLE-001",
+      "temple_name": "Somnath Jyotirlinga Temple",
+      "total_recorded_entries": 18539165,
+      "daily_average_visitors": 51213,
+      "peak_concurrent_crowd": 7478,
+      "avg_queue_wait_minutes": 21.8,
+      "top_festival": "Maha Shivratri",
+      "festival_surge_multiplier": 4.79,
+      "peak_to_average_ratio": 2.51,
+      "busiest_window": "08:00 - 11:30 AM & 05:30 - 08:00 PM"
+    },
+    {
+      "temple_id": "TEMPLE-002",
+      "temple_name": "Tirumala Tirupati Devasthanams",
+      "total_recorded_entries": 18536030,
+      "daily_average_visitors": 51204,
+      "peak_concurrent_crowd": 7407,
+      "avg_queue_wait_minutes": 21.7,
+      "top_festival": "Srivari Salakatla Brahmotsavam",
+      "festival_surge_multiplier": 2.64,
+      "peak_to_average_ratio": 2.49,
+      "busiest_window": "08:00 - 11:30 AM & 05:30 - 08:00 PM"
+    },
+    {
+      "temple_id": "TEMPLE-003",
+      "temple_name": "Meenakshi Amman Temple",
+      "total_recorded_entries": 18248705,
+      "daily_average_visitors": 50410,
+      "peak_concurrent_crowd": 7413,
+      "avg_queue_wait_minutes": 21.7,
+      "top_festival": "Chithirai Thiruvizha",
+      "festival_surge_multiplier": 6.0,
+      "peak_to_average_ratio": 2.49,
+      "busiest_window": "08:00 - 11:30 AM & 05:30 - 08:00 PM"
+    },
+    {
+      "temple_id": "TEMPLE-005",
+      "temple_name": "Kashi Vishwanath Temple & Corridor",
+      "total_recorded_entries": 21311403,
+      "daily_average_visitors": 58871,
+      "peak_concurrent_crowd": 8225,
+      "avg_queue_wait_minutes": 20.7,
+      "top_festival": "Maha Shivratri",
+      "festival_surge_multiplier": 5.85,
+      "peak_to_average_ratio": 2.51,
+      "busiest_window": "08:00 - 11:30 AM & 05:30 - 08:00 PM"
+    }
+  ],
+  "festivals": [
+    {
+      "temple_id": "TEMPLE-001",
+      "festival_name": "Maha Shivratri",
+      "start_date": "2025-02-26",
+      "end_date": "2025-02-28",
+      "darshan_type": "Continuous 42h Darshan",
+      "historical_daily_avg": 24000,
+      "festival_daily_surge": 115000,
+      "surge_multiplier": 4.79,
+      "source": "Shree Somnath Trust Public Annual Report 2024"
+    },
+    {
+      "temple_id": "TEMPLE-001",
+      "festival_name": "Shravan Month Somwar",
+      "start_date": "2025-07-28",
+      "end_date": "2025-08-25",
+      "darshan_type": "Special Jalabhishek",
+      "historical_daily_avg": 24000,
+      "festival_daily_surge": 65000,
+      "surge_multiplier": 2.71,
+      "source": "Shree Somnath Trust Public Annual Report 2024"
+    },
+    {
+      "temple_id": "TEMPLE-001",
+      "festival_name": "Kartik Purnima Mela",
+      "start_date": "2025-11-04",
+      "end_date": "2025-11-06",
+      "darshan_type": "Oceanfront Deepotsav",
+      "historical_daily_avg": 24000,
+      "festival_daily_surge": 72000,
+      "surge_multiplier": 3.0,
+      "source": "Shree Somnath Trust Public Annual Report 2024"
+    },
+    {
+      "temple_id": "TEMPLE-001",
+      "festival_name": "Diwali & Gujarati New Year",
+      "start_date": "2025-10-20",
+      "end_date": "2025-10-23",
+      "darshan_type": "Annakut Mahotsav",
+      "historical_daily_avg": 24000,
+      "festival_daily_surge": 85000,
+      "surge_multiplier": 3.54,
+      "source": "Shree Somnath Trust Public Annual Report 2024"
+    },
+    {
+      "temple_id": "TEMPLE-002",
+      "festival_name": "Vaikunta Ekadasi",
+      "start_date": "2025-01-10",
+      "end_date": "2025-01-19",
+      "darshan_type": "Vaikunta Dwaram Darshan",
+      "historical_daily_avg": 70000,
+      "festival_daily_surge": 145000,
+      "surge_multiplier": 2.07,
+      "source": "TTD Official Public Release / Statistical Bulletin"
+    },
+    {
+      "temple_id": "TEMPLE-002",
+      "festival_name": "Srivari Salakatla Brahmotsavam",
+      "start_date": "2025-09-24",
+      "end_date": "2025-10-02",
+      "darshan_type": "Garuda Seva Vahana Seva",
+      "historical_daily_avg": 70000,
+      "festival_daily_surge": 185000,
+      "surge_multiplier": 2.64,
+      "source": "TTD Official Public Release / Statistical Bulletin"
+    },
+    {
+      "temple_id": "TEMPLE-002",
+      "festival_name": "Rathasapthami",
+      "start_date": "2025-02-04",
+      "end_date": "2025-02-04",
+      "darshan_type": "One-Day Brahmotsavam (7 Vahanams)",
+      "historical_daily_avg": 70000,
+      "festival_daily_surge": 160000,
+      "surge_multiplier": 2.29,
+      "source": "TTD Official Public Release / Statistical Bulletin"
+    },
+    {
+      "temple_id": "TEMPLE-002",
+      "festival_name": "Ugadi Telugu New Year",
+      "start_date": "2025-03-30",
+      "end_date": "2025-03-30",
+      "darshan_type": "Panchanga Sravanam Darshan",
+      "historical_daily_avg": 70000,
+      "festival_daily_surge": 95000,
+      "surge_multiplier": 1.36,
+      "source": "TTD Official Public Release / Statistical Bulletin"
+    },
+    {
+      "temple_id": "TEMPLE-003",
+      "festival_name": "Chithirai Thiruvizha",
+      "start_date": "2025-04-10",
+      "end_date": "2025-04-22",
+      "darshan_type": "Celestial Wedding & Therottam",
+      "historical_daily_avg": 35000,
+      "festival_daily_surge": 210000,
+      "surge_multiplier": 6.0,
+      "source": "HR&CE Dept Govt of Tamil Nadu Annual Statistics"
+    },
+    {
+      "temple_id": "TEMPLE-003",
+      "festival_name": "Navratri Kolu Mahotsavam",
+      "start_date": "2025-09-22",
+      "end_date": "2025-10-02",
+      "darshan_type": "Kolu Procession & Special Alankaram",
+      "historical_daily_avg": 35000,
+      "festival_daily_surge": 78000,
+      "surge_multiplier": 2.23,
+      "source": "HR&CE Dept Govt of Tamil Nadu Annual Statistics"
+    },
+    {
+      "temple_id": "TEMPLE-003",
+      "festival_name": "Float Festival (Theppam)",
+      "start_date": "2025-01-13",
+      "end_date": "2025-01-14",
+      "darshan_type": "Mariamman Teppakulam Procession",
+      "historical_daily_avg": 35000,
+      "festival_daily_surge": 92000,
+      "surge_multiplier": 2.63,
+      "source": "HR&CE Dept Govt of Tamil Nadu Annual Statistics"
+    },
+    {
+      "temple_id": "TEMPLE-003",
+      "festival_name": "Aavani Moola Festival",
+      "start_date": "2025-08-18",
+      "end_date": "2025-08-28",
+      "darshan_type": "Tiruvilayadal Leela Recitation",
+      "historical_daily_avg": 35000,
+      "festival_daily_surge": 58000,
+      "surge_multiplier": 1.66,
+      "source": "HR&CE Dept Govt of Tamil Nadu Annual Statistics"
+    },
+    {
+      "temple_id": "TEMPLE-005",
+      "festival_name": "Maha Shivratri",
+      "start_date": "2025-02-26",
+      "end_date": "2025-02-28",
+      "darshan_type": "Char Pahar Aarti & Continuous Darshan",
+      "historical_daily_avg": 65000,
+      "festival_daily_surge": 380000,
+      "surge_multiplier": 5.85,
+      "source": "Kashi Vishwanath Special Area Development Board"
+    },
+    {
+      "temple_id": "TEMPLE-005",
+      "festival_name": "Dev Deepawali",
+      "start_date": "2025-11-05",
+      "end_date": "2025-11-06",
+      "darshan_type": "Ganga Ghat Deepotsav & Aarti",
+      "historical_daily_avg": 65000,
+      "festival_daily_surge": 290000,
+      "surge_multiplier": 4.46,
+      "source": "Kashi Vishwanath Special Area Development Board"
+    },
+    {
+      "temple_id": "TEMPLE-005",
+      "festival_name": "Shravan Month Sawan Somwar",
+      "start_date": "2025-07-28",
+      "end_date": "2025-08-25",
+      "darshan_type": "Kanwar Yatra Jalabhishek",
+      "historical_daily_avg": 65000,
+      "festival_daily_surge": 220000,
+      "surge_multiplier": 3.38,
+      "source": "Kashi Vishwanath Special Area Development Board"
+    },
+    {
+      "temple_id": "TEMPLE-005",
+      "festival_name": "Rangbhari Ekadasi",
+      "start_date": "2025-03-10",
+      "end_date": "2025-03-10",
+      "darshan_type": "Shiva Parvati Gulal Utsav",
+      "historical_daily_avg": 65000,
+      "festival_daily_surge": 125000,
+      "surge_multiplier": 1.92,
+      "source": "Kashi Vishwanath Special Area Development Board"
+    }
+  ],
+  "transport_summary": [
+    {
+      "timestamp": "2025-12-01 00:00:00",
+      "temple_id": "TEMPLE-001",
+      "parking_capacity": 1500,
+      "parking_occupied": 290,
+      "parking_occupancy_pct": 19.3,
+      "transit_inflow_rate": 116,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    },
+    {
+      "timestamp": "2025-12-01 00:00:00",
+      "temple_id": "TEMPLE-002",
+      "parking_capacity": 3500,
+      "parking_occupied": 647,
+      "parking_occupancy_pct": 18.5,
+      "transit_inflow_rate": 258,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    },
+    {
+      "timestamp": "2025-12-01 00:00:00",
+      "temple_id": "TEMPLE-003",
+      "parking_capacity": 1200,
+      "parking_occupied": 228,
+      "parking_occupancy_pct": 19.0,
+      "transit_inflow_rate": 91,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    },
+    {
+      "timestamp": "2025-12-01 00:00:00",
+      "temple_id": "TEMPLE-005",
+      "parking_capacity": 2000,
+      "parking_occupied": 384,
+      "parking_occupancy_pct": 19.2,
+      "transit_inflow_rate": 153,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    },
+    {
+      "timestamp": "2025-12-01 01:00:00",
+      "temple_id": "TEMPLE-001",
+      "parking_capacity": 1500,
+      "parking_occupied": 276,
+      "parking_occupancy_pct": 18.4,
+      "transit_inflow_rate": 110,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    },
+    {
+      "timestamp": "2025-12-01 01:00:00",
+      "temple_id": "TEMPLE-002",
+      "parking_capacity": 3500,
+      "parking_occupied": 620,
+      "parking_occupancy_pct": 17.7,
+      "transit_inflow_rate": 248,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    },
+    {
+      "timestamp": "2025-12-01 01:00:00",
+      "temple_id": "TEMPLE-003",
+      "parking_capacity": 1200,
+      "parking_occupied": 213,
+      "parking_occupancy_pct": 17.8,
+      "transit_inflow_rate": 85,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    },
+    {
+      "timestamp": "2025-12-01 01:00:00",
+      "temple_id": "TEMPLE-005",
+      "parking_capacity": 2000,
+      "parking_occupied": 343,
+      "parking_occupancy_pct": 17.2,
+      "transit_inflow_rate": 137,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    },
+    {
+      "timestamp": "2025-12-01 02:00:00",
+      "temple_id": "TEMPLE-001",
+      "parking_capacity": 1500,
+      "parking_occupied": 293,
+      "parking_occupancy_pct": 19.5,
+      "transit_inflow_rate": 117,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    },
+    {
+      "timestamp": "2025-12-01 02:00:00",
+      "temple_id": "TEMPLE-002",
+      "parking_capacity": 3500,
+      "parking_occupied": 688,
+      "parking_occupancy_pct": 19.7,
+      "transit_inflow_rate": 275,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    },
+    {
+      "timestamp": "2025-12-01 02:00:00",
+      "temple_id": "TEMPLE-003",
+      "parking_capacity": 1200,
+      "parking_occupied": 226,
+      "parking_occupancy_pct": 18.8,
+      "transit_inflow_rate": 90,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    },
+    {
+      "timestamp": "2025-12-01 02:00:00",
+      "temple_id": "TEMPLE-005",
+      "parking_capacity": 2000,
+      "parking_occupied": 398,
+      "parking_occupancy_pct": 19.9,
+      "transit_inflow_rate": 159,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    },
+    {
+      "timestamp": "2025-12-01 03:00:00",
+      "temple_id": "TEMPLE-001",
+      "parking_capacity": 1500,
+      "parking_occupied": 291,
+      "parking_occupancy_pct": 19.4,
+      "transit_inflow_rate": 116,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    },
+    {
+      "timestamp": "2025-12-01 03:00:00",
+      "temple_id": "TEMPLE-002",
+      "parking_capacity": 3500,
+      "parking_occupied": 631,
+      "parking_occupancy_pct": 18.0,
+      "transit_inflow_rate": 252,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    },
+    {
+      "timestamp": "2025-12-01 03:00:00",
+      "temple_id": "TEMPLE-003",
+      "parking_capacity": 1200,
+      "parking_occupied": 239,
+      "parking_occupancy_pct": 19.9,
+      "transit_inflow_rate": 95,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    },
+    {
+      "timestamp": "2025-12-01 03:00:00",
+      "temple_id": "TEMPLE-005",
+      "parking_capacity": 2000,
+      "parking_occupied": 372,
+      "parking_occupancy_pct": 18.6,
+      "transit_inflow_rate": 148,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    },
+    {
+      "timestamp": "2025-12-01 04:00:00",
+      "temple_id": "TEMPLE-001",
+      "parking_capacity": 1500,
+      "parking_occupied": 276,
+      "parking_occupancy_pct": 18.4,
+      "transit_inflow_rate": 110,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    },
+    {
+      "timestamp": "2025-12-01 04:00:00",
+      "temple_id": "TEMPLE-002",
+      "parking_capacity": 3500,
+      "parking_occupied": 669,
+      "parking_occupancy_pct": 19.1,
+      "transit_inflow_rate": 267,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    },
+    {
+      "timestamp": "2025-12-01 04:00:00",
+      "temple_id": "TEMPLE-003",
+      "parking_capacity": 1200,
+      "parking_occupied": 228,
+      "parking_occupancy_pct": 19.0,
+      "transit_inflow_rate": 91,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    },
+    {
+      "timestamp": "2025-12-01 04:00:00",
+      "temple_id": "TEMPLE-005",
+      "parking_capacity": 2000,
+      "parking_occupied": 351,
+      "parking_occupancy_pct": 17.5,
+      "transit_inflow_rate": 140,
+      "road_congestion_level": "LOW",
+      "is_simulated": true,
+      "data_source": "Municipal Smart Parking Sensor Telemetry (Aggregated)"
+    }
+  ],
+  "environmental_summary": [
+    {
+      "timestamp": "2025-12-01 00:00:00",
+      "temple_id": "TEMPLE-001",
+      "city": "Somnath",
+      "temperature_celsius": 21.6,
+      "humidity_pct": 76.6,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 86,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    },
+    {
+      "timestamp": "2025-12-01 00:00:00",
+      "temple_id": "TEMPLE-002",
+      "city": "Tirumala Hills",
+      "temperature_celsius": 19.6,
+      "humidity_pct": 69.0,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 95,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    },
+    {
+      "timestamp": "2025-12-01 00:00:00",
+      "temple_id": "TEMPLE-003",
+      "city": "Madurai",
+      "temperature_celsius": 27.2,
+      "humidity_pct": 60.2,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 56,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    },
+    {
+      "timestamp": "2025-12-01 00:00:00",
+      "temple_id": "TEMPLE-005",
+      "city": "Varanasi",
+      "temperature_celsius": 19.8,
+      "humidity_pct": 57.7,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 96,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    },
+    {
+      "timestamp": "2025-12-01 01:00:00",
+      "temple_id": "TEMPLE-001",
+      "city": "Somnath",
+      "temperature_celsius": 22.3,
+      "humidity_pct": 67.9,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 137,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    },
+    {
+      "timestamp": "2025-12-01 01:00:00",
+      "temple_id": "TEMPLE-002",
+      "city": "Tirumala Hills",
+      "temperature_celsius": 21.4,
+      "humidity_pct": 69.6,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 75,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    },
+    {
+      "timestamp": "2025-12-01 01:00:00",
+      "temple_id": "TEMPLE-003",
+      "city": "Madurai",
+      "temperature_celsius": 27.2,
+      "humidity_pct": 59.9,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 56,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    },
+    {
+      "timestamp": "2025-12-01 01:00:00",
+      "temple_id": "TEMPLE-005",
+      "city": "Varanasi",
+      "temperature_celsius": 19.7,
+      "humidity_pct": 51.2,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 131,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    },
+    {
+      "timestamp": "2025-12-01 02:00:00",
+      "temple_id": "TEMPLE-001",
+      "city": "Somnath",
+      "temperature_celsius": 22.8,
+      "humidity_pct": 74.3,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 138,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    },
+    {
+      "timestamp": "2025-12-01 02:00:00",
+      "temple_id": "TEMPLE-002",
+      "city": "Tirumala Hills",
+      "temperature_celsius": 19.9,
+      "humidity_pct": 60.7,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 112,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    },
+    {
+      "timestamp": "2025-12-01 02:00:00",
+      "temple_id": "TEMPLE-003",
+      "city": "Madurai",
+      "temperature_celsius": 29.1,
+      "humidity_pct": 64.8,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 59,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    },
+    {
+      "timestamp": "2025-12-01 02:00:00",
+      "temple_id": "TEMPLE-005",
+      "city": "Varanasi",
+      "temperature_celsius": 18.3,
+      "humidity_pct": 53.8,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 108,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    },
+    {
+      "timestamp": "2025-12-01 03:00:00",
+      "temple_id": "TEMPLE-001",
+      "city": "Somnath",
+      "temperature_celsius": 21.9,
+      "humidity_pct": 70.2,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 74,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    },
+    {
+      "timestamp": "2025-12-01 03:00:00",
+      "temple_id": "TEMPLE-002",
+      "city": "Tirumala Hills",
+      "temperature_celsius": 21.6,
+      "humidity_pct": 69.3,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 110,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    },
+    {
+      "timestamp": "2025-12-01 03:00:00",
+      "temple_id": "TEMPLE-003",
+      "city": "Madurai",
+      "temperature_celsius": 27.6,
+      "humidity_pct": 61.2,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 80,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    },
+    {
+      "timestamp": "2025-12-01 03:00:00",
+      "temple_id": "TEMPLE-005",
+      "city": "Varanasi",
+      "temperature_celsius": 19.7,
+      "humidity_pct": 57.4,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 119,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    },
+    {
+      "timestamp": "2025-12-01 04:00:00",
+      "temple_id": "TEMPLE-001",
+      "city": "Somnath",
+      "temperature_celsius": 23.4,
+      "humidity_pct": 71.6,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 75,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    },
+    {
+      "timestamp": "2025-12-01 04:00:00",
+      "temple_id": "TEMPLE-002",
+      "city": "Tirumala Hills",
+      "temperature_celsius": 21.6,
+      "humidity_pct": 69.3,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 122,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    },
+    {
+      "timestamp": "2025-12-01 04:00:00",
+      "temple_id": "TEMPLE-003",
+      "city": "Madurai",
+      "temperature_celsius": 27.6,
+      "humidity_pct": 64.3,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 127,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    },
+    {
+      "timestamp": "2025-12-01 04:00:00",
+      "temple_id": "TEMPLE-005",
+      "city": "Varanasi",
+      "temperature_celsius": 17.8,
+      "humidity_pct": 53.4,
+      "rainfall_mm": 0.0,
+      "weather_condition": "Clear",
+      "air_quality_index": 56,
+      "is_simulated": true,
+      "data_source": "IMD Open Weather Archive (Regional Meteorological Center)"
+    }
+  ]
+}
