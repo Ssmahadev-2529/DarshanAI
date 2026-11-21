@@ -1,0 +1,107 @@
+{
+  "platform": "DARSHANAI 2.0",
+  "model_version": "v2.0.0",
+  "training_metadata": {
+    "trained_at": "2026-11-21T16:03:01.134301+00:00",
+    "training_duration_seconds": 12.96,
+    "total_dataset_rows": 69433,
+    "training_samples": 55546,
+    "testing_samples": 13887,
+    "split_strategy": "Chronological Time-Series Split (80/20) - Zero Future Data Leakage"
+  },
+  "models": [
+    {
+      "id": "crowd_regressor",
+      "role": "Visitor Demand & Concurrent Crowd Estimation",
+      "artifact": "crowd_regressor.pkl",
+      "metrics": {
+        "algorithm": "RandomForestRegressor (n_estimators=40, max_depth=9)",
+        "MAE": 146.23,
+        "RMSE": 184.01,
+        "R2": 0.962,
+        "baseline_naive_mae": 413.07,
+        "baseline_mean_mae": 729.28,
+        "improvement_over_naive_pct": 64.6,
+        "status": "OPERATIONAL_PRODUCTION"
+      }
+    },
+    {
+      "id": "waiting_time_model",
+      "role": "Queue Latency & Bottleneck Estimation",
+      "artifact": "waiting_time_model.pkl",
+      "metrics": {
+        "algorithm": "GradientBoostingRegressor (n_estimators=45, lr=0.08)",
+        "MAE": 7.65,
+        "RMSE": 9.25,
+        "R2": 0.0816,
+        "unit": "Minutes",
+        "status": "OPERATIONAL_PRODUCTION"
+      }
+    },
+    {
+      "id": "risk_classifier",
+      "role": "Zone Congestion Risk Classification",
+      "artifact": "risk_classifier.pkl",
+      "metrics": {
+        "algorithm": "RandomForestClassifier (n_estimators=35, max_depth=7)",
+        "Accuracy": 0.8056,
+        "Precision": 0.8703,
+        "Recall": 0.8056,
+        "F1_Score": 0.809,
+        "labels": [
+          "LOW",
+          "MODERATE",
+          "HIGH",
+          "CRITICAL"
+        ],
+        "Confusion_Matrix": [
+          [
+            6088,
+            2610,
+            0,
+            0
+          ],
+          [
+            9,
+            4985,
+            44,
+            0
+          ],
+          [
+            0,
+            36,
+            115,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "status": "OPERATIONAL_PRODUCTION"
+      }
+    },
+    {
+      "id": "parking_demand_model",
+      "role": "Parking Occupancy Demand Forecaster",
+      "artifact": "parking_demand_regressor.pkl",
+      "metrics": {
+        "algorithm": "RandomForestRegressor (n_estimators=25)",
+        "MAE": 48.5,
+        "R2": 0.941,
+        "status": "OPERATIONAL_PRODUCTION"
+      }
+    },
+    {
+      "id": "anomaly_model",
+      "role": "Density & Flow Anomaly Detection",
+      "artifact": "anomaly_model.pkl",
+      "metrics": {
+        "algorithm": "IsolationForest (contamination=0.025)",
+        "status": "OPERATIONAL_PRODUCTION"
+      }
+    }
+  ]
+}
