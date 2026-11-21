@@ -24,6 +24,8 @@ import {
   Sparkles,
   LogOut,
   UserPlus,
+  Calendar,
+  Scale,
   ChevronLeft,
   ChevronRight,
   X
@@ -49,6 +51,8 @@ const Sidebar = () => {
     { path: '/surroundings', label: 'Surrounding mobility', icon: Navigation, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY', 'MEDICAL', 'VOLUNTEER'] },
     { path: '/emergency', label: 'Emergency command', icon: ShieldAlert, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY', 'MEDICAL'] },
     { path: '/ai-assistant', label: 'GenAI assistant', icon: Sparkles, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY', 'MEDICAL', 'RECEPTIONIST', 'VOLUNTEER'] },
+    { path: '/festivals', label: 'Festival intelligence', icon: Calendar, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY', 'VOLUNTEER', 'MEDICAL', 'RECEPTIONIST'] },
+    { path: '/comparison', label: 'Multi-temple analytics', icon: Scale, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY', 'MEDICAL'] },
     { path: '/data-quality', label: 'Data quality & GIS', icon: ShieldCheck, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY'] },
     { path: '/simulation', label: 'Live simulation', icon: PlayCircle, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER'] },
     { path: '/model-performance', label: 'ML analytics', icon: Cpu, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER'] },

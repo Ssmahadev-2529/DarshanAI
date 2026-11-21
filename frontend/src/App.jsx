@@ -29,6 +29,8 @@ const DigitalTwinPage = lazy(() => import('./pages/DigitalTwin'));
 const SurroundingIntelligence = lazy(() => import('./pages/SurroundingIntelligence'));
 const EmergencyManagement = lazy(() => import('./pages/EmergencyManagement'));
 const AIAssistant = lazy(() => import('./pages/AIAssistant'));
+const FestivalIntelligence = lazy(() => import('./pages/FestivalIntelligence'));
+const TempleComparison = lazy(() => import('./pages/TempleComparison'));
 const Analytics = lazy(() => import('./pages/Analytics'));
 const ModelPerformance = lazy(() => import('./pages/ModelPerformance'));
 const Pilgrims = lazy(() => import('./pages/Pilgrims'));
@@ -145,6 +147,18 @@ const AppRoutes = () => {
       <Route path="/ai-assistant" element={
         <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY', 'MEDICAL', 'RECEPTIONIST', 'VOLUNTEER']}>
           <Layout><AIAssistant /></Layout>
+        </ProtectedRoute>
+      } />
+
+      <Route path="/festivals" element={
+        <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY', 'VOLUNTEER', 'MEDICAL', 'RECEPTIONIST']}>
+          <Layout><FestivalIntelligence /></Layout>
+        </ProtectedRoute>
+      } />
+
+      <Route path="/comparison" element={
+        <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY', 'MEDICAL']}>
+          <Layout><TempleComparison /></Layout>
         </ProtectedRoute>
       } />
 

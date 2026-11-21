@@ -27,10 +27,11 @@ from backend.models.gis import (
 )
 from backend.models.emergency import EmergencyEvent, EmergencyRoute, EmergencyAuditLog
 from backend.models.ai_assistant import AIConversation, AIMessage, AIQueryLog
+from backend.models.festival import TempleFestival, FestivalHistoricalRecord, FestivalPrediction
 from backend.services.temple_data_service import seed_multi_temple_gis_foundation
 from backend.services.auth_service import get_password_hash
 
-from backend.routers import auth, temples, dashboard, ml, simulation, alerts, pilgrims, cctv, analytics, predictions, cameras, heatmap, surroundings, emergency, ai_chat
+from backend.routers import auth, temples, dashboard, ml, simulation, alerts, pilgrims, cctv, analytics, predictions, cameras, heatmap, surroundings, emergency, ai_chat, festivals
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -68,6 +69,7 @@ app.include_router(cameras.router, prefix=settings.API_V1_STR)
 app.include_router(heatmap.router, prefix=settings.API_V1_STR)
 app.include_router(emergency.router, prefix=settings.API_V1_STR)
 app.include_router(ai_chat.router, prefix=settings.API_V1_STR)
+app.include_router(festivals.router, prefix=settings.API_V1_STR)
 
 import gc
 import asyncio
@@ -412,6 +414,10 @@ def seed_database():
         # 6. Seed verified emergency evacuation routes
         from backend.services.emergency_service import EmergencyService
         EmergencyService.seed_emergency_routes(db)
+
+        # 7. Seed verified temple festivals, historical records & surge forecasts
+        from backend.services.festival_service import FestivalAnalyticsService
+        FestivalAnalyticsService.seed_verified_festivals(db)
 
         print("[SEEDING] Database initialization complete.")
     except Exception as e:

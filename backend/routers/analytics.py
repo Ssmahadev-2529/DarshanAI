@@ -175,15 +175,26 @@ def get_crowd_history(temple_id: str = Query("TEMPLE-001")):
 
 # 7. GET /api/analytics/temple-comparison
 @router.get("/temple-comparison")
-def get_temple_comparison():
+def get_temple_comparison(
+    temple_ids: Optional[str] = Query(None, description="Comma-separated temple IDs"),
+    db: Session = Depends(get_db)
+):
+    from backend.services.festival_service import FestivalAnalyticsService
+    id_list = [tid.strip() for tid in temple_ids.split(",")] if temple_ids else None
+    res = FestivalAnalyticsService.compare_temples(temple_ids=id_list, db=db)
+    
     cache = load_analytics_cache()
-    comp = cache.get("multi_temple_comparison", [])
+    res["comparison_title"] = "Multi-Temple Standardized Crowd & Infrastructure Benchmarking"
+    res["temples"] = cache.get("multi_temple_comparison", [])
+    return res
 
+@router.get("/metric-compatibility")
+def get_metric_compatibility():
+    from backend.services.festival_service import FestivalAnalyticsService
     return {
-        "comparison_title": "Multi-Temple Standardized Crowd & Infrastructure Benchmarking",
-        "methodology": "Normalized volume-to-capacity ratio, peak surge multipliers, and queue service efficiency",
-        "data_source": "multi_temple_comparison.parquet",
-        "temples": comp
+        "status": "SUCCESS",
+        "compatibility_rules": FestivalAnalyticsService.get_metric_compatibility_matrix(),
+        "disclaimer": "Metrics lacking verified spatial polygons or standard instrumentation are isolated and cannot be ranked."
     }
 
 # 8. GET /api/analytics/data-quality

@@ -53,6 +53,11 @@ const DigitalTwinPage = () => {
   const [heatmapPredictions, setHeatmapPredictions] = useState(null);
   const [heatmapHistory, setHeatmapHistory] = useState(null);
 
+  // Phase 7 Festival Peak Surge Simulation State
+  const [festivalSimulationMode, setFestivalSimulationMode] = useState(false);
+  const [templeFestivals, setTempleFestivals] = useState([]);
+  const [selectedFestival, setSelectedFestival] = useState(null);
+
   // Phase 5 Multi-Level Navigation State
   // 1: REGIONAL VIEW, 2: TEMPLE CAMPUS, 3: BUILDING VIEW, 4: OPERATIONAL ZONE, 5: INTERIOR / FLOOR
   const [navLevel, setNavLevel] = useState(2);
@@ -140,7 +145,7 @@ const DigitalTwinPage = () => {
       setNavLevel(2); // Reset to Campus View
       setSelectedFloor(1);
 
-      const [templeRes, bldRes, geoRes, zonesRes, roadsRes, facRes, transRes, parkRes, camsRes, hmRes, hmPredRes, hmHistRes, emRoutesRes, emAlertsRes] = await Promise.allSettled([
+      const [templeRes, bldRes, geoRes, zonesRes, roadsRes, facRes, transRes, parkRes, camsRes, hmRes, hmPredRes, hmHistRes, emRoutesRes, emAlertsRes, festRes] = await Promise.allSettled([
         API.get(`/temples/${templeId}`),
         API.get(`/temples/${templeId}/buildings`),
         API.get(`/temples/${templeId}/geography`),
@@ -154,7 +159,8 @@ const DigitalTwinPage = () => {
         API.get(`/temples/${templeId}/heatmap/predictions`),
         API.get(`/temples/${templeId}/heatmap/history?hour=${replayHour}`),
         API.get(`/emergency/routes/${templeId}`),
-        API.get(`/emergency/alerts?temple_id=${templeId}`)
+        API.get(`/emergency/alerts?temple_id=${templeId}`),
+        API.get('/festivals', { params: { temple_id: templeId } })
       ]);
 
       if (templeRes.status === 'fulfilled') setTemple(templeRes.value.data);
@@ -173,6 +179,12 @@ const DigitalTwinPage = () => {
       if (hmHistRes.status === 'fulfilled') setHeatmapHistory(hmHistRes.value.data);
       if (emRoutesRes.status === 'fulfilled') setEmergencyRoutes(Array.isArray(emRoutesRes.value.data) ? emRoutesRes.value.data : []);
       if (emAlertsRes.status === 'fulfilled') setEmergencyAlerts(Array.isArray(emAlertsRes.value.data) ? emAlertsRes.value.data : []);
+      if (festRes.status === 'fulfilled' && Array.isArray(festRes.value.data)) {
+        setTempleFestivals(festRes.value.data);
+        if (festRes.value.data.length > 0) {
+          setSelectedFestival(festRes.value.data[0]);
+        }
+      }
     } catch (err) {
       console.error(`Failed to load digital twin for ${templeId}:`, err);
     } finally {
@@ -316,6 +328,35 @@ const DigitalTwinPage = () => {
 
           <ClassificationBadge classification="GIS_DERIVED_MODEL" />
 
+          {/* Phase 7: Festival Surge Simulation Mode Toggle */}
+          <div className="d-flex align-items-center gap-1 bg-white p-1 rounded border border-beige shadow-sm">
+            <button
+              onClick={() => setFestivalSimulationMode(!festivalSimulationMode)}
+              className={`btn btn-sm d-flex align-items-center gap-1 ${festivalSimulationMode ? 'btn-warning text-dark fw-bold' : 'btn-outline-secondary'}`}
+              title="Toggle Festival Crowd Surge Simulation Scenario"
+            >
+              <Sparkles size={14} className={festivalSimulationMode ? 'text-dark' : 'text-warning'} />
+              <span>{festivalSimulationMode ? 'Festival Sim Active' : 'Simulate Festival Peak'}</span>
+            </button>
+            {festivalSimulationMode && templeFestivals.length > 0 && (
+              <select
+                className="form-select form-select-sm border-0 fw-semibold text-dark"
+                style={{ maxWidth: '180px', backgroundColor: '#FFFDF9' }}
+                value={selectedFestival?.festival_id || ''}
+                onChange={(e) => {
+                  const found = templeFestivals.find(f => f.festival_id === e.target.value);
+                  if (found) setSelectedFestival(found);
+                }}
+              >
+                {templeFestivals.map(f => (
+                  <option key={f.festival_id} value={f.festival_id}>
+                    {f.name} ({f.peak_surge_multiplier}x)
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+
           <button 
             onClick={() => loadTempleDigitalTwin(selectedTempleId)} 
             className="btn btn-outline-secondary btn-sm p-2 shadow-sm"
@@ -381,6 +422,8 @@ const DigitalTwinPage = () => {
           navLevel={navLevel}
           selectedEntity={selectedEntity}
           selectedFloor={selectedFloor}
+          festivalSimulationMode={festivalSimulationMode}
+          selectedFestival={selectedFestival}
           onSelectEntity={(ent) => setSelectedEntity(ent)}
           onSelectLevel={(lvl) => setNavLevel(lvl)}
           onUpdateStats={setTelemetry}

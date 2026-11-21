@@ -27,14 +27,17 @@ import {
 } from 'lucide-react';
 
 const SUGGESTED_PROMPTS = [
+  { label: 'Multi-Temple Comparison', query: 'Compare temples across Somnath, Tirupati, Meenakshi, and Kashi Vishwanath.' },
+  { label: 'Highest Festival Surge', query: 'Which festival brings the most crowd surge multiplier?' },
+  { label: 'Festival Peak Hours', query: 'What are the peak hours during festival days?' },
+  { label: 'Upcoming Festivals', query: 'What are the upcoming verified temple festivals?' },
+  { label: 'Metric Limitations', query: 'What metrics cannot be compared across temples and why?' },
   { label: 'Highest Observed Crowd', query: 'Which temple currently has the highest observed crowd count?' },
   { label: 'Most Congested Zone', query: 'Which zone has the highest recorded congestion?' },
   { label: '30-Min AI Forecast', query: 'What is the predicted crowd condition after 30 minutes?' },
   { label: 'Entrances & Wait Times', query: 'Which entrances require attention?' },
   { label: 'Emergency Facilities', query: 'What are the available emergency facilities near this temple?' },
   { label: 'Recurring Bottlenecks', query: 'Which areas have repeated congestion?' },
-  { label: 'Peak Rush Hours', query: 'What are the busiest hours?' },
-  { label: 'Festival Surge History', query: 'How did visitor demand change during the last festival?' },
   { label: 'Evacuation Corridors', query: 'Which verified emergency routes are available?' },
   { label: 'Operational Health Briefing', query: 'Give me a summary of the selected temple current operational condition.' }
 ];

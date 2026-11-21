@@ -163,6 +163,8 @@ const HolographicCanvas = ({
   navLevel = 2, // 1: REGIONAL, 2: CAMPUS, 3: BUILDING, 4: ZONE, 5: FLOOR
   selectedEntity = null,
   selectedFloor = 1,
+  festivalSimulationMode = false,
+  selectedFestival = null,
   onSelectEntity = () => {},
   onSelectLevel = () => {},
   onUpdateStats = () => {}
@@ -804,20 +806,36 @@ const HolographicCanvas = ({
         const zoneSelected = isSelected(zone);
         const hm = hmMap[zone.zone_code] || {};
 
-        // Extract verified telemetry
-        const count = hm.observed_people_count ?? hm.predicted_people_count ?? (zone.current_crowd || 0);
-        const density = hm.estimated_crowd_density ?? hm.predicted_crowd_density ?? null;
-        const util = hm.capacity_utilization_percent ?? hm.predicted_capacity_utilization ?? null;
-        const risk = hm.congestion_risk ?? hm.predicted_congestion_risk ?? (zone.risk_level || 'NORMAL');
+        // Extract verified telemetry with Festival Surge Factor applied if in Festival Simulation Mode
+        const surgeFactor = festivalSimulationMode ? (selectedFestival?.peak_surge_multiplier || 4.2) : 1.0;
+        const count = Math.round((hm.observed_people_count ?? hm.predicted_people_count ?? (zone.current_crowd || 0)) * surgeFactor);
+        const density = hm.estimated_crowd_density !== null && hm.estimated_crowd_density !== undefined
+          ? Math.round(hm.estimated_crowd_density * surgeFactor * 100) / 100
+          : null;
+        const util = hm.capacity_utilization_percent !== null && hm.capacity_utilization_percent !== undefined
+          ? Math.min(100, Math.round(hm.capacity_utilization_percent * surgeFactor))
+          : null;
+        const risk = festivalSimulationMode 
+          ? (surgeFactor >= 4.0 ? 'CRITICAL' : 'HIGH')
+          : (hm.congestion_risk ?? hm.predicted_congestion_risk ?? (zone.risk_level || 'NORMAL'));
 
         // Color coding per Section 3
         let zoneHex = 0x38ef7d;
         let themeHex = '#38ef7d';
-        if (risk === 'CRITICAL') { zoneHex = 0xef4444; themeHex = '#ef4444'; }
-        else if (risk === 'HIGH') { zoneHex = 0xf97316; themeHex = '#f97316'; }
-        else if (risk === 'MODERATE') { zoneHex = 0xf59e0b; themeHex = '#f59e0b'; }
-        else if (risk === 'NORMAL') { zoneHex = 0x38ef7d; themeHex = '#38ef7d'; }
-        else if (risk === 'UNKNOWN') { zoneHex = 0x94a3b8; themeHex = '#94a3b8'; }
+        if (festivalSimulationMode) {
+          zoneHex = 0xffaa00; // Festive luminous amber/gold
+          themeHex = '#ffaa00';
+          if (surgeFactor >= 4.0) {
+            zoneHex = 0xff4433; // Critical festival surge crimson
+            themeHex = '#ff4433';
+          }
+        } else {
+          if (risk === 'CRITICAL') { zoneHex = 0xef4444; themeHex = '#ef4444'; }
+          else if (risk === 'HIGH') { zoneHex = 0xf97316; themeHex = '#f97316'; }
+          else if (risk === 'MODERATE') { zoneHex = 0xf59e0b; themeHex = '#f59e0b'; }
+          else if (risk === 'NORMAL') { zoneHex = 0x38ef7d; themeHex = '#38ef7d'; }
+          else if (risk === 'UNKNOWN') { zoneHex = 0x94a3b8; themeHex = '#94a3b8'; }
+        }
 
         if (zoneSelected) {
           zoneHex = 0x00f0ff;
@@ -835,7 +853,7 @@ const HolographicCanvas = ({
         const heatMat = new THREE.MeshBasicMaterial({
           color: zoneHex,
           transparent: true,
-          opacity: zoneSelected ? 0.45 : 0.22,
+          opacity: zoneSelected ? 0.45 : (festivalSimulationMode ? 0.35 : 0.22),
           side: THREE.DoubleSide
         });
         const heatMesh = new THREE.Mesh(heatGeo, heatMat);
@@ -852,17 +870,18 @@ const HolographicCanvas = ({
         zoneGroup.add(ringMesh);
 
         // 3. Elevated Density Indicator Pillar (Volumetric Light Cylinder)
+        const maxPillarHeight = festivalSimulationMode ? 45.0 : 24.0;
         const pillarH = density !== null 
-          ? Math.max(4.0, Math.min(24.0, density * 5.0)) 
-          : Math.max(4.0, Math.min(18.0, (count / 80.0) * 3.0));
+          ? Math.max(4.0, Math.min(maxPillarHeight, density * 5.0 * (festivalSimulationMode ? 1.3 : 1.0))) 
+          : Math.max(4.0, Math.min(maxPillarHeight, (count / 80.0) * 3.0));
 
         const pillarGeo = new THREE.CylinderGeometry(radius * 0.65, radius * 0.82, pillarH, 16, 1, true);
         const pillarMat = new THREE.MeshPhysicalMaterial({
           color: zoneHex,
           emissive: zoneHex,
-          emissiveIntensity: zoneSelected ? 0.6 : 0.25,
+          emissiveIntensity: zoneSelected ? 0.7 : (festivalSimulationMode ? 0.5 : 0.25),
           transparent: true,
-          opacity: zoneSelected ? 0.38 : 0.18,
+          opacity: zoneSelected ? 0.45 : (festivalSimulationMode ? 0.35 : 0.18),
           side: THREE.DoubleSide
         });
         const pillarMesh = new THREE.Mesh(pillarGeo, pillarMat);
@@ -1100,7 +1119,7 @@ const HolographicCanvas = ({
     if (onUpdateStats) {
       onUpdateStats({ polyCount: totalPolygons + 1500 });
     }
-  }, [temple, buildings, zones, boundary, roads, facilities, transport, parking, cameras, heatmapData, heatmapMode, layers, navLevel, selectedEntity, selectedFloor]);
+  }, [temple, buildings, zones, boundary, roads, facilities, transport, parking, cameras, heatmapData, heatmapMode, layers, navLevel, selectedEntity, selectedFloor, festivalSimulationMode, selectedFestival]);
 
   // Raycaster for Interactive Navigation Transitions
   const handlePointerDown = useCallback((event) => {
@@ -1136,11 +1155,39 @@ const HolographicCanvas = ({
 
   return (
     <div 
-      ref={mountRef} 
-      onPointerDown={handlePointerDown}
       className="w-100 h-100 position-relative overflow-hidden cursor-grab"
       style={{ touchAction: 'none' }}
-    />
+    >
+      <div 
+        ref={mountRef} 
+        onPointerDown={handlePointerDown}
+        className="w-100 h-100"
+      />
+
+      {/* Holographic 3D Festival Simulation Watermark & Banner */}
+      {festivalSimulationMode && (
+        <div 
+          className="position-absolute top-0 start-50 translate-middle-x mt-3 px-4 py-2 rounded-pill d-flex align-items-center gap-2 shadow-lg"
+          style={{
+            backgroundColor: 'rgba(24, 10, 4, 0.90)',
+            border: '1.5px solid #ff7700',
+            backdropFilter: 'blur(10px)',
+            zIndex: 1000,
+            boxShadow: '0 0 25px rgba(255, 119, 0, 0.45)'
+          }}
+        >
+          <span className="badge bg-danger text-uppercase fw-bold px-2 py-1" style={{ letterSpacing: '0.5px' }}>
+            [SIMULATED - FESTIVAL PEAK SCENARIO]
+          </span>
+          <span className="text-warning fw-semibold small">
+            {selectedFestival?.name || 'Festival Surge Peak'} 
+            <span className="text-white-50 ms-2">
+              (Surge Factor: ~{selectedFestival?.peak_surge_multiplier || 4.2}x Baseline)
+            </span>
+          </span>
+        </div>
+      )}
+    </div>
   );
 };
 
