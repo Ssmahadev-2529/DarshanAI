@@ -43,6 +43,8 @@ const DigitalTwinPage = () => {
   const [transport, setTransport] = useState([]);
   const [parking, setParking] = useState([]);
   const [cameras, setCameras] = useState([]);
+  const [emergencyRoutes, setEmergencyRoutes] = useState([]);
+  const [emergencyAlerts, setEmergencyAlerts] = useState([]);
 
   // Phase 9 3D Spatial Crowd Heatmap State
   const [heatmapMode, setHeatmapMode] = useState(HEATMAP_MODES.CURRENT);
@@ -138,7 +140,7 @@ const DigitalTwinPage = () => {
       setNavLevel(2); // Reset to Campus View
       setSelectedFloor(1);
 
-      const [templeRes, bldRes, geoRes, zonesRes, roadsRes, facRes, transRes, parkRes, camsRes, hmRes, hmPredRes, hmHistRes] = await Promise.allSettled([
+      const [templeRes, bldRes, geoRes, zonesRes, roadsRes, facRes, transRes, parkRes, camsRes, hmRes, hmPredRes, hmHistRes, emRoutesRes, emAlertsRes] = await Promise.allSettled([
         API.get(`/temples/${templeId}`),
         API.get(`/temples/${templeId}/buildings`),
         API.get(`/temples/${templeId}/geography`),
@@ -150,7 +152,9 @@ const DigitalTwinPage = () => {
         API.get(`/cameras?temple_id=${templeId}`),
         API.get(`/temples/${templeId}/heatmap`),
         API.get(`/temples/${templeId}/heatmap/predictions`),
-        API.get(`/temples/${templeId}/heatmap/history?hour=${replayHour}`)
+        API.get(`/temples/${templeId}/heatmap/history?hour=${replayHour}`),
+        API.get(`/emergency/routes/${templeId}`),
+        API.get(`/emergency/alerts?temple_id=${templeId}`)
       ]);
 
       if (templeRes.status === 'fulfilled') setTemple(templeRes.value.data);
@@ -167,6 +171,8 @@ const DigitalTwinPage = () => {
       if (hmRes.status === 'fulfilled') setHeatmapData(hmRes.value.data);
       if (hmPredRes.status === 'fulfilled') setHeatmapPredictions(hmRes.value.data?.horizons ? hmRes.value.data : hmPredRes.value.data);
       if (hmHistRes.status === 'fulfilled') setHeatmapHistory(hmHistRes.value.data);
+      if (emRoutesRes.status === 'fulfilled') setEmergencyRoutes(Array.isArray(emRoutesRes.value.data) ? emRoutesRes.value.data : []);
+      if (emAlertsRes.status === 'fulfilled') setEmergencyAlerts(Array.isArray(emAlertsRes.value.data) ? emAlertsRes.value.data : []);
     } catch (err) {
       console.error(`Failed to load digital twin for ${templeId}:`, err);
     } finally {
@@ -365,6 +371,8 @@ const DigitalTwinPage = () => {
           transport={transport}
           parking={parking}
           cameras={cameras}
+          emergencyRoutes={emergencyRoutes}
+          emergencyAlerts={emergencyAlerts}
           heatmapData={activeHeatmapData}
           heatmapMode={heatmapMode}
           layers={layers}

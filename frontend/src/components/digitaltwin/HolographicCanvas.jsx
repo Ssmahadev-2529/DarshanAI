@@ -141,6 +141,8 @@ const HolographicCanvas = ({
   transport = [],
   parking = [],
   cameras = [],
+  emergencyRoutes = [],
+  emergencyAlerts = [],
   heatmapData = null,
   heatmapMode = 'CURRENT',
   layers = {
@@ -606,6 +608,33 @@ const HolographicCanvas = ({
       });
     }
 
+    // 3b. VERIFIED EMERGENCY EVACUATION CORRIDORS (Phase 6 Integration)
+    if (Array.isArray(emergencyRoutes) && emergencyRoutes.length > 0) {
+      emergencyRoutes.forEach(route => {
+        if (Array.isArray(route.pathway_coordinates) && route.pathway_coordinates.length > 1) {
+          const isPrimary = route.route_type === 'PRIMARY_EVACUATION';
+          const routeColor = isPrimary ? 0x00ff88 : 0xff7700;
+          const roadGroup = createRoadRibbon(route.pathway_coordinates, (route.clearance_width_meters || 8) * 0.8, centerLat, centerLng, routeColor);
+          if (roadGroup) {
+            roadGroup.userData = { type: 'EMERGENCY_ROUTE', entityType: 'ROUTE', data: route };
+            scene.add(roadGroup);
+            meshesRef.current.push(roadGroup);
+            clickableObjectsRef.current.push(roadGroup);
+
+            // Floating Route Marker at midpoint
+            const midCoord = route.pathway_coordinates[Math.floor(route.pathway_coordinates.length / 2)];
+            if (midCoord) {
+              const { x: rx, z: rz } = gpsToMeters(midCoord[1], midCoord[0], centerLat, centerLng);
+              const rLabel = createFloatingLabel(route.name, `EVACUATION: ${route.length_meters}m • ${route.clearance_width_meters}m clear`, isPrimary ? '#00ff88' : '#ff7700');
+              rLabel.position.set(rx, 9, rz);
+              scene.add(rLabel);
+              meshesRef.current.push(rLabel);
+            }
+          }
+        }
+      });
+    }
+
     // 4. SURROUNDING PUBLIC FACILITIES
     if (Array.isArray(facilities)) {
       facilities.forEach(fac => {
@@ -868,6 +897,25 @@ const HolographicCanvas = ({
           selectRing.rotation.x = -Math.PI / 2;
           selectRing.position.y = 0.28;
           zoneGroup.add(selectRing);
+        }
+
+        // Active Emergency Alert Beacon & Warning Marker
+        const activeAlert = Array.isArray(emergencyAlerts) ? emergencyAlerts.find(a => 
+          (a.zone_code === zone.zone_code || a.zone_name === zone.name) && 
+          a.status !== 'RESOLVED' && a.status !== 'DISMISSED'
+        ) : null;
+
+        if (activeAlert) {
+          const alertColor = activeAlert.severity === 'RED' ? 0xff0044 : 0xff7700;
+          const emBeaconGeo = new THREE.CylinderGeometry(0.8, 1.2, 70, 8);
+          const emBeaconMat = new THREE.MeshBasicMaterial({ color: alertColor, transparent: true, opacity: 0.65, wireframe: true });
+          const emBeacon = new THREE.Mesh(emBeaconGeo, emBeaconMat);
+          emBeacon.position.y = 35;
+          zoneGroup.add(emBeacon);
+
+          const alertLabel = createFloatingLabel(`⚠️ ${activeAlert.severity} ALERT: ${activeAlert.event_type}`, activeAlert.title, activeAlert.severity === 'RED' ? '#ff0044' : '#ff7700', 'rgba(40, 5, 10, 0.92)');
+          alertLabel.position.set(0, pillarH + 15.0, 0);
+          zoneGroup.add(alertLabel);
         }
 
         // 6. Floating 3D Count & Density Billboard Sprite Label

@@ -17,6 +17,12 @@ class Settings(BaseSettings):
         os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "480")
     )
 
+    # GenAI & LLM Provider Configuration
+    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
+    LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "auto")
+    OLLAMA_BASE_URL: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "llama3")
+
     _raw_db_url: str = os.getenv(
         "DATABASE_URL",
         "sqlite:///./backend/darshanai.db"
