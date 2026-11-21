@@ -18,7 +18,6 @@ const createFloatingLabel = (text, subtitle = '', themeColor = '#00f0ff', bgColo
   canvas.height = 128;
   const ctx = canvas.getContext('2d');
 
-  // Background pill
   ctx.fillStyle = bgColor;
   ctx.strokeStyle = themeColor;
   ctx.lineWidth = 4;
@@ -29,13 +28,11 @@ const createFloatingLabel = (text, subtitle = '', themeColor = '#00f0ff', bgColo
   ctx.fill();
   ctx.stroke();
 
-  // Text Title
   ctx.font = 'bold 30px sans-serif';
   ctx.fillStyle = themeColor;
   ctx.textAlign = 'center';
   ctx.fillText(text, 256, 54);
 
-  // Subtitle
   if (subtitle) {
     ctx.font = '22px sans-serif';
     ctx.fillStyle = '#D0E4F5';
@@ -71,7 +68,6 @@ const createRoadRibbon = (coords, width, centerLat, centerLng, roadColor = 0x00e
     const cur = points[i];
     centerVertices.push(cur.x, 0.35, cur.z);
 
-    // Compute normal tangent vector
     let dx = 0, dz = 1;
     if (i < points.length - 1) {
       dx = points[i + 1].x - cur.x;
@@ -111,7 +107,6 @@ const createRoadRibbon = (coords, width, centerLat, centerLng, roadColor = 0x00e
       const npRightX = next.x - nnx * halfW;
       const npRightZ = next.z - nnz * halfW;
 
-      // Two triangles per segment
       ribbonVertices.push(
         pLeftX, 0.3, pLeftZ,
         npLeftX, 0.3, npLeftZ,
@@ -123,29 +118,15 @@ const createRoadRibbon = (coords, width, centerLat, centerLng, roadColor = 0x00e
     }
   }
 
-  // Road surface plane
   const roadGeo = new THREE.BufferGeometry();
   roadGeo.setAttribute('position', new THREE.Float32BufferAttribute(ribbonVertices, 3));
-  const roadMat = new THREE.MeshBasicMaterial({
-    color: roadColor,
-    transparent: true,
-    opacity: 0.28,
-    side: THREE.DoubleSide
-  });
-  const roadMesh = new THREE.Mesh(roadGeo, roadMat);
-  roadGroup.add(roadMesh);
+  const roadMat = new THREE.MeshBasicMaterial({ color: roadColor, transparent: true, opacity: 0.28, side: THREE.DoubleSide });
+  roadGroup.add(new THREE.Mesh(roadGeo, roadMat));
 
-  // Road curbs / boundary edges
   const edgeLineMat = new THREE.LineBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.85 });
-  const edge1Geo = new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(edge1Vertices, 3));
-  const edge2Geo = new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(edge2Vertices, 3));
-  roadGroup.add(new THREE.Line(edge1Geo, edgeLineMat));
-  roadGroup.add(new THREE.Line(edge2Geo, edgeLineMat));
-
-  // Glowing center line
-  const centerGeo = new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(centerVertices, 3));
-  const centerMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.7 });
-  roadGroup.add(new THREE.Line(centerGeo, centerMat));
+  roadGroup.add(new THREE.Line(new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(edge1Vertices, 3)), edgeLineMat));
+  roadGroup.add(new THREE.Line(new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(edge2Vertices, 3)), edgeLineMat));
+  roadGroup.add(new THREE.Line(new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(centerVertices, 3)), new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.7 })));
 
   return roadGroup;
 };
@@ -172,8 +153,11 @@ const HolographicCanvas = ({
   },
   autoRotate = true,
   cameraPreset = null,
+  navLevel = 2, // 1: REGIONAL, 2: CAMPUS, 3: BUILDING, 4: ZONE, 5: FLOOR
   selectedEntity = null,
+  selectedFloor = 1,
   onSelectEntity = () => {},
+  onSelectLevel = () => {},
   onUpdateStats = () => {}
 }) => {
   const mountRef = useRef(null);
@@ -200,7 +184,7 @@ const HolographicCanvas = ({
     scene.fog = new THREE.FogExp2(0x040914, 0.0028);
     sceneRef.current = scene;
 
-    const camera = new THREE.PerspectiveCamera(50, width / height, 1, 4000);
+    const camera = new THREE.PerspectiveCamera(50, width / height, 1, 4500);
     camera.position.set(0, 180, 240);
     cameraRef.current = camera;
 
@@ -217,8 +201,8 @@ const HolographicCanvas = ({
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.maxPolarAngle = Math.PI / 2 - 0.02;
-    controls.minDistance = 20;
-    controls.maxDistance = 1000;
+    controls.minDistance = 15;
+    controls.maxDistance = 1200;
     controls.autoRotate = autoRotate;
     controls.autoRotateSpeed = 0.8;
     controlsRef.current = controls;
@@ -228,25 +212,20 @@ const HolographicCanvas = ({
     const dirLight1 = new THREE.DirectionalLight(0x00f0ff, 2.8);
     dirLight1.position.set(120, 240, 120);
     scene.add(dirLight1);
-
     const dirLight2 = new THREE.DirectionalLight(0x0055ff, 1.8);
     dirLight2.position.set(-120, 180, -120);
     scene.add(dirLight2);
 
-    // Cybernetic Ground Grid & Concentric Radar Rings
+    // Ground Grid & Concentric Radar Rings
     const gridHelper = new THREE.GridHelper(800, 80, 0x00f0ff, 0x003366);
     gridHelper.position.y = -0.2;
     scene.add(gridHelper);
 
     [80, 160, 260, 400].forEach(radius => {
-      const ringGeo = new THREE.RingGeometry(radius - 0.5, radius + 0.5, 64);
-      const ringMat = new THREE.MeshBasicMaterial({ 
-        color: 0x00f0ff, 
-        transparent: true, 
-        opacity: 0.22, 
-        side: THREE.DoubleSide 
-      });
-      const ring = new THREE.Mesh(ringGeo, ringMat);
+      const ring = new THREE.Mesh(
+        new THREE.RingGeometry(radius - 0.5, radius + 0.5, 64),
+        new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.22, side: THREE.DoubleSide })
+      );
       ring.rotation.x = Math.PI / 2;
       ring.position.y = -0.1;
       scene.add(ring);
@@ -254,13 +233,13 @@ const HolographicCanvas = ({
 
     // Particle Cloud
     const particleCount = 700;
-    const particleGeo = new THREE.BufferGeometry();
     const particlePositions = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount * 3; i += 3) {
       particlePositions[i] = (Math.random() - 0.5) * 600;
       particlePositions[i + 1] = Math.random() * 140;
       particlePositions[i + 2] = (Math.random() - 0.5) * 600;
     }
+    const particleGeo = new THREE.BufferGeometry();
     particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
     const particleCloud = new THREE.Points(
       particleGeo, 
@@ -278,7 +257,6 @@ const HolographicCanvas = ({
     scene.add(scanPlane);
     scanPlaneRef.current = scanPlane;
 
-    // Resize
     const handleResize = () => {
       if (!mountRef.current || !renderer || !camera) return;
       const w = mountRef.current.clientWidth;
@@ -289,7 +267,6 @@ const HolographicCanvas = ({
     };
     window.addEventListener('resize', handleResize);
 
-    // Animation Loop
     let lastTime = performance.now();
     let frameCount = 0;
     let fps = 60;
@@ -316,15 +293,14 @@ const HolographicCanvas = ({
         particleCloud.rotation.y += 0.0005;
       }
 
-      // Smooth camera interpolation
       if (targetCamPosRef.current && camera) {
-        camera.position.lerp(targetCamPosRef.current, 0.05);
+        camera.position.lerp(targetCamPosRef.current, 0.06);
         if (camera.position.distanceTo(targetCamPosRef.current) < 1.0) {
           targetCamPosRef.current = null;
         }
       }
       if (targetLookAtRef.current && controls) {
-        controls.target.lerp(targetLookAtRef.current, 0.05);
+        controls.target.lerp(targetLookAtRef.current, 0.06);
         if (controls.target.distanceTo(targetLookAtRef.current) < 0.5) {
           targetLookAtRef.current = null;
         }
@@ -352,10 +328,9 @@ const HolographicCanvas = ({
     }
   }, [autoRotate]);
 
-  // Handle Camera Presets
+  // Handle Preset Views
   useEffect(() => {
     if (!cameraPreset || !cameraRef.current || !controlsRef.current) return;
-
     if (cameraPreset === 'aerial') {
       targetCamPosRef.current = new THREE.Vector3(0, 360, 20);
       targetLookAtRef.current = new THREE.Vector3(0, 0, 0);
@@ -368,12 +343,56 @@ const HolographicCanvas = ({
     }
   }, [cameraPreset]);
 
-  // Construct Complete Spatial 3D Digital Twin Environment (Campus + Surroundings)
+  // Handle 5 Navigation Levels Camera Transitions
+  useEffect(() => {
+    if (!cameraRef.current || !controlsRef.current || !temple) return;
+    const centerLat = temple.latitude || 20.8880;
+    const centerLng = temple.longitude || 70.4012;
+
+    if (navLevel === 1) {
+      // LEVEL 1: REGIONAL VIEW (High Altitude Regional Context)
+      targetLookAtRef.current = new THREE.Vector3(0, 0, 0);
+      targetCamPosRef.current = new THREE.Vector3(0, 480, 440);
+    } else if (navLevel === 2) {
+      // LEVEL 2: TEMPLE CAMPUS VIEW (Standard Campus Isometric Overview)
+      targetLookAtRef.current = new THREE.Vector3(0, 10, 0);
+      targetCamPosRef.current = new THREE.Vector3(0, 180, 240);
+    } else if (navLevel === 3) {
+      // LEVEL 3: BUILDING VIEW (Focused on selected or main building)
+      const bld = (selectedEntity && selectedEntity.entityType === 'BUILDING') ? selectedEntity : buildings[0];
+      if (bld && bld.latitude && bld.longitude) {
+        const { x, z } = gpsToMeters(bld.latitude, bld.longitude, centerLat, centerLng);
+        const h = bld.height_meters || 20;
+        targetLookAtRef.current = new THREE.Vector3(x, h / 2, z);
+        targetCamPosRef.current = new THREE.Vector3(x + 40, h + 25, z + 55);
+      }
+    } else if (navLevel === 4) {
+      // LEVEL 4: OPERATIONAL ZONE VIEW (Close-up telemetry inspection)
+      const zone = (selectedEntity && selectedEntity.entityType === 'ZONE') ? selectedEntity : zones[0];
+      if (zone && zone.latitude && zone.longitude) {
+        const { x, z } = gpsToMeters(zone.latitude, zone.longitude, centerLat, centerLng);
+        targetLookAtRef.current = new THREE.Vector3(x, 2, z);
+        targetCamPosRef.current = new THREE.Vector3(x + 28, 22, z + 32);
+      }
+    } else if (navLevel === 5) {
+      // LEVEL 5: INTERIOR / FLOOR VIEW (Multi-tier architectural slicing)
+      const bld = (selectedEntity && selectedEntity.entityType === 'BUILDING') ? selectedEntity : buildings[0];
+      if (bld && bld.floors > 1 && bld.latitude && bld.longitude) {
+        const { x, z } = gpsToMeters(bld.latitude, bld.longitude, centerLat, centerLng);
+        const totalH = bld.height_meters || 20;
+        const floorH = totalH / bld.floors;
+        const activeY = (selectedFloor - 0.5) * floorH;
+        targetLookAtRef.current = new THREE.Vector3(x, activeY, z);
+        targetCamPosRef.current = new THREE.Vector3(x + 28, activeY + 16, z + 36);
+      }
+    }
+  }, [navLevel, selectedEntity, selectedFloor, temple, buildings, zones]);
+
+  // Construct Complete Spatial 3D Digital Twin Environment with Level 5 Floor Slicing
   useEffect(() => {
     const scene = sceneRef.current;
     if (!scene || !temple) return;
 
-    // Clean previous meshes
     meshesRef.current.forEach(mesh => {
       scene.remove(mesh);
       if (mesh.geometry) mesh.geometry.dispose();
@@ -398,81 +417,137 @@ const HolographicCanvas = ({
       side: THREE.DoubleSide
     });
 
-    const edgeLineMat = new THREE.LineBasicMaterial({
-      color: 0x00ffff,
-      transparent: true,
-      opacity: 0.9,
-      linewidth: 1.5
-    });
+    const edgeLineMat = new THREE.LineBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.9, linewidth: 1.5 });
+    const isSelected = (item) => selectedEntity && selectedEntity.id === item.id;
 
     let totalPolygons = 0;
 
-    // 1. CAMPUS BUILDINGS LAYER
+    // 1. CAMPUS BUILDINGS LAYER (With Level 5 Architectural Floor Slicing)
     if (layers.buildings && Array.isArray(buildings)) {
       buildings.forEach(bld => {
         const { x, z } = gpsToMeters(bld.latitude, bld.longitude, centerLat, centerLng);
         const height = bld.height_meters || 20;
         const bldType = (bld.building_type || '').toUpperCase();
+        const bldSelected = isSelected(bld);
+        const isFloorSliceActive = (navLevel === 5 && bldSelected && bld.floors > 1);
         
         const group = new THREE.Group();
         group.position.set(x, 0, z);
 
-        if (bldType.includes('SANCTUM') || bldType.includes('SHIKHARA') || bldType.includes('VIMANA')) {
+        // Level 5 Floor Slicing Architecture
+        if (isFloorSliceActive) {
+          const floorCount = bld.floors;
+          const tierH = height / floorCount;
           const baseSize = 24;
-          const baseH = height * 0.4;
-          const spireH = height * 0.6;
 
-          const baseGeo = new THREE.BoxGeometry(baseSize, baseH, baseSize);
-          const baseMesh = new THREE.Mesh(baseGeo, buildingMat);
-          baseMesh.position.y = baseH / 2;
-          group.add(baseMesh);
-          const baseEdges = new THREE.LineSegments(new THREE.EdgesGeometry(baseGeo), edgeLineMat);
-          baseEdges.position.y = baseH / 2;
-          group.add(baseEdges);
+          for (let f = 1; f <= floorCount; f++) {
+            const isCurrentFloor = f === selectedFloor;
+            const floorY = (f - 1) * tierH;
 
-          const spireGeo = new THREE.ConeGeometry(baseSize * 0.7, spireH, 4);
-          const spireMesh = new THREE.Mesh(spireGeo, buildingMat);
-          spireMesh.position.y = baseH + spireH / 2;
-          spireMesh.rotation.y = Math.PI / 4;
-          group.add(spireMesh);
-          const spireEdges = new THREE.LineSegments(new THREE.EdgesGeometry(spireGeo), edgeLineMat);
-          spireEdges.position.y = baseH + spireH / 2;
-          spireEdges.rotation.y = Math.PI / 4;
-          group.add(spireEdges);
+            // Floor Slab Plate
+            const slabGeo = new THREE.BoxGeometry(baseSize * (1 - (f - 1) * 0.08), 1.0, baseSize * (1 - (f - 1) * 0.08));
+            const slabMat = new THREE.MeshBasicMaterial({
+              color: isCurrentFloor ? 0x00f0ff : 0x0055aa,
+              transparent: true,
+              opacity: isCurrentFloor ? 0.9 : 0.2
+            });
+            const slabMesh = new THREE.Mesh(slabGeo, slabMat);
+            slabMesh.position.y = floorY + 0.5;
+            group.add(slabMesh);
 
-          const kalash = new THREE.Mesh(new THREE.SphereGeometry(2.5, 12, 12), new THREE.MeshBasicMaterial({ color: 0xffcc00 }));
-          kalash.position.y = baseH + spireH + 2;
-          group.add(kalash);
-          totalPolygons += 450;
-        } else if (bldType.includes('GOPURAM') || bldType.includes('TOWER')) {
-          const tiers = Math.min(7, Math.max(3, Math.floor(height / 8)));
-          const baseW = 28, baseD = 18;
-          for (let t = 0; t < tiers; t++) {
-            const scale = 1 - (t * 0.11);
-            const tierH = height / tiers;
-            const geo = new THREE.BoxGeometry(baseW * scale, tierH * 0.9, baseD * scale);
-            const m = new THREE.Mesh(geo, buildingMat);
-            m.position.y = (t * tierH) + (tierH / 2);
+            // Floor Interior Walls & Structural Grid
+            const wallGeo = new THREE.BoxGeometry(baseSize * (1 - (f - 1) * 0.08) * 0.95, tierH * 0.9, baseSize * (1 - (f - 1) * 0.08) * 0.95);
+            const wallMat = new THREE.MeshPhysicalMaterial({
+              color: isCurrentFloor ? 0x00f0ff : 0x003366,
+              emissive: isCurrentFloor ? 0x004466 : 0x001122,
+              transparent: true,
+              opacity: isCurrentFloor ? 0.55 : 0.12,
+              side: THREE.DoubleSide
+            });
+            const wallMesh = new THREE.Mesh(wallGeo, wallMat);
+            wallMesh.position.y = floorY + (tierH * 0.9) / 2 + 1;
+            group.add(wallMesh);
+
+            const wallEdges = new THREE.LineSegments(new THREE.EdgesGeometry(wallGeo), new THREE.LineBasicMaterial({
+              color: isCurrentFloor ? 0xffcc00 : 0x00aaff,
+              opacity: isCurrentFloor ? 0.95 : 0.25,
+              transparent: true
+            }));
+            wallEdges.position.y = floorY + (tierH * 0.9) / 2 + 1;
+            group.add(wallEdges);
+
+            // Floor Label on active floor
+            if (isCurrentFloor) {
+              const flLabel = createFloatingLabel(`FLOOR L${f}`, `Elev: ${Math.round(floorY)}m • Slice Active`, '#ffcc00');
+              flLabel.position.set(0, floorY + tierH + 5, 0);
+              group.add(flLabel);
+            }
+          }
+          totalPolygons += floorCount * 240;
+        } else {
+          // Standard Architectural Typology (Levels 1-4)
+          const activeMat = bldSelected 
+            ? new THREE.MeshPhysicalMaterial({ color: 0xffaa00, emissive: 0x442200, metalness: 0.9, roughness: 0.1, transparent: true, opacity: 0.65 })
+            : buildingMat;
+
+          if (bldType.includes('SANCTUM') || bldType.includes('SHIKHARA') || bldType.includes('VIMANA')) {
+            const baseSize = 24;
+            const baseH = height * 0.4;
+            const spireH = height * 0.6;
+
+            const baseGeo = new THREE.BoxGeometry(baseSize, baseH, baseSize);
+            const baseMesh = new THREE.Mesh(baseGeo, activeMat);
+            baseMesh.position.y = baseH / 2;
+            group.add(baseMesh);
+            const baseEdges = new THREE.LineSegments(new THREE.EdgesGeometry(baseGeo), edgeLineMat);
+            baseEdges.position.y = baseH / 2;
+            group.add(baseEdges);
+
+            const spireGeo = new THREE.ConeGeometry(baseSize * 0.7, spireH, 4);
+            const spireMesh = new THREE.Mesh(spireGeo, activeMat);
+            spireMesh.position.y = baseH + spireH / 2;
+            spireMesh.rotation.y = Math.PI / 4;
+            group.add(spireMesh);
+            const spireEdges = new THREE.LineSegments(new THREE.EdgesGeometry(spireGeo), edgeLineMat);
+            spireEdges.position.y = baseH + spireH / 2;
+            spireEdges.rotation.y = Math.PI / 4;
+            group.add(spireEdges);
+
+            const kalash = new THREE.Mesh(new THREE.SphereGeometry(2.5, 12, 12), new THREE.MeshBasicMaterial({ color: 0xffcc00 }));
+            kalash.position.y = baseH + spireH + 2;
+            group.add(kalash);
+            totalPolygons += 450;
+          } else if (bldType.includes('GOPURAM') || bldType.includes('TOWER')) {
+            const tiers = Math.min(7, Math.max(3, Math.floor(height / 8)));
+            const baseW = 28, baseD = 18;
+            for (let t = 0; t < tiers; t++) {
+              const scale = 1 - (t * 0.11);
+              const tierH = height / tiers;
+              const geo = new THREE.BoxGeometry(baseW * scale, tierH * 0.9, baseD * scale);
+              const m = new THREE.Mesh(geo, activeMat);
+              m.position.y = (t * tierH) + (tierH / 2);
+              group.add(m);
+              const ed = new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeLineMat);
+              ed.position.y = (t * tierH) + (tierH / 2);
+              group.add(ed);
+            }
+            totalPolygons += tiers * 120;
+          } else {
+            const geo = new THREE.BoxGeometry(22, height, 18);
+            const m = new THREE.Mesh(geo, activeMat);
+            m.position.y = height / 2;
             group.add(m);
             const ed = new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeLineMat);
-            ed.position.y = (t * tierH) + (tierH / 2);
+            ed.position.y = height / 2;
             group.add(ed);
+            totalPolygons += 120;
           }
-          totalPolygons += tiers * 120;
-        } else {
-          const geo = new THREE.BoxGeometry(22, height, 18);
-          const m = new THREE.Mesh(geo, buildingMat);
-          m.position.y = height / 2;
-          group.add(m);
-          const ed = new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeLineMat);
-          ed.position.y = height / 2;
-          group.add(ed);
-          totalPolygons += 120;
-        }
 
-        const label = createFloatingLabel(bld.name, `${bld.height_meters || ''}m • ${bld.building_type}`);
-        label.position.set(0, height + 10, 0);
-        group.add(label);
+          const labelTheme = bldSelected ? '#ffaa00' : '#00f0ff';
+          const label = createFloatingLabel(bld.name, `${bld.height_meters || ''}m • ${bld.building_type}`, labelTheme);
+          label.position.set(0, height + 10, 0);
+          group.add(label);
+        }
 
         group.userData = { type: 'BUILDING', entityType: 'BUILDING', data: bld };
         scene.add(group);
@@ -481,7 +556,7 @@ const HolographicCanvas = ({
       });
     }
 
-    // 2. CAMPUS BOUNDARY LAYER
+    // 2. BOUNDARY RIBBON
     if (layers.boundaries && boundary && Array.isArray(boundary.coordinates_geojson)) {
       const bPoints = boundary.coordinates_geojson.map(([lng, lat]) => {
         const { x, z } = gpsToMeters(lat, lng, centerLat, centerLng);
@@ -490,25 +565,23 @@ const HolographicCanvas = ({
 
       if (bPoints.length > 2) {
         bPoints.push(bPoints[0]);
-        const lineGeo = new THREE.BufferGeometry().setFromPoints(bPoints);
-        const line = new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: 0x00f0ff, linewidth: 3 }));
-        scene.add(line);
-        meshesRef.current.push(line);
+        scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(bPoints), new THREE.LineBasicMaterial({ color: 0x00f0ff, linewidth: 3 })));
 
-        // Holographic ribbon fence
         const rVertices = [];
         for (let i = 0; i < bPoints.length - 1; i++) {
           const p1 = bPoints[i], p2 = bPoints[i + 1];
           rVertices.push(p1.x, 0, p1.z, p1.x, 4, p1.z, p2.x, 4, p2.z, p1.x, 0, p1.z, p2.x, 4, p2.z, p2.x, 0, p2.z);
         }
-        const rGeo = new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(rVertices, 3));
-        const ribbon = new THREE.Mesh(rGeo, new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.15, side: THREE.DoubleSide }));
+        const ribbon = new THREE.Mesh(
+          new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(rVertices, 3)),
+          new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.15, side: THREE.DoubleSide })
+        );
         scene.add(ribbon);
         meshesRef.current.push(ribbon);
       }
     }
 
-    // 3. SURROUNDING ROADS NETWORK (Phase 4 Transport Corridors)
+    // 3. ROAD NETWORK RIBBONS
     if (layers.roads && Array.isArray(roads)) {
       roads.forEach(road => {
         if (road.geometry_type === 'LineString' && Array.isArray(road.geometry_geojson)) {
@@ -524,7 +597,7 @@ const HolographicCanvas = ({
       });
     }
 
-    // 4. SURROUNDING PUBLIC & EMERGENCY FACILITIES (Phase 4 Public Amenities)
+    // 4. SURROUNDING PUBLIC FACILITIES
     if (Array.isArray(facilities)) {
       facilities.forEach(fac => {
         const isEmergency = fac.facility_type === 'HOSPITAL' || fac.facility_type === 'CLINIC' || fac.facility_type === 'POLICE_STATION' || fac.facility_type === 'FIRE_STATION';
@@ -539,41 +612,21 @@ const HolographicCanvas = ({
         const group = new THREE.Group();
         group.position.set(x, 0, z);
 
-        let color = 0x00e5ff;
-        let labelTheme = '#00f0ff';
-        let size = 14;
-
+        let color = 0x00e5ff, labelTheme = '#00f0ff', size = 14;
         if (fac.facility_type === 'HOSPITAL' || fac.facility_type === 'CLINIC') {
-          color = 0xff0055; // Crimson/Magenta
-          labelTheme = '#ff3366';
-          size = 18;
+          color = 0xff0055; labelTheme = '#ff3366'; size = 18;
         } else if (fac.facility_type === 'POLICE_STATION') {
-          color = 0x0088ff; // Deep Blue
-          labelTheme = '#3399ff';
+          color = 0x0088ff; labelTheme = '#3399ff';
         } else if (fac.facility_type === 'FIRE_STATION') {
-          color = 0xff6600; // Orange
-          labelTheme = '#ff8800';
+          color = 0xff6600; labelTheme = '#ff8800';
         } else if (isCommercial) {
-          color = 0xffbb00; // Amber/Gold
-          labelTheme = '#ffbb00';
-          size = 16;
+          color = 0xffbb00; labelTheme = '#ffbb00'; size = 16;
         } else if (isAmenity) {
-          color = 0x00ffff; // Cyan Water
-          labelTheme = '#00f0ff';
-          size = 10;
+          color = 0x00ffff; labelTheme = '#00f0ff'; size = 10;
         }
 
-        // 3D Volumetric Facility Block
         const geo = new THREE.BoxGeometry(size, size * 0.9, size);
-        const mat = new THREE.MeshPhysicalMaterial({
-          color,
-          emissive: color,
-          emissiveIntensity: 0.25,
-          transparent: true,
-          opacity: 0.55,
-          side: THREE.DoubleSide
-        });
-        const mesh = new THREE.Mesh(geo, mat);
+        const mesh = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial({ color, emissive: color, emissiveIntensity: 0.25, transparent: true, opacity: 0.55 }));
         mesh.position.y = (size * 0.9) / 2;
         group.add(mesh);
 
@@ -581,7 +634,6 @@ const HolographicCanvas = ({
         edges.position.y = (size * 0.9) / 2;
         group.add(edges);
 
-        // Floating Label with Distance Badge
         const distStr = fac.distance_meters > 1000 ? `${(fac.distance_meters/1000).toFixed(1)}km` : `${fac.distance_meters}m`;
         const label = createFloatingLabel(fac.name, `${fac.facility_type} • ${distStr}`, labelTheme);
         label.position.set(0, size + 8, 0);
@@ -595,28 +647,19 @@ const HolographicCanvas = ({
       });
     }
 
-    // 5. TRANSIT NODES (Railway, Bus, Airport)
+    // 5. TRANSIT NODES
     if (layers.transport && Array.isArray(transport)) {
       transport.forEach(tNode => {
         const { x, z } = gpsToMeters(tNode.latitude, tNode.longitude, centerLat, centerLng);
         const group = new THREE.Group();
         group.position.set(x, 0, z);
 
-        // Transit Portal Frame
         const pGeo = new THREE.BoxGeometry(22, 12, 16);
-        const pMat = new THREE.MeshPhysicalMaterial({ color: 0x0088ff, emissive: 0x0033aa, emissiveIntensity: 0.3, transparent: true, opacity: 0.45 });
-        const pMesh = new THREE.Mesh(pGeo, pMat);
+        const pMesh = new THREE.Mesh(pGeo, new THREE.MeshPhysicalMaterial({ color: 0x0088ff, emissive: 0x0033aa, emissiveIntensity: 0.3, transparent: true, opacity: 0.45 }));
         pMesh.position.y = 6;
         group.add(pMesh);
 
-        const pEdges = new THREE.LineSegments(new THREE.EdgesGeometry(pGeo), new THREE.LineBasicMaterial({ color: 0x00aaff }));
-        pEdges.position.y = 6;
-        group.add(pEdges);
-
-        // Floating vertical beacon beam
-        const beamGeo = new THREE.CylinderGeometry(0.8, 0.8, 60, 8);
-        const beamMat = new THREE.MeshBasicMaterial({ color: 0x00aaff, transparent: true, opacity: 0.4 });
-        const beam = new THREE.Mesh(beamGeo, beamMat);
+        const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 60, 8), new THREE.MeshBasicMaterial({ color: 0x00aaff, transparent: true, opacity: 0.4 }));
         beam.position.y = 30;
         group.add(beam);
 
@@ -633,22 +676,18 @@ const HolographicCanvas = ({
       });
     }
 
-    // 6. PARKING COMPLEXES
+    // 6. PARKING LOTS
     if (layers.parking && Array.isArray(parking)) {
       parking.forEach(pLot => {
         const { x, z } = gpsToMeters(pLot.latitude, pLot.longitude, centerLat, centerLng);
         const group = new THREE.Group();
         group.position.set(x, 0, z);
 
-        // Planar Parking Lot Grid
-        const lotGeo = new THREE.PlaneGeometry(36, 26);
-        const lotMat = new THREE.MeshBasicMaterial({ color: 0x00ffaa, transparent: true, opacity: 0.22, side: THREE.DoubleSide });
-        const lotMesh = new THREE.Mesh(lotGeo, lotMat);
+        const lotMesh = new THREE.Mesh(new THREE.PlaneGeometry(36, 26), new THREE.MeshBasicMaterial({ color: 0x00ffaa, transparent: true, opacity: 0.22, side: THREE.DoubleSide }));
         lotMesh.rotation.x = -Math.PI / 2;
         lotMesh.position.y = 0.2;
         group.add(lotMesh);
 
-        // Parking border
         const borderGeo = new THREE.BufferGeometry().setFromPoints([
           new THREE.Vector3(-18, 0.25, -13), new THREE.Vector3(18, 0.25, -13),
           new THREE.Vector3(18, 0.25, 13), new THREE.Vector3(-18, 0.25, 13),
@@ -656,7 +695,7 @@ const HolographicCanvas = ({
         ]);
         group.add(new THREE.Line(borderGeo, new THREE.LineBasicMaterial({ color: 0x00ffaa })));
 
-        const label = createFloatingLabel(pLot.name, `PARKING • ${pLot.parking_capacity || 400} vehicles`, '#00ffaa');
+        const label = createFloatingLabel(pLot.name, `PARKING • ${pLot.parking_capacity || 400} cars`, '#00ffaa');
         label.position.set(0, 10, 0);
         group.add(label);
 
@@ -668,16 +707,22 @@ const HolographicCanvas = ({
       });
     }
 
-    // 7. CROWD MONITORING ZONES
+    // 7. CROWD MONITORING ZONES (With Level 4 Zone Focus Highlight)
     if (layers.crowdZones && Array.isArray(zones)) {
       zones.forEach(zone => {
         const { x, z } = gpsToMeters(zone.latitude, zone.longitude, centerLat, centerLng);
+        const zoneSelected = isSelected(zone);
+
         let zoneColor = 0x38ef7d;
         if (zone.risk_level === 'CRITICAL' || zone.occupancy_percent > 80) zoneColor = 0xff3838;
         else if (zone.risk_level === 'HIGH' || zone.occupancy_percent > 60) zoneColor = 0xffaa00;
+        if (zoneSelected) zoneColor = 0x00f0ff;
 
         const zoneGroup = new THREE.Group();
-        const zoneMesh = new THREE.Mesh(new THREE.CircleGeometry(16, 32), new THREE.MeshBasicMaterial({ color: zoneColor, transparent: true, opacity: 0.28, side: THREE.DoubleSide }));
+        const zoneMesh = new THREE.Mesh(
+          new THREE.CircleGeometry(16, 32), 
+          new THREE.MeshBasicMaterial({ color: zoneColor, transparent: true, opacity: zoneSelected ? 0.5 : 0.28, side: THREE.DoubleSide })
+        );
         zoneMesh.rotation.x = -Math.PI / 2;
         zoneMesh.position.set(x, 0.2, z);
         zoneGroup.add(zoneMesh);
@@ -687,7 +732,7 @@ const HolographicCanvas = ({
         ring.position.set(x, 0.25, z);
         zoneGroup.add(ring);
 
-        const label = createFloatingLabel(zone.name, `Queue: ${zone.queue_length || 0} • ${zone.occupancy_percent || 0}%`, '#38ef7d');
+        const label = createFloatingLabel(zone.name, `Queue: ${zone.queue_length || 0} • ${zone.occupancy_percent || 0}%`, zoneSelected ? '#00f0ff' : '#38ef7d');
         label.position.set(x, 14, z);
         zoneGroup.add(label);
 
@@ -701,9 +746,9 @@ const HolographicCanvas = ({
     if (onUpdateStats) {
       onUpdateStats({ polyCount: totalPolygons + 1500 });
     }
-  }, [temple, buildings, zones, boundary, roads, facilities, transport, parking, layers]);
+  }, [temple, buildings, zones, boundary, roads, facilities, transport, parking, layers, navLevel, selectedEntity, selectedFloor]);
 
-  // Raycaster for Click Interaction on Any 3D Spatial Entity
+  // Raycaster for Interactive Navigation Transitions
   const handlePointerDown = useCallback((event) => {
     if (!mountRef.current || !cameraRef.current || !sceneRef.current) return;
 
@@ -722,22 +767,18 @@ const HolographicCanvas = ({
       }
 
       if (target && target.userData?.data) {
-        onSelectEntity(target.userData.data);
+        const ent = target.userData.data;
+        onSelectEntity(ent);
+
+        // Auto drill-down navigation levels
+        if (target.userData.type === 'BUILDING') {
+          onSelectLevel(3); // Level 3: Building View
+        } else if (target.userData.type === 'ZONE') {
+          onSelectLevel(4); // Level 4: Zone View
+        }
       }
     }
-  }, [onSelectEntity]);
-
-  // Camera focus on selected entity
-  useEffect(() => {
-    if (!selectedEntity || !cameraRef.current || !controlsRef.current || !temple) return;
-    const centerLat = temple.latitude || 20.8880;
-    const centerLng = temple.longitude || 70.4012;
-    if (selectedEntity.latitude && selectedEntity.longitude) {
-      const { x, z } = gpsToMeters(selectedEntity.latitude, selectedEntity.longitude, centerLat, centerLng);
-      targetLookAtRef.current = new THREE.Vector3(x, 15, z);
-      targetCamPosRef.current = new THREE.Vector3(x + 50, 50, z + 70);
-    }
-  }, [selectedEntity, temple]);
+  }, [onSelectEntity, onSelectLevel]);
 
   return (
     <div 

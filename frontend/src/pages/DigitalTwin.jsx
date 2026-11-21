@@ -5,6 +5,7 @@ import Loading from '../components/Loading';
 import HolographicCanvas from '../components/digitaltwin/HolographicCanvas';
 import BuildingInfoPanel from '../components/digitaltwin/BuildingInfoPanel';
 import DigitalTwinControls from '../components/digitaltwin/DigitalTwinControls';
+import NavigationLevelBar, { NAV_LEVELS } from '../components/digitaltwin/NavigationLevelBar';
 import { ClassificationBadge } from './DataQualityDashboard';
 import { 
   Boxes, 
@@ -41,6 +42,11 @@ const DigitalTwinPage = () => {
   const [transport, setTransport] = useState([]);
   const [parking, setParking] = useState([]);
 
+  // Phase 5 Multi-Level Navigation State
+  // 1: REGIONAL VIEW, 2: TEMPLE CAMPUS, 3: BUILDING VIEW, 4: OPERATIONAL ZONE, 5: INTERIOR / FLOOR
+  const [navLevel, setNavLevel] = useState(2);
+  const [selectedFloor, setSelectedFloor] = useState(1);
+
   // Interactive 3D States
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [autoRotate, setAutoRotate] = useState(true);
@@ -54,7 +60,7 @@ const DigitalTwinPage = () => {
   // HUD Stats
   const [telemetry, setTelemetry] = useState({ fps: 60, polyCount: 16800 });
 
-  // Phase 4 Extended Layer Visibility Matrix
+  // Layer Visibility Matrix (Phase 4 Extended)
   const [layers, setLayers] = useState({
     buildings: true,
     boundaries: true,
@@ -66,6 +72,27 @@ const DigitalTwinPage = () => {
     parking: true,
     crowdZones: true
   });
+
+  // Check if Level 5 Interior / Floor Slicing is supported by verified data
+  const isInteriorAvailable = useMemo(() => {
+    if (!selectedEntity) return false;
+    if (selectedEntity.entityType === 'BUILDING' && (selectedEntity.floors || 0) > 1) {
+      return true;
+    }
+    return false;
+  }, [selectedEntity]);
+
+  // Selected building reference (if any building is selected or in Level 3/5)
+  const selectedBuilding = useMemo(() => {
+    if (selectedEntity?.entityType === 'BUILDING') return selectedEntity;
+    return buildings[0] || null;
+  }, [selectedEntity, buildings]);
+
+  // Selected zone reference (if any zone is selected or in Level 4)
+  const selectedZone = useMemo(() => {
+    if (selectedEntity?.entityType === 'ZONE') return selectedEntity;
+    return zones[0] || null;
+  }, [selectedEntity, zones]);
 
   // Fetch list of registered temples
   const fetchTemplesList = async () => {
@@ -93,6 +120,8 @@ const DigitalTwinPage = () => {
       setParking([]);
       setSelectedEntity(null);
       setSearchQuery('');
+      setNavLevel(2); // Reset to Campus View
+      setSelectedFloor(1);
 
       const [templeRes, bldRes, geoRes, zonesRes, roadsRes, facRes, transRes, parkRes] = await Promise.allSettled([
         API.get(`/temples/${templeId}`),
@@ -167,15 +196,17 @@ const DigitalTwinPage = () => {
       ...transport.map(t => ({ ...t, entityType: 'TRANSPORT' })),
       ...parking.map(p => ({ ...p, entityType: 'TRANSPORT' })),
       ...roads.map(r => ({ ...r, entityType: 'ROAD' })),
-      ...buildings.map(b => ({ ...b, entityType: 'BUILDING' }))
+      ...buildings.map(b => ({ ...b, entityType: 'BUILDING' })),
+      ...zones.map(z => ({ ...z, entityType: 'ZONE' }))
     ];
     return all.filter(item => 
       item.name?.toLowerCase().includes(q) ||
       item.facility_type?.toLowerCase().includes(q) ||
       item.transport_type?.toLowerCase().includes(q) ||
-      item.building_type?.toLowerCase().includes(q)
+      item.building_type?.toLowerCase().includes(q) ||
+      item.zone_type?.toLowerCase().includes(q)
     ).slice(0, 8);
-  }, [searchQuery, facilities, transport, parking, roads, buildings]);
+  }, [searchQuery, facilities, transport, parking, roads, buildings, zones]);
 
   // Layer element counts
   const availableCounts = useMemo(() => {
@@ -204,10 +235,10 @@ const DigitalTwinPage = () => {
       <div className="d-flex flex-wrap align-items-center justify-content-between mb-3 gap-2">
         <div>
           <h4 className="fw-bold text-maroon m-0 d-flex align-items-center gap-2">
-            <Boxes size={26} className="text-maroon" /> Holographic 3D Digital Twin — Campus & Surroundings
+            <Boxes size={26} className="text-maroon" /> Multi-Level 3D Holographic Navigation System
           </h4>
           <small className="text-muted">
-            Phase 4: Full-campus architectural models, verified road networks, hospitals, police stations, transit hubs, and straight-line vs. road distance calculations
+            Phase 5: 5-Tier Spatial Navigation (Regional → Campus → Building → Zone → Interior Floor Slices) with interactive breadcrumbs & verified CAD floor heights
           </small>
         </div>
 
@@ -270,14 +301,14 @@ const DigitalTwinPage = () => {
         ref={containerRef}
         className="position-relative flex-grow-1 rounded-3 overflow-hidden shadow-lg border"
         style={{ 
-          height: isFullscreen ? '100vh' : '630px', 
+          height: isFullscreen ? '100vh' : '640px', 
           minHeight: '520px',
           borderColor: '#00f0ff',
           backgroundColor: '#040914',
           boxShadow: '0 0 35px rgba(0, 240, 255, 0.22)'
         }}
       >
-        {/* Core Three.js WebGL Holographic Engine */}
+        {/* Core Three.js WebGL Holographic Engine with Multi-Level Navigation Support */}
         <HolographicCanvas
           temple={temple}
           buildings={buildings}
@@ -290,9 +321,27 @@ const DigitalTwinPage = () => {
           layers={layers}
           autoRotate={autoRotate}
           cameraPreset={cameraPreset}
+          navLevel={navLevel}
           selectedEntity={selectedEntity}
+          selectedFloor={selectedFloor}
           onSelectEntity={(ent) => setSelectedEntity(ent)}
+          onSelectLevel={(lvl) => setNavLevel(lvl)}
           onUpdateStats={setTelemetry}
+        />
+
+        {/* Phase 5 Navigation Level Bar (Breadcrumb & 5-Level Switcher) */}
+        <NavigationLevelBar
+          currentLevel={navLevel}
+          onChangeLevel={(lvl) => {
+            setNavLevel(lvl);
+            if (lvl === 2) setSelectedEntity(null);
+          }}
+          temple={temple}
+          selectedBuilding={selectedBuilding}
+          selectedZone={selectedZone}
+          selectedFloor={selectedFloor}
+          onChangeFloor={(fl) => setSelectedFloor(fl)}
+          isInteriorAvailable={isInteriorAvailable}
         />
 
         {/* Floating Digital Twin Overlay Controls */}
@@ -300,7 +349,11 @@ const DigitalTwinPage = () => {
           autoRotate={autoRotate}
           onToggleAutoRotate={() => setAutoRotate(!autoRotate)}
           onSetCameraView={handleSetCameraView}
-          onResetCamera={() => handleSetCameraView('reset')}
+          onResetCamera={() => {
+            setNavLevel(2);
+            setSelectedEntity(null);
+            handleSetCameraView('reset');
+          }}
           isFullscreen={isFullscreen}
           onToggleFullscreen={handleToggleFullscreen}
           layers={layers}
@@ -315,26 +368,32 @@ const DigitalTwinPage = () => {
           onSelectSearchResult={(item) => {
             setSelectedEntity(item);
             setSearchQuery('');
+            if (item.entityType === 'BUILDING') setNavLevel(3);
+            else if (item.entityType === 'ZONE') setNavLevel(4);
           }}
         />
 
-        {/* Selected Entity (Building, Facility, Road, Transport) Inspector HUD Panel */}
+        {/* Selected Entity Inspector HUD Panel */}
         {selectedEntity && (
           <BuildingInfoPanel
             entity={selectedEntity}
             temple={temple}
             onClose={() => setSelectedEntity(null)}
-            onFocusEntity={(ent) => setSelectedEntity(ent)}
+            onFocusEntity={(ent) => {
+              setSelectedEntity(ent);
+              if (ent.entityType === 'BUILDING') setNavLevel(3);
+              else if (ent.entityType === 'ZONE') setNavLevel(4);
+            }}
           />
         )}
       </div>
 
-      {/* Technical Provenance & Distance Notice */}
+      {/* Technical Provenance & Classification Notice */}
       <div className="mt-3 p-3 rounded bg-ivory border border-gold small text-dark-brown d-flex flex-wrap align-items-center justify-content-between gap-2">
         <div className="d-flex align-items-center gap-2">
           <Info size={18} className="text-maroon flex-shrink-0" />
           <span>
-            <strong>Phase 4 Spatial Provenance Guarantee:</strong> Surrounding road networks and public facilities are rendered strictly from verified OpenStreetMap alignments and state gazette coordinates. Straight-line geodesic distance is calculated via the Haversine formula; road network distance reflects surveyed physical routes.
+            <strong>Phase 5 Multi-Level Navigation Architecture:</strong> 5-tier spatial hierarchy from Regional context down to individual verified building floor slices. Level 5 Interior Slicing is active strictly for structures confirmed with multi-floor architectural records by state trust gazettes (e.g. Sanctum Shikhara 3 tiers, Vaikunta Queue Complex 4 tiers).
           </span>
         </div>
         <div className="d-flex align-items-center gap-1">
