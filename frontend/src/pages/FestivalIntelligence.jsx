@@ -165,7 +165,7 @@ const FestivalIntelligence = () => {
             <Sparkles size={24} className="text-warning" /> AI-Powered Festival & Special Event Intelligence
           </h4>
           <small className="text-muted">
-            Official temple festival calendars, historical attendance datasets, hourly crowd surge models & 3D holographic digital twin simulation
+            Official temple festival calendars, historical attendance datasets, hourly crowd surge models & 3D realistic digital twin simulation
           </small>
         </div>
 
@@ -301,7 +301,7 @@ const FestivalIntelligence = () => {
                           navigate('/digital-twin');
                         }}
                         className="btn btn-sm btn-outline-warning text-dark py-0 px-2 d-flex align-items-center gap-1 small"
-                        title="Simulate this festival crowd scenario in 3D Holographic Twin"
+                        title="Simulate this festival crowd scenario in 3D Digital Twin"
                       >
                         <Boxes size={12} /> 3D Twin
                       </button>

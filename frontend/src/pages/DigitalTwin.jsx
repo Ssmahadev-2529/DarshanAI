@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
 import API from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import Loading from '../components/Loading';
-import HolographicCanvas from '../components/digitaltwin/HolographicCanvas';
+import TempleDigitalTwin from '../components/digitaltwin/TempleDigitalTwin';
 import BuildingInfoPanel from '../components/digitaltwin/BuildingInfoPanel';
 import DigitalTwinControls from '../components/digitaltwin/DigitalTwinControls';
 import NavigationLevelBar, { NAV_LEVELS } from '../components/digitaltwin/NavigationLevelBar';
@@ -63,7 +63,7 @@ const DigitalTwinPage = () => {
   const [navLevel, setNavLevel] = useState(2);
   const [selectedFloor, setSelectedFloor] = useState(1);
 
-  // Realistic 3D Architecture vs Tactical GIS Hologram Mode
+  // Realistic 3D Architecture vs Tactical GIS Grid Mode
   const [renderMode, setRenderMode] = useState('REALISTIC'); // 'REALISTIC' | 'TACTICAL'
 
   // Interactive 3D States
@@ -302,7 +302,7 @@ const DigitalTwinPage = () => {
       <div className="d-flex flex-wrap align-items-center justify-content-between mb-3 gap-2">
         <div>
           <h4 className="fw-bold text-maroon m-0 d-flex align-items-center gap-2">
-            <Boxes size={26} className="text-maroon" /> Multi-Level 3D Holographic Navigation System
+            <Boxes size={26} className="text-maroon" /> Multi-Level 3D Digital Twin Navigation System
           </h4>
           <small className="text-muted">
             Phase 5: 5-Tier Spatial Navigation (Regional → Campus → Building → Zone → Interior Floor Slices) with interactive breadcrumbs & verified CAD floor heights
@@ -360,7 +360,7 @@ const DigitalTwinPage = () => {
             )}
           </div>
 
-          {/* Mode Switcher: Realistic 3D Architecture vs Tactical GIS Hologram */}
+          {/* Mode Switcher: Realistic 3D Architecture vs Tactical GIS View */}
           <div className="btn-group btn-group-sm shadow-sm" role="group">
             <button
               onClick={() => setRenderMode('REALISTIC')}
@@ -377,7 +377,7 @@ const DigitalTwinPage = () => {
               className={`btn btn-sm d-flex align-items-center gap-1 fw-semibold ${
                 renderMode === 'TACTICAL' ? 'btn-dark text-info' : 'btn-outline-secondary bg-white'
               }`}
-              title="Tactical Holographic GIS Matrix"
+              title="Tactical GIS Spatial Grid"
             >
               <Sparkles size={14} />
               <span className="d-none d-md-inline">Tactical GIS</span>
@@ -416,21 +416,21 @@ const DigitalTwinPage = () => {
         })}
       </div>
 
-      {/* Main 3D Holographic Canvas Container */}
+      {/* Main 3D Digital Twin Canvas Container */}
       <div 
         ref={containerRef}
         className="position-relative flex-grow-1 rounded-3 overflow-hidden shadow-lg border"
         style={{ 
           height: isFullscreen ? '100vh' : '640px', 
           minHeight: '520px',
-          borderColor: renderMode === 'REALISTIC' ? '#D4AF37' : '#00f0ff',
-          backgroundColor: renderMode === 'REALISTIC' ? '#dce7f0' : '#040914',
-          boxShadow: renderMode === 'REALISTIC' ? '0 8px 30px rgba(139, 0, 0, 0.12)' : '0 0 35px rgba(0, 240, 255, 0.22)',
+          borderColor: renderMode === 'REALISTIC' ? '#D4AF37' : '#475569',
+          backgroundColor: renderMode === 'REALISTIC' ? '#dce7f0' : '#0f172a',
+          boxShadow: renderMode === 'REALISTIC' ? '0 8px 30px rgba(139, 0, 0, 0.12)' : '0 4px 20px rgba(0, 0, 0, 0.25)',
           transition: 'border-color 0.3s ease, background-color 0.3s ease'
         }}
       >
-        {/* Core Three.js WebGL Holographic Engine with Multi-Level Navigation Support */}
-        <HolographicCanvas
+        {/* Core Three.js WebGL Digital Twin Engine with Multi-Level Navigation Support */}
+        <TempleDigitalTwin
           temple={temple}
           buildings={buildings}
           zones={zones}
@@ -534,11 +534,11 @@ const DigitalTwinPage = () => {
         <div className="d-flex align-items-center gap-2">
           <Info size={18} className="text-maroon flex-shrink-0" />
           <span>
-            <strong>Phase 5 Multi-Level Navigation Architecture:</strong> 5-tier spatial hierarchy from Regional context down to individual verified building floor slices. Level 5 Interior Slicing is active strictly for structures confirmed with multi-floor architectural records by state trust gazettes (e.g. Sanctum Shikhara 3 tiers, Vaikunta Queue Complex 4 tiers).
+            <strong>Architectural Digital Twin Provenance:</strong> 3D architectural representations are derived from official temple board GIS footprints, cadastral boundaries, and documented elevation records (Nagara/Solanki sandstone for Northern/Western shrines, Dravidian granite vimana/gopuram for Southern shrines). Generic models are never presented as verified representations of actual temples; unverified structures are rendered as schematic spatial boundary approximations.
           </span>
         </div>
         <div className="d-flex align-items-center gap-1">
-          <span className="badge bg-dark text-cyan border border-info" style={{ fontSize: '0.7rem' }}>
+          <span className="badge bg-dark text-gold border border-warning" style={{ fontSize: '0.7rem' }}>
             Active Classification: GIS_DERIVED_MODEL
           </span>
         </div>

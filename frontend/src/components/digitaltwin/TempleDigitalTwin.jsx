@@ -98,7 +98,7 @@ const createFloatingLabel = (text, subtitle = '', themeColor = '#00f0ff', bgColo
 };
 
 // Helper to create a 3D road ribbon from an array of [lng, lat] coordinates
-const createRoadRibbon = (coords, width, centerLat, centerLng, roadColor = 0x00e5ff) => {
+const createRoadRibbon = (coords, width, centerLat, centerLng, roadColor = 0x334155) => {
   const points = coords.map(([lng, lat]) => gpsToMeters(lat, lng, centerLat, centerLng));
   if (points.length < 2) return null;
 
@@ -169,7 +169,7 @@ const createRoadRibbon = (coords, width, centerLat, centerLng, roadColor = 0x00e
   const roadMat = new THREE.MeshBasicMaterial({ color: roadColor, transparent: true, opacity: 0.28, side: THREE.DoubleSide });
   roadGroup.add(new THREE.Mesh(roadGeo, roadMat));
 
-  const edgeLineMat = new THREE.LineBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.85 });
+  const edgeLineMat = new THREE.LineBasicMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.75 });
   roadGroup.add(new THREE.Line(new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(edge1Vertices, 3)), edgeLineMat));
   roadGroup.add(new THREE.Line(new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(edge2Vertices, 3)), edgeLineMat));
   roadGroup.add(new THREE.Line(new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(centerVertices, 3)), new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.7 })));
@@ -177,7 +177,7 @@ const createRoadRibbon = (coords, width, centerLat, centerLng, roadColor = 0x00e
   return roadGroup;
 };
 
-const HolographicCanvas = ({
+const TempleDigitalTwin = ({
   temple,
   buildings = [],
   zones = [],
@@ -221,7 +221,6 @@ const HolographicCanvas = ({
   const rendererRef = useRef(null);
   const cameraRef = useRef(null);
   const controlsRef = useRef(null);
-  const scanPlaneRef = useRef(null);
   const tacticalGroupRef = useRef(null);
   const realisticGroupRef = useRef(null);
   const ambientLightRef = useRef(null);
@@ -243,8 +242,8 @@ const HolographicCanvas = ({
 
     const isInitialRealistic = (renderMode === 'REALISTIC');
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(isInitialRealistic ? 0xdce7f0 : 0x040914);
-    scene.fog = new THREE.FogExp2(isInitialRealistic ? 0xdce7f0 : 0x040914, isInitialRealistic ? 0.0010 : 0.0028);
+    scene.background = new THREE.Color(isInitialRealistic ? 0xdce7f0 : 0x0f172a);
+    scene.fog = new THREE.FogExp2(isInitialRealistic ? 0xdce7f0 : 0x0f172a, isInitialRealistic ? 0.0010 : 0.0020);
     sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(50, width / height, 1, 4500);
@@ -270,17 +269,17 @@ const HolographicCanvas = ({
     controls.autoRotateSpeed = 0.8;
     controlsRef.current = controls;
 
-    // Diurnal & Tactical Lights
-    const ambientLight = new THREE.AmbientLight(isInitialRealistic ? 0xfff8ee : 0x0a2540, isInitialRealistic ? 1.4 : 2.0);
+    // Diurnal & Tactical Analytical Lights
+    const ambientLight = new THREE.AmbientLight(isInitialRealistic ? 0xfff8ee : 0x1e293b, isInitialRealistic ? 1.4 : 1.6);
     scene.add(ambientLight);
     ambientLightRef.current = ambientLight;
 
-    const dirLight1 = new THREE.DirectionalLight(isInitialRealistic ? 0xfffaea : 0x00f0ff, isInitialRealistic ? 2.5 : 2.8);
+    const dirLight1 = new THREE.DirectionalLight(isInitialRealistic ? 0xfffaea : 0x94a3b8, isInitialRealistic ? 2.5 : 2.0);
     dirLight1.position.set(120, 240, 120);
     scene.add(dirLight1);
     dirLight1Ref.current = dirLight1;
 
-    const dirLight2 = new THREE.DirectionalLight(isInitialRealistic ? 0xd0e2f5 : 0x0055ff, isInitialRealistic ? 1.0 : 1.8);
+    const dirLight2 = new THREE.DirectionalLight(isInitialRealistic ? 0xd0e2f5 : 0x475569, isInitialRealistic ? 1.0 : 1.2);
     dirLight2.position.set(-120, 180, -120);
     scene.add(dirLight2);
     dirLight2Ref.current = dirLight2;
@@ -289,45 +288,11 @@ const HolographicCanvas = ({
     scene.add(hemiLight);
     hemiLightRef.current = hemiLight;
 
-    // Tactical HUD Ground Group (Grid, Radar Rings, Cyber Particles, Scan Plane)
+    // Tactical GIS Ground Group (Clean Analytical Reference Grid)
     const tacticalGroup = new THREE.Group();
-    const gridHelper = new THREE.GridHelper(800, 80, 0x00f0ff, 0x003366);
+    const gridHelper = new THREE.GridHelper(800, 80, 0x64748b, 0x334155);
     gridHelper.position.y = -0.2;
     tacticalGroup.add(gridHelper);
-
-    [80, 160, 260, 400].forEach(radius => {
-      const ring = new THREE.Mesh(
-        new THREE.RingGeometry(radius - 0.5, radius + 0.5, 64),
-        new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.22, side: THREE.DoubleSide })
-      );
-      ring.rotation.x = Math.PI / 2;
-      ring.position.y = -0.1;
-      tacticalGroup.add(ring);
-    });
-
-    const particleCount = 700;
-    const particlePositions = new Float32Array(particleCount * 3);
-    for (let i = 0; i < particleCount * 3; i += 3) {
-      particlePositions[i] = (Math.random() - 0.5) * 600;
-      particlePositions[i + 1] = Math.random() * 140;
-      particlePositions[i + 2] = (Math.random() - 0.5) * 600;
-    }
-    const particleGeo = new THREE.BufferGeometry();
-    particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-    const particleCloud = new THREE.Points(
-      particleGeo, 
-      new THREE.PointsMaterial({ color: 0x00f0ff, size: 2.2, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending })
-    );
-    tacticalGroup.add(particleCloud);
-
-    const scanPlane = new THREE.Mesh(
-      new THREE.PlaneGeometry(500, 500, 16, 16),
-      new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.08, wireframe: true, side: THREE.DoubleSide })
-    );
-    scanPlane.rotation.x = Math.PI / 2;
-    scanPlane.position.y = 5;
-    tacticalGroup.add(scanPlane);
-    scanPlaneRef.current = scanPlane;
 
     scene.add(tacticalGroup);
     tacticalGroup.visible = !isInitialRealistic;
@@ -378,15 +343,7 @@ const HolographicCanvas = ({
         if (onUpdateStats) onUpdateStats({ fps });
       }
 
-      if (scanPlaneRef.current) {
-        scanPlaneRef.current.position.y += scanDirection * 0.35;
-        if (scanPlaneRef.current.position.y > 85) scanDirection = -1;
-        if (scanPlaneRef.current.position.y < 2) scanDirection = 1;
-      }
 
-      if (particleCloud) {
-        particleCloud.rotation.y += 0.0005;
-      }
 
       if (targetCamPosRef.current && camera) {
         camera.position.lerp(targetCamPosRef.current, 0.06);
@@ -487,22 +444,22 @@ const HolographicCanvas = ({
   useEffect(() => {
     const isRealistic = (renderMode === 'REALISTIC');
     if (sceneRef.current) {
-      sceneRef.current.background = new THREE.Color(isRealistic ? 0xdce7f0 : 0x040914);
-      sceneRef.current.fog = new THREE.FogExp2(isRealistic ? 0xdce7f0 : 0x040914, isRealistic ? 0.0010 : 0.0028);
+      sceneRef.current.background = new THREE.Color(isRealistic ? 0xdce7f0 : 0x0f172a);
+      sceneRef.current.fog = new THREE.FogExp2(isRealistic ? 0xdce7f0 : 0x0f172a, isRealistic ? 0.0010 : 0.0020);
     }
     if (tacticalGroupRef.current) tacticalGroupRef.current.visible = !isRealistic;
     if (realisticGroupRef.current) realisticGroupRef.current.visible = isRealistic;
     if (ambientLightRef.current) {
-      ambientLightRef.current.color.set(isRealistic ? 0xfff8ee : 0x0a2540);
-      ambientLightRef.current.intensity = isRealistic ? 1.4 : 2.0;
+      ambientLightRef.current.color.set(isRealistic ? 0xfff8ee : 0x1e293b);
+      ambientLightRef.current.intensity = isRealistic ? 1.4 : 1.6;
     }
     if (dirLight1Ref.current) {
-      dirLight1Ref.current.color.set(isRealistic ? 0xfffaea : 0x00f0ff);
-      dirLight1Ref.current.intensity = isRealistic ? 2.5 : 2.8;
+      dirLight1Ref.current.color.set(isRealistic ? 0xfffaea : 0x94a3b8);
+      dirLight1Ref.current.intensity = isRealistic ? 2.5 : 2.0;
     }
     if (dirLight2Ref.current) {
-      dirLight2Ref.current.color.set(isRealistic ? 0xd0e2f5 : 0x0055ff);
-      dirLight2Ref.current.intensity = isRealistic ? 1.0 : 1.8;
+      dirLight2Ref.current.color.set(isRealistic ? 0xd0e2f5 : 0x475569);
+      dirLight2Ref.current.intensity = isRealistic ? 1.0 : 1.2;
     }
     if (hemiLightRef.current) {
       hemiLightRef.current.intensity = isRealistic ? 0.8 : 0.0;
@@ -550,13 +507,12 @@ const HolographicCanvas = ({
           map: stoneTexture,
           side: THREE.DoubleSide
         })
-      : new THREE.MeshPhysicalMaterial({
-          color: 0x00e5ff,
-          emissive: 0x002244,
-          metalness: 0.85,
-          roughness: 0.15,
+      : new THREE.MeshStandardMaterial({
+          color: 0x64748b,
+          roughness: 0.8,
+          metalness: 0.1,
           transparent: true,
-          opacity: 0.42,
+          opacity: 0.70,
           side: THREE.DoubleSide
         });
 
@@ -584,12 +540,12 @@ const HolographicCanvas = ({
           transparent: true,
           opacity: 0.85
         })
-      : new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.45 });
+      : new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.45 });
 
     const edgeLineMat = new THREE.LineBasicMaterial({
-      color: isRealistic ? 0x8a7050 : 0x00ffff,
+      color: isRealistic ? 0x8a7050 : 0x94a3b8,
       transparent: true,
-      opacity: isRealistic ? 0.35 : 0.9,
+      opacity: isRealistic ? 0.35 : 0.8,
       linewidth: 1.5
     });
 
@@ -626,7 +582,7 @@ const HolographicCanvas = ({
             // Floor Slab Plate
             const slabGeo = new THREE.BoxGeometry(baseSize * (1 - (f - 1) * 0.08), 1.0, baseSize * (1 - (f - 1) * 0.08));
             const slabMat = new THREE.MeshBasicMaterial({
-              color: isCurrentFloor ? 0x00f0ff : (isRealistic ? 0xb59265 : 0x0055aa),
+              color: isCurrentFloor ? 0xd4af37 : (isRealistic ? 0xb59265 : 0x475569),
               transparent: true,
               opacity: isCurrentFloor ? 0.9 : 0.35
             });
@@ -644,11 +600,11 @@ const HolographicCanvas = ({
                   opacity: isCurrentFloor ? 0.75 : 0.25,
                   side: THREE.DoubleSide
                 })
-              : new THREE.MeshPhysicalMaterial({
-                  color: isCurrentFloor ? 0x00f0ff : 0x003366,
-                  emissive: isCurrentFloor ? 0x004466 : 0x001122,
+              : new THREE.MeshStandardMaterial({
+                  color: isCurrentFloor ? 0xd4af37 : 0x334155,
+                  roughness: 0.7,
                   transparent: true,
-                  opacity: isCurrentFloor ? 0.55 : 0.12,
+                  opacity: isCurrentFloor ? 0.65 : 0.25,
                   side: THREE.DoubleSide
                 });
             const wallMesh = new THREE.Mesh(wallGeo, wallMat);
@@ -978,7 +934,7 @@ const HolographicCanvas = ({
 
       if (bPoints.length > 2) {
         bPoints.push(bPoints[0]);
-        scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(bPoints), new THREE.LineBasicMaterial({ color: 0x00f0ff, linewidth: 3 })));
+        scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(bPoints), new THREE.LineBasicMaterial({ color: 0xd97706, linewidth: 3 })));
 
         const rVertices = [];
         for (let i = 0; i < bPoints.length - 1; i++) {
@@ -987,7 +943,7 @@ const HolographicCanvas = ({
         }
         const ribbon = new THREE.Mesh(
           new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(rVertices, 3)),
-          new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.15, side: THREE.DoubleSide })
+          new THREE.MeshBasicMaterial({ color: 0xd97706, transparent: true, opacity: 0.12, side: THREE.DoubleSide })
         );
         scene.add(ribbon);
         meshesRef.current.push(ribbon);
@@ -1052,21 +1008,21 @@ const HolographicCanvas = ({
         const group = new THREE.Group();
         group.position.set(x, 0, z);
 
-        let color = 0x00e5ff, labelTheme = '#00f0ff', size = 14;
+        let color = 0x3b82f6, labelTheme = '#3b82f6', size = 14;
         if (fac.facility_type === 'HOSPITAL' || fac.facility_type === 'CLINIC') {
-          color = 0xff0055; labelTheme = '#ff3366'; size = 18;
+          color = 0xef4444; labelTheme = '#ef4444'; size = 18;
         } else if (fac.facility_type === 'POLICE_STATION') {
-          color = 0x0088ff; labelTheme = '#3399ff';
+          color = 0x1d4ed8; labelTheme = '#1d4ed8';
         } else if (fac.facility_type === 'FIRE_STATION') {
-          color = 0xff6600; labelTheme = '#ff8800';
+          color = 0xea580c; labelTheme = '#ea580c';
         } else if (isCommercial) {
-          color = 0xffbb00; labelTheme = '#ffbb00'; size = 16;
+          color = 0xd97706; labelTheme = '#d97706'; size = 16;
         } else if (isAmenity) {
-          color = 0x00ffff; labelTheme = '#00f0ff'; size = 10;
+          color = 0x0d9488; labelTheme = '#0d9488'; size = 10;
         }
 
         const geo = new THREE.BoxGeometry(size, size * 0.9, size);
-        const mesh = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial({ color, emissive: color, emissiveIntensity: 0.25, transparent: true, opacity: 0.55 }));
+        const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color, roughness: 0.6, metalness: 0.1, transparent: true, opacity: 0.75 }));
         mesh.position.y = (size * 0.9) / 2;
         group.add(mesh);
 
@@ -1238,8 +1194,8 @@ const HolographicCanvas = ({
         }
 
         if (zoneSelected) {
-          zoneHex = 0x00f0ff;
-          themeHex = '#00f0ff';
+          zoneHex = 0xd4af37;
+          themeHex = '#d4af37';
         }
 
         const zoneGroup = new THREE.Group();
@@ -1261,7 +1217,7 @@ const HolographicCanvas = ({
         heatMesh.position.y = 0.22;
         zoneGroup.add(heatMesh);
 
-        // 2. Glowing Holographic Zone Boundary Ring
+        // 2. Zone Boundary Ring
         const ringGeo = new THREE.RingGeometry(radius - 0.5, radius + 0.5, 32);
         const ringMat = new THREE.MeshBasicMaterial({ color: zoneHex, side: THREE.DoubleSide, transparent: true, opacity: 0.85 });
         const ringMesh = new THREE.Mesh(ringGeo, ringMat);
@@ -1305,13 +1261,13 @@ const HolographicCanvas = ({
         // 5. Selected-Zone Highlight Beacon
         if (zoneSelected) {
           const selectBeaconGeo = new THREE.CylinderGeometry(0.5, 0.5, 50, 8);
-          const selectBeaconMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.5 });
+          const selectBeaconMat = new THREE.MeshBasicMaterial({ color: 0xd4af37, transparent: true, opacity: 0.65 });
           const beacon = new THREE.Mesh(selectBeaconGeo, selectBeaconMat);
           beacon.position.y = 25;
           zoneGroup.add(beacon);
 
           const selectRingGeo = new THREE.RingGeometry(radius + 1.5, radius + 2.5, 32);
-          const selectRingMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide });
+          const selectRingMat = new THREE.MeshBasicMaterial({ color: 0xd4af37, side: THREE.DoubleSide });
           const selectRing = new THREE.Mesh(selectRingGeo, selectRingMat);
           selectRing.rotation.x = -Math.PI / 2;
           selectRing.position.y = 0.28;
@@ -1379,7 +1335,7 @@ const HolographicCanvas = ({
         camGroup.position.set(x, 0, z);
 
         const isHighCrowd = cam.risk_level === 'CRITICAL' || cam.risk_level === 'HIGH' || (cam.density_percent || 0) > 65;
-        const themeColor = isHighCrowd ? 0xff3344 : 0x00f0ff;
+        const themeColor = isHighCrowd ? 0xef4444 : 0x2563eb;
         const poleH = 7.0;
 
         // Metallic Pylon Pole
@@ -1391,12 +1347,10 @@ const HolographicCanvas = ({
 
         // Camera Head Unit Box
         const headGeo = new THREE.BoxGeometry(0.8, 0.5, 1.2);
-        const headMat = new THREE.MeshPhysicalMaterial({
+        const headMat = new THREE.MeshStandardMaterial({
           color: themeColor,
-          emissive: themeColor,
-          emissiveIntensity: isHighCrowd ? 0.7 : 0.35,
-          transparent: true,
-          opacity: 0.9
+          roughness: 0.4,
+          metalness: 0.3
         });
         const headMesh = new THREE.Mesh(headGeo, headMat);
         headMesh.position.y = poleH;
@@ -1503,7 +1457,7 @@ const HolographicCanvas = ({
         const routeLine = new THREE.Line(
           routeGeo,
           new THREE.LineDashedMaterial({
-            color: 0x00f0ff,
+            color: 0x10b981,
             linewidth: 2,
             scale: 1,
             dashSize: 4,
@@ -1564,31 +1518,40 @@ const HolographicCanvas = ({
         className="w-100 h-100"
       />
 
-      {/* Holographic 3D Festival Simulation Watermark & Banner */}
+      {/* 3D Festival Simulation Watermark & Banner */}
       {festivalSimulationMode && (
-        <div 
-          className="position-absolute top-0 start-50 translate-middle-x mt-3 px-4 py-2 rounded-pill d-flex align-items-center gap-2 shadow-lg"
-          style={{
-            backgroundColor: 'rgba(24, 10, 4, 0.90)',
-            border: '1.5px solid #ff7700',
-            backdropFilter: 'blur(10px)',
-            zIndex: 1000,
-            boxShadow: '0 0 25px rgba(255, 119, 0, 0.45)'
-          }}
-        >
-          <span className="badge bg-danger text-uppercase fw-bold px-2 py-1" style={{ letterSpacing: '0.5px' }}>
-            [SIMULATED - FESTIVAL PEAK SCENARIO]
-          </span>
-          <span className="text-warning fw-semibold small">
-            {selectedFestival?.name || 'Festival Surge Peak'} 
-            <span className="text-white-50 ms-2">
-              (Surge Factor: ~{selectedFestival?.peak_surge_multiplier || 4.2}x Baseline)
+        <>
+          <div 
+            className="position-absolute top-0 start-50 translate-middle-x mt-3 px-4 py-2 rounded-pill d-flex align-items-center gap-2 shadow-lg"
+            style={{
+              backgroundColor: 'rgba(24, 10, 4, 0.90)',
+              border: '1.5px solid #ff7700',
+              backdropFilter: 'blur(10px)',
+              zIndex: 1000,
+              boxShadow: '0 0 25px rgba(255, 119, 0, 0.45)'
+            }}
+          >
+            <span className="badge bg-danger text-uppercase fw-bold px-2 py-1" style={{ letterSpacing: '0.5px' }}>
+              [SIMULATED - FESTIVAL PEAK SCENARIO]
             </span>
-          </span>
-        </div>
+            <span className="text-warning fw-semibold small">
+              {selectedFestival?.name || 'Festival Surge Peak'} 
+              <span className="text-white-50 ms-2">
+                (Surge Factor: ~{selectedFestival?.peak_surge_multiplier || 4.2}x Baseline)
+              </span>
+            </span>
+          </div>
+
+          <div 
+            className="position-absolute bottom-0 end-0 m-3 px-3 py-1 rounded bg-dark border border-warning text-warning fw-bold small opacity-75 shadow"
+            style={{ zIndex: 1000, letterSpacing: '1px' }}
+          >
+            ⚠️ [SIMULATED DATA - FESTIVAL SCENARIO]
+          </div>
+        </>
       )}
     </div>
   );
 };
 
-export default HolographicCanvas;
+export default TempleDigitalTwin;

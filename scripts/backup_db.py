@@ -7,7 +7,7 @@ import os
 import sys
 import shutil
 import subprocess
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Add root directory to python path
 sys.path.insert(0, os.path.abspath("."))
@@ -17,10 +17,11 @@ BACKUP_DIR = os.path.join(os.getcwd(), "backups")
 os.makedirs(BACKUP_DIR, exist_ok=True)
 
 def backup_database():
-    timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    now_utc = datetime.now(timezone.utc)
+    timestamp = now_utc.strftime("%Y%m%d_%H%M%S")
     db_url = settings.DATABASE_URL
 
-    print(f"[*] Initiating database backup at {datetime.utcnow().isoformat()} UTC...")
+    print(f"[*] Initiating database backup at {now_utc.isoformat()}...")
     print(f"[*] Engine configured: {db_url.split('://')[0]}")
 
     if db_url.startswith("sqlite"):

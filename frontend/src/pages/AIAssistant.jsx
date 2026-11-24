@@ -339,7 +339,7 @@ const AIAssistant = () => {
                           style={{ fontSize: '0.75rem', backgroundColor: '#E0F2FE' }}
                           onClick={() => navigate('/digital-twin')}
                         >
-                          <Boxes size={13} className="text-primary" /> Highlight {m.zone_to_highlight} in 3D Holographic Twin
+                          <Boxes size={13} className="text-primary" /> Highlight {m.zone_to_highlight} in 3D Digital Twin
                         </button>
                       </div>
                     )}

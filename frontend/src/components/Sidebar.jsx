@@ -47,7 +47,7 @@ const Sidebar = () => {
     { path: '/predictions', label: 'AI predictions', icon: TrendingUp, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER'] },
     { path: '/risk-analysis', label: 'Risk analysis', icon: ShieldAlert, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY', 'MEDICAL'] },
     { path: '/temple-map', label: 'Temple map', icon: Map, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY', 'MEDICAL', 'VOLUNTEER'] },
-    { path: '/digital-twin', label: 'Holographic 3D twin', icon: Boxes, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY', 'MEDICAL', 'VOLUNTEER'] },
+    { path: '/digital-twin', label: '3D Digital Twin', icon: Boxes, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY', 'MEDICAL', 'VOLUNTEER'] },
     { path: '/surroundings', label: 'Surrounding mobility', icon: Navigation, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY', 'MEDICAL', 'VOLUNTEER'] },
     { path: '/emergency', label: 'Emergency command', icon: ShieldAlert, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY', 'MEDICAL'] },
     { path: '/ai-assistant', label: 'GenAI assistant', icon: Sparkles, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY', 'MEDICAL', 'RECEPTIONIST', 'VOLUNTEER'] },

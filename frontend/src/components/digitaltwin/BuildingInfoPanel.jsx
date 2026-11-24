@@ -479,21 +479,21 @@ const BuildingInfoPanel = ({
         )}
       </div>
 
-      {/* Holographic Focus Action */}
+      {/* 3D Digital Twin Focus Action */}
       <div className="d-flex gap-2">
         {onFocusEntity && (
           <button 
             onClick={() => onFocusEntity(entity)}
             className="btn btn-sm w-100 fw-bold d-flex align-items-center justify-content-center gap-1"
             style={{ 
-              backgroundColor: '#00f0ff', 
-              color: '#0a192f',
-              border: 'none',
-              boxShadow: '0 0 12px rgba(0, 240, 255, 0.4)',
+              backgroundColor: '#6B1D2F', 
+              color: '#F9F6F0',
+              border: '1px solid #D4AF37',
+              boxShadow: '0 2px 8px rgba(107, 29, 47, 0.3)',
               fontSize: '0.75rem'
             }}
           >
-            <Maximize2 size={13} /> Focus Holographic Camera
+            <Maximize2 size={13} /> Focus Digital Twin Camera
           </button>
         )}
       </div>

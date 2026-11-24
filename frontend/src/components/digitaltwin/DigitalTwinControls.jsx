@@ -46,15 +46,15 @@ const DigitalTwinControls = ({
 
   return (
     <>
-      {/* Top Left: Holographic HUD Status Badge & Search Trigger */}
+      {/* Top Left: Digital Twin Status Badge & Search Trigger */}
       <div 
         className="position-absolute top-0 start-0 m-3 p-2 rounded-3"
         style={{
           zIndex: 1040,
-          backgroundColor: 'rgba(10, 25, 47, 0.88)',
+          backgroundColor: 'rgba(24, 10, 4, 0.90)',
           backdropFilter: 'blur(12px)',
-          border: '1px solid rgba(0, 240, 255, 0.35)',
-          boxShadow: '0 0 20px rgba(0, 240, 255, 0.2)',
+          border: '1px solid rgba(212, 175, 55, 0.4)',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
           color: '#E2F1F8',
           fontSize: '0.75rem',
           maxWidth: '380px'
@@ -67,19 +67,19 @@ const DigitalTwinControls = ({
               style={{ 
                 width: '8px', 
                 height: '8px', 
-                backgroundColor: '#00f0ff',
-                boxShadow: '0 0 8px #00f0ff' 
+                backgroundColor: '#D4AF37',
+                boxShadow: '0 0 8px #D4AF37' 
               }}
             />
-            <strong style={{ color: '#00f0ff', letterSpacing: '0.5px' }}>HOLOGRAPHIC DIGITAL TWIN 2.0</strong>
+            <strong style={{ color: '#D4AF37', letterSpacing: '0.5px' }}>TEMPLE DIGITAL TWIN 3D</strong>
           </div>
           <button
             onClick={() => setShowSearch(!showSearch)}
             className="btn btn-xs py-0 px-2 rounded d-flex align-items-center gap-1"
             style={{
-              backgroundColor: showSearch ? 'rgba(0, 240, 255, 0.25)' : 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(0, 240, 255, 0.4)',
-              color: '#00f0ff',
+              backgroundColor: showSearch ? 'rgba(212, 175, 55, 0.25)' : 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(212, 175, 55, 0.4)',
+              color: '#D4AF37',
               fontSize: '0.68rem'
             }}
           >
