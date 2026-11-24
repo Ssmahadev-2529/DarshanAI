@@ -499,7 +499,7 @@ class AIAnalyticsService:
                 f"• **Observed Devotees**: **{hz['observed_count']:,}** / {hz['capacity']:,} verified capacity\n"
                 f"• **Capacity Utilization**: **{hz['utilization_pct']}%**\n"
                 f"• **Congestion Risk Level**: **{hz['risk_level']}**\n\n"
-                f"*Data Source: {source} (As of {timestamp}). You can view this zone highlighted in the 3D Holographic Twin.*"
+                f"*Data Source: {source} (As of {timestamp}). You can view this zone highlighted in the 3D Digital Twin.*"
             )
 
         elif intent == "PREDICTION_30MIN":
@@ -591,7 +591,7 @@ class AIAnalyticsService:
                     f"  - Length: {r['length_meters']}m • Surface: {r['surface']}\n"
                     f"  - Wheelchair Accessible: {'Yes' if r['accessible'] else 'No'} • Status: **{r['status']}**\n\n"
                 )
-            answer += f"*All corridors verified via {source}. Routes are highlighted on the 3D Holographic Twin.*"
+            answer += f"*All corridors verified via {source}. Routes are highlighted on the 3D Digital Twin.*"
 
         elif intent == "COMPARE_TEMPLES":
             matrix = analytics_result["matrix"]

@@ -320,7 +320,7 @@ The Digital Twin incorporates a dual-mode visual engine toggled via the top tool
   - **Solanki / Nagara Architecture** (Somnath, Kashi Vishwanath): Warm honey sandstone masonry, multi-tier stepped *Jagati* plinth, curvilinear *Shikhara* spire with corner *Urushringas*, carved stone *Amalaka* disc, and gleaming brass-gilded *Kalasha* finial.
   - **Dravidian Architecture** (Tirupati Balaji, Madurai Meenakshi): Carved dark granite masonry, stepped pyramidal *Vimana* with *Stupi*, monumental *Gopuram* gateway towers with *Dvarashala* portal, tiered *Talas*, *Sala-Shikhara* barrel crest, and row of 5 golden finials.
   - **Diurnal Temple Lighting**: Natural warm sunlight, soft atmospheric sky haze, and sandstone flagstone courtyard pavement.
-- **Tactical GIS Mode**: High-contrast cyber-hologram with laser scanning plane, neon wireframes, particle telemetry, and concentric radar rings.
+- **Tactical GIS Mode**: High-contrast GIS spatial coordinate grid with elevation slices, analytical lighting, and real-time zone boundary telemetry.
 - **Preserved Overlays**: Real-time crowd heatmaps, evacuation routes, and camera frustums overlay seamlessly in both modes.
 
 ### 3. Centralized System Health & Telemetry Hub (`/system-health`)

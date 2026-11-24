@@ -23,6 +23,7 @@ router = APIRouter(prefix="/system-health", tags=["System Health & Diagnostics"]
 _STARTUP_TIME = time.time()
 
 @router.get("")
+@router.get("/status")
 def get_system_health(db: Session = Depends(get_db)) -> Dict[str, Any]:
     """Centralized production health monitor performing live probes across all 9 architectural subsystems."""
     now = datetime.utcnow()

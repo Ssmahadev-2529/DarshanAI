@@ -178,7 +178,7 @@ def seed_multi_temple_gis_foundation(db: Session = None):
             # 3D Asset
             db.add(Temple3DAsset(
                 temple_id=t1_id,
-                asset_name="Somnath Mandir Holographic 3D Model Mesh",
+                asset_name="Somnath Mandir Architectural 3D Model Mesh",
                 asset_type="GLB_MODEL",
                 file_path_or_url="/assets/3d/somnath_temple_lod1.glb",
                 lod_level="LOD1",
