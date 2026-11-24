@@ -61,7 +61,8 @@ const Sidebar = () => {
     { path: '/alerts', label: 'Alerts', icon: ShieldAlert, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY'] },
     { path: '/reports', label: 'Reports', icon: FileSpreadsheet, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER'] },
     { path: '/users', label: 'User directory', icon: Users, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN'] },
-    { path: '/temples-management', label: 'Temple platform', icon: Building2, roles: ['SUPER_ADMIN'] },
+    { path: '/temples-management', label: 'Temple admin portal', icon: Building2, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN'] },
+    { path: '/system-health', label: 'System health & probes', icon: Activity, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY'] },
     { path: '/settings', label: 'Temple settings', icon: Settings, roles: ['SUPER_ADMIN', 'TEMPLE_ADMIN'] },
   ];
 

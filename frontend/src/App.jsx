@@ -40,6 +40,7 @@ const Reports = lazy(() => import('./pages/Reports'));
 const AlertsPage = lazy(() => import('./pages/Alerts'));
 const UsersPage = lazy(() => import('./pages/Users'));
 const TempleManagement = lazy(() => import('./pages/TempleManagement'));
+const SystemMonitoring = lazy(() => import('./pages/SystemMonitoring'));
 const Settings = lazy(() => import('./pages/Settings'));
 
 const Layout = ({ children }) => {
@@ -211,8 +212,14 @@ const AppRoutes = () => {
       } />
 
       <Route path="/temples-management" element={
-        <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
+        <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'TEMPLE_ADMIN']}>
           <Layout><TempleManagement /></Layout>
+        </ProtectedRoute>
+      } />
+
+      <Route path="/system-health" element={
+        <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'TEMPLE_ADMIN', 'MANAGER', 'SECURITY', 'DATA_ANALYST']}>
+          <Layout><SystemMonitoring /></Layout>
         </ProtectedRoute>
       } />
 

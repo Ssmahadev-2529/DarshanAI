@@ -57,8 +57,12 @@ class DarshanAIPredictiveService:
             prep_path = os.path.join(MODELS_DIR, "preprocessing_pipeline.pkl")
             if os.path.exists(prep_path):
                 prep = joblib.load(prep_path)
-                self.scaler = prep.get("scaler")
-                self.feature_cols = prep.get("feature_cols", [])
+                if isinstance(prep, dict):
+                    self.scaler = prep.get("scaler")
+                    self.feature_cols = prep.get("feature_cols", [])
+                else:
+                    self.scaler = getattr(prep, "scaler", None)
+                    self.feature_cols = getattr(prep, "feature_names", getattr(prep, "feature_cols", []))
 
             cr_path = os.path.join(MODELS_DIR, "crowd_regressor.pkl")
             if os.path.exists(cr_path):

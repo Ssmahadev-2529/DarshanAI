@@ -49,9 +49,40 @@ def get_optional_user(
         return None
     return None
 
+ROLE_ALIASES = {
+    "OPERATIONS_MANAGER": {"OPERATIONS_MANAGER", "MANAGER"},
+    "MANAGER": {"OPERATIONS_MANAGER", "MANAGER"},
+    "EMERGENCY_OFFICER": {"EMERGENCY_OFFICER", "SECURITY"},
+    "SECURITY": {"EMERGENCY_OFFICER", "SECURITY"},
+    "VIEWER": {"VIEWER", "VOLUNTEER"},
+    "VOLUNTEER": {"VIEWER", "VOLUNTEER"},
+    "DATA_ANALYST": {"DATA_ANALYST", "ANALYST"},
+    "SUPER_ADMIN": {"SUPER_ADMIN"},
+    "TEMPLE_ADMIN": {"TEMPLE_ADMIN"},
+    "MEDICAL": {"MEDICAL"},
+    "RECEPTIONIST": {"RECEPTIONIST"}
+}
+
 def require_role(allowed_roles: list[str]):
     def role_checker(current_user: User = Depends(get_current_user)):
-        if current_user.role not in allowed_roles and current_user.role != "SUPER_ADMIN":
+        user_role = (current_user.role or "").strip().upper()
+        if user_role == "SUPER_ADMIN":
+            return current_user
+
+        # Expand allowed roles with aliases
+        expanded_allowed = set()
+        for r in allowed_roles:
+            r_norm = r.strip().upper()
+            expanded_allowed.add(r_norm)
+            if r_norm in ROLE_ALIASES:
+                expanded_allowed.update(ROLE_ALIASES[r_norm])
+
+        # Check if user's role or its aliases match
+        user_roles = {user_role}
+        if user_role in ROLE_ALIASES:
+            user_roles.update(ROLE_ALIASES[user_role])
+
+        if not user_roles.intersection(expanded_allowed):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=f"Access denied. Required roles: {allowed_roles}"

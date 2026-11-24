@@ -28,16 +28,59 @@ from backend.models.gis import (
 from backend.models.emergency import EmergencyEvent, EmergencyRoute, EmergencyAuditLog
 from backend.models.ai_assistant import AIConversation, AIMessage, AIQueryLog
 from backend.models.festival import TempleFestival, FestivalHistoricalRecord, FestivalPrediction
+from backend.models.audit import SystemAuditLog
 from backend.services.temple_data_service import seed_multi_temple_gis_foundation
 from backend.services.auth_service import get_password_hash
 
-from backend.routers import auth, temples, dashboard, ml, simulation, alerts, pilgrims, cctv, analytics, predictions, cameras, heatmap, surroundings, emergency, ai_chat, festivals
+from backend.routers import auth, temples, dashboard, ml, simulation, alerts, pilgrims, cctv, analytics, predictions, cameras, heatmap, surroundings, emergency, ai_chat, festivals, admin, system_health
+import time
+from typing import Dict, List
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     description="DarshanAI - AI-Powered Multi-Temple Crowd Intelligence & Safety Management System"
 )
+
+# Sliding Window Rate Limiting State (In-Memory Protection)
+_client_requests: Dict[str, List[float]] = {}
+RATE_LIMIT_PER_MINUTE = 180
+
+@app.middleware("http")
+async def rate_limiting_middleware(request: Request, call_next):
+    path = request.url.path
+    # Exempt internal probes, static files, and documentation
+    if (
+        path in ["/health", f"{settings.API_V1_STR}/health", "/docs", "/openapi.json"] 
+        or path.startswith("/assets") 
+        or path.startswith("/static")
+    ):
+        return await call_next(request)
+
+    client_ip = request.client.host if request.client else "127.0.0.1"
+    now = time.time()
+    window = now - 60.0
+
+    # Prune old timestamps
+    timestamps = [t for t in _client_requests.get(client_ip, []) if t > window]
+    if len(timestamps) >= RATE_LIMIT_PER_MINUTE:
+        from fastapi.responses import JSONResponse
+        return JSONResponse(
+            status_code=429,
+            content={"detail": "Too many requests. Please slow down."},
+            headers={
+                "Retry-After": "60",
+                "X-RateLimit-Limit": str(RATE_LIMIT_PER_MINUTE),
+                "X-RateLimit-Remaining": "0"
+            }
+        )
+
+    timestamps.append(now)
+    _client_requests[client_ip] = timestamps
+    response = await call_next(request)
+    response.headers["X-RateLimit-Limit"] = str(RATE_LIMIT_PER_MINUTE)
+    response.headers["X-RateLimit-Remaining"] = str(max(0, RATE_LIMIT_PER_MINUTE - len(timestamps)))
+    return response
 
 # Enable GZIP compression for fast payload transfers (>1KB)
 app.add_middleware(GZipMiddleware, minimum_size=1000)
@@ -70,6 +113,8 @@ app.include_router(heatmap.router, prefix=settings.API_V1_STR)
 app.include_router(emergency.router, prefix=settings.API_V1_STR)
 app.include_router(ai_chat.router, prefix=settings.API_V1_STR)
 app.include_router(festivals.router, prefix=settings.API_V1_STR)
+app.include_router(admin.router, prefix=settings.API_V1_STR)
+app.include_router(system_health.router, prefix=settings.API_V1_STR)
 
 import gc
 import asyncio
@@ -418,6 +463,10 @@ def seed_database():
         # 7. Seed verified temple festivals, historical records & surge forecasts
         from backend.services.festival_service import FestivalAnalyticsService
         FestivalAnalyticsService.seed_verified_festivals(db)
+
+        # 8. Seed verified CCTV Edge Cameras across temples
+        from backend.services.camera_db_migration import migrate_and_seed_cameras
+        migrate_and_seed_cameras()
 
         print("[SEEDING] Database initialization complete.")
     except Exception as e:

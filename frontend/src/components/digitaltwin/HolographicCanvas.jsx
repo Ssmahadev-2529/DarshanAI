@@ -11,8 +11,54 @@ export const gpsToMeters = (lat, lng, centerLat, centerLng) => {
   return { x, z };
 };
 
+// Procedural texture generator for realistic temple masonry and courtyard paving
+export const createStoneTexture = (baseHex = '#cfa878', mortarHex = '#8c7050') => {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = baseHex;
+  ctx.fillRect(0, 0, 256, 256);
+
+  // Ashlar stone block lines
+  ctx.strokeStyle = mortarHex;
+  ctx.lineWidth = 2;
+  const rowH = 32;
+  for (let y = 0; y < 256; y += rowH) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(256, y);
+    ctx.stroke();
+
+    const offset = (y / rowH) % 2 === 0 ? 0 : 32;
+    for (let x = offset; x < 256; x += 64) {
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x, y + rowH);
+      ctx.stroke();
+    }
+  }
+
+  // Micro-noise grain
+  const imgData = ctx.getImageData(0, 0, 256, 256);
+  const data = imgData.data;
+  for (let i = 0; i < data.length; i += 4) {
+    const noise = (Math.random() - 0.5) * 18;
+    data[i] = Math.min(255, Math.max(0, data[i] + noise));
+    data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + noise));
+    data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + noise));
+  }
+  ctx.putImageData(imgData, 0, 0);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(2, 2);
+  return texture;
+};
+
 // Procedural dynamic 2D canvas text sprite generator for floating 3D labels
-const createFloatingLabel = (text, subtitle = '', themeColor = '#00f0ff', bgColor = 'rgba(5, 18, 38, 0.88)') => {
+const createFloatingLabel = (text, subtitle = '', themeColor = '#00f0ff', bgColor = 'rgba(5, 18, 38, 0.88)', textColor = null) => {
   const canvas = document.createElement('canvas');
   canvas.width = 512;
   canvas.height = 128;
@@ -29,13 +75,13 @@ const createFloatingLabel = (text, subtitle = '', themeColor = '#00f0ff', bgColo
   ctx.stroke();
 
   ctx.font = 'bold 30px sans-serif';
-  ctx.fillStyle = themeColor;
+  ctx.fillStyle = textColor || themeColor;
   ctx.textAlign = 'center';
   ctx.fillText(text, 256, 54);
 
   if (subtitle) {
     ctx.font = '22px sans-serif';
-    ctx.fillStyle = '#D0E4F5';
+    ctx.fillStyle = textColor ? '#665544' : '#D0E4F5';
     ctx.fillText(subtitle, 256, 94);
   }
 
@@ -163,6 +209,7 @@ const HolographicCanvas = ({
   navLevel = 2, // 1: REGIONAL, 2: CAMPUS, 3: BUILDING, 4: ZONE, 5: FLOOR
   selectedEntity = null,
   selectedFloor = 1,
+  renderMode = 'REALISTIC', // 'REALISTIC' | 'TACTICAL'
   festivalSimulationMode = false,
   selectedFestival = null,
   onSelectEntity = () => {},
@@ -175,6 +222,12 @@ const HolographicCanvas = ({
   const cameraRef = useRef(null);
   const controlsRef = useRef(null);
   const scanPlaneRef = useRef(null);
+  const tacticalGroupRef = useRef(null);
+  const realisticGroupRef = useRef(null);
+  const ambientLightRef = useRef(null);
+  const dirLight1Ref = useRef(null);
+  const dirLight2Ref = useRef(null);
+  const hemiLightRef = useRef(null);
   const meshesRef = useRef([]);
   const clickableObjectsRef = useRef([]);
   const animFrameIdRef = useRef(null);
@@ -188,9 +241,10 @@ const HolographicCanvas = ({
     const width = mountRef.current.clientWidth;
     const height = mountRef.current.clientHeight;
 
+    const isInitialRealistic = (renderMode === 'REALISTIC');
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x040914);
-    scene.fog = new THREE.FogExp2(0x040914, 0.0028);
+    scene.background = new THREE.Color(isInitialRealistic ? 0xdce7f0 : 0x040914);
+    scene.fog = new THREE.FogExp2(isInitialRealistic ? 0xdce7f0 : 0x040914, isInitialRealistic ? 0.0010 : 0.0028);
     sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(50, width / height, 1, 4500);
@@ -216,19 +270,30 @@ const HolographicCanvas = ({
     controls.autoRotateSpeed = 0.8;
     controlsRef.current = controls;
 
-    // Lights
-    scene.add(new THREE.AmbientLight(0x0a2540, 2.0));
-    const dirLight1 = new THREE.DirectionalLight(0x00f0ff, 2.8);
+    // Diurnal & Tactical Lights
+    const ambientLight = new THREE.AmbientLight(isInitialRealistic ? 0xfff8ee : 0x0a2540, isInitialRealistic ? 1.4 : 2.0);
+    scene.add(ambientLight);
+    ambientLightRef.current = ambientLight;
+
+    const dirLight1 = new THREE.DirectionalLight(isInitialRealistic ? 0xfffaea : 0x00f0ff, isInitialRealistic ? 2.5 : 2.8);
     dirLight1.position.set(120, 240, 120);
     scene.add(dirLight1);
-    const dirLight2 = new THREE.DirectionalLight(0x0055ff, 1.8);
+    dirLight1Ref.current = dirLight1;
+
+    const dirLight2 = new THREE.DirectionalLight(isInitialRealistic ? 0xd0e2f5 : 0x0055ff, isInitialRealistic ? 1.0 : 1.8);
     dirLight2.position.set(-120, 180, -120);
     scene.add(dirLight2);
+    dirLight2Ref.current = dirLight2;
 
-    // Ground Grid & Concentric Radar Rings
+    const hemiLight = new THREE.HemisphereLight(0xdce7f0, 0xcab598, isInitialRealistic ? 0.8 : 0.0);
+    scene.add(hemiLight);
+    hemiLightRef.current = hemiLight;
+
+    // Tactical HUD Ground Group (Grid, Radar Rings, Cyber Particles, Scan Plane)
+    const tacticalGroup = new THREE.Group();
     const gridHelper = new THREE.GridHelper(800, 80, 0x00f0ff, 0x003366);
     gridHelper.position.y = -0.2;
-    scene.add(gridHelper);
+    tacticalGroup.add(gridHelper);
 
     [80, 160, 260, 400].forEach(radius => {
       const ring = new THREE.Mesh(
@@ -237,10 +302,9 @@ const HolographicCanvas = ({
       );
       ring.rotation.x = Math.PI / 2;
       ring.position.y = -0.1;
-      scene.add(ring);
+      tacticalGroup.add(ring);
     });
 
-    // Particle Cloud
     const particleCount = 700;
     const particlePositions = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount * 3; i += 3) {
@@ -254,17 +318,39 @@ const HolographicCanvas = ({
       particleGeo, 
       new THREE.PointsMaterial({ color: 0x00f0ff, size: 2.2, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending })
     );
-    scene.add(particleCloud);
+    tacticalGroup.add(particleCloud);
 
-    // Laser Scan Plane
     const scanPlane = new THREE.Mesh(
       new THREE.PlaneGeometry(500, 500, 16, 16),
       new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.08, wireframe: true, side: THREE.DoubleSide })
     );
     scanPlane.rotation.x = Math.PI / 2;
     scanPlane.position.y = 5;
-    scene.add(scanPlane);
+    tacticalGroup.add(scanPlane);
     scanPlaneRef.current = scanPlane;
+
+    scene.add(tacticalGroup);
+    tacticalGroup.visible = !isInitialRealistic;
+    tacticalGroupRef.current = tacticalGroup;
+
+    // Realistic Temple Courtyard Ground Group (Natural Stone Masonry Plaza)
+    const realisticGroup = new THREE.Group();
+    const courtyardTex = createStoneTexture('#d1bc9e', '#967f62');
+    const courtyardMat = new THREE.MeshStandardMaterial({
+      color: 0xdfceb7,
+      roughness: 0.88,
+      metalness: 0.04,
+      map: courtyardTex,
+      side: THREE.DoubleSide
+    });
+    const courtyardMesh = new THREE.Mesh(new THREE.PlaneGeometry(1600, 1600), courtyardMat);
+    courtyardMesh.rotation.x = -Math.PI / 2;
+    courtyardMesh.position.y = -0.05;
+    realisticGroup.add(courtyardMesh);
+
+    scene.add(realisticGroup);
+    realisticGroup.visible = isInitialRealistic;
+    realisticGroupRef.current = realisticGroup;
 
     const handleResize = () => {
       if (!mountRef.current || !renderer || !camera) return;
@@ -397,6 +483,32 @@ const HolographicCanvas = ({
     }
   }, [navLevel, selectedEntity, selectedFloor, temple, buildings, zones]);
 
+  // Dynamic Diurnal Lighting & Atmosphere Watcher
+  useEffect(() => {
+    const isRealistic = (renderMode === 'REALISTIC');
+    if (sceneRef.current) {
+      sceneRef.current.background = new THREE.Color(isRealistic ? 0xdce7f0 : 0x040914);
+      sceneRef.current.fog = new THREE.FogExp2(isRealistic ? 0xdce7f0 : 0x040914, isRealistic ? 0.0010 : 0.0028);
+    }
+    if (tacticalGroupRef.current) tacticalGroupRef.current.visible = !isRealistic;
+    if (realisticGroupRef.current) realisticGroupRef.current.visible = isRealistic;
+    if (ambientLightRef.current) {
+      ambientLightRef.current.color.set(isRealistic ? 0xfff8ee : 0x0a2540);
+      ambientLightRef.current.intensity = isRealistic ? 1.4 : 2.0;
+    }
+    if (dirLight1Ref.current) {
+      dirLight1Ref.current.color.set(isRealistic ? 0xfffaea : 0x00f0ff);
+      dirLight1Ref.current.intensity = isRealistic ? 2.5 : 2.8;
+    }
+    if (dirLight2Ref.current) {
+      dirLight2Ref.current.color.set(isRealistic ? 0xd0e2f5 : 0x0055ff);
+      dirLight2Ref.current.intensity = isRealistic ? 1.0 : 1.8;
+    }
+    if (hemiLightRef.current) {
+      hemiLightRef.current.intensity = isRealistic ? 0.8 : 0.0;
+    }
+  }, [renderMode]);
+
   // Construct Complete Spatial 3D Digital Twin Environment with Level 5 Floor Slicing
   useEffect(() => {
     const scene = sceneRef.current;
@@ -416,17 +528,71 @@ const HolographicCanvas = ({
     const centerLat = temple.latitude || 20.8880;
     const centerLng = temple.longitude || 70.4012;
 
-    const buildingMat = new THREE.MeshPhysicalMaterial({
-      color: 0x00e5ff,
-      emissive: 0x002244,
-      metalness: 0.85,
-      roughness: 0.15,
-      transparent: true,
-      opacity: 0.42,
-      side: THREE.DoubleSide
+    const isRealistic = (renderMode === 'REALISTIC');
+    const isSouthDravidian = Boolean(
+      temple?.state?.toLowerCase().includes('tamil') || 
+      temple?.state?.toLowerCase().includes('andhra') || 
+      temple?.temple_id === 'TEMPLE-002' || 
+      temple?.temple_id === 'TEMPLE-003'
+    );
+
+    // Procedural stone masonry textures for realistic architecture
+    const stoneBaseHex = isSouthDravidian ? '#5a554e' : '#d8b584';
+    const stoneMortarHex = isSouthDravidian ? '#383430' : '#8e6f47';
+    const stoneTexture = isRealistic ? createStoneTexture(stoneBaseHex, stoneMortarHex) : null;
+    const plinthTexture = isRealistic ? createStoneTexture(isSouthDravidian ? '#44403b' : '#be9767', isSouthDravidian ? '#2a2724' : '#7c5f3b') : null;
+
+    const buildingMat = isRealistic
+      ? new THREE.MeshStandardMaterial({
+          color: isSouthDravidian ? 0x625d56 : 0xd8b584,
+          roughness: 0.82,
+          metalness: 0.08,
+          map: stoneTexture,
+          side: THREE.DoubleSide
+        })
+      : new THREE.MeshPhysicalMaterial({
+          color: 0x00e5ff,
+          emissive: 0x002244,
+          metalness: 0.85,
+          roughness: 0.15,
+          transparent: true,
+          opacity: 0.42,
+          side: THREE.DoubleSide
+        });
+
+    const plinthMat = isRealistic
+      ? new THREE.MeshStandardMaterial({
+          color: isSouthDravidian ? 0x48443f : 0xbe9767,
+          roughness: 0.90,
+          metalness: 0.05,
+          map: plinthTexture,
+          side: THREE.DoubleSide
+        })
+      : buildingMat;
+
+    const goldKalashMat = new THREE.MeshStandardMaterial({
+      color: 0xf5b700,
+      roughness: 0.25,
+      metalness: 0.85
     });
 
-    const edgeLineMat = new THREE.LineBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.9, linewidth: 1.5 });
+    const waterMat = isRealistic
+      ? new THREE.MeshStandardMaterial({
+          color: 0x1a535c,
+          roughness: 0.12,
+          metalness: 0.22,
+          transparent: true,
+          opacity: 0.85
+        })
+      : new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.45 });
+
+    const edgeLineMat = new THREE.LineBasicMaterial({
+      color: isRealistic ? 0x8a7050 : 0x00ffff,
+      transparent: true,
+      opacity: isRealistic ? 0.35 : 0.9,
+      linewidth: 1.5
+    });
+
     const isSelected = (item) => selectedEntity && (
       selectedEntity.id === item.id ||
       (selectedEntity.zone_code && (selectedEntity.zone_code === item.zone_code || selectedEntity.zone_code === item.zone_id)) ||
@@ -435,7 +601,7 @@ const HolographicCanvas = ({
 
     let totalPolygons = 0;
 
-    // 1. CAMPUS BUILDINGS LAYER (With Level 5 Architectural Floor Slicing)
+    // 1. CAMPUS BUILDINGS LAYER (With Level 5 Architectural Floor Slicing & Authentic Indian Architecture)
     if (layers.buildings && Array.isArray(buildings)) {
       buildings.forEach(bld => {
         const { x, z } = gpsToMeters(bld.latitude, bld.longitude, centerLat, centerLng);
@@ -460,9 +626,9 @@ const HolographicCanvas = ({
             // Floor Slab Plate
             const slabGeo = new THREE.BoxGeometry(baseSize * (1 - (f - 1) * 0.08), 1.0, baseSize * (1 - (f - 1) * 0.08));
             const slabMat = new THREE.MeshBasicMaterial({
-              color: isCurrentFloor ? 0x00f0ff : 0x0055aa,
+              color: isCurrentFloor ? 0x00f0ff : (isRealistic ? 0xb59265 : 0x0055aa),
               transparent: true,
-              opacity: isCurrentFloor ? 0.9 : 0.2
+              opacity: isCurrentFloor ? 0.9 : 0.35
             });
             const slabMesh = new THREE.Mesh(slabGeo, slabMat);
             slabMesh.position.y = floorY + 0.5;
@@ -470,20 +636,28 @@ const HolographicCanvas = ({
 
             // Floor Interior Walls & Structural Grid
             const wallGeo = new THREE.BoxGeometry(baseSize * (1 - (f - 1) * 0.08) * 0.95, tierH * 0.9, baseSize * (1 - (f - 1) * 0.08) * 0.95);
-            const wallMat = new THREE.MeshPhysicalMaterial({
-              color: isCurrentFloor ? 0x00f0ff : 0x003366,
-              emissive: isCurrentFloor ? 0x004466 : 0x001122,
-              transparent: true,
-              opacity: isCurrentFloor ? 0.55 : 0.12,
-              side: THREE.DoubleSide
-            });
+            const wallMat = isRealistic
+              ? new THREE.MeshStandardMaterial({
+                  color: isCurrentFloor ? 0xe5c28f : 0x9e805d,
+                  roughness: 0.8,
+                  transparent: true,
+                  opacity: isCurrentFloor ? 0.75 : 0.25,
+                  side: THREE.DoubleSide
+                })
+              : new THREE.MeshPhysicalMaterial({
+                  color: isCurrentFloor ? 0x00f0ff : 0x003366,
+                  emissive: isCurrentFloor ? 0x004466 : 0x001122,
+                  transparent: true,
+                  opacity: isCurrentFloor ? 0.55 : 0.12,
+                  side: THREE.DoubleSide
+                });
             const wallMesh = new THREE.Mesh(wallGeo, wallMat);
             wallMesh.position.y = floorY + (tierH * 0.9) / 2 + 1;
             group.add(wallMesh);
 
             const wallEdges = new THREE.LineSegments(new THREE.EdgesGeometry(wallGeo), new THREE.LineBasicMaterial({
-              color: isCurrentFloor ? 0xffcc00 : 0x00aaff,
-              opacity: isCurrentFloor ? 0.95 : 0.25,
+              color: isCurrentFloor ? 0xffcc00 : (isRealistic ? 0x6e5233 : 0x00aaff),
+              opacity: isCurrentFloor ? 0.95 : 0.35,
               transparent: true
             }));
             wallEdges.position.y = floorY + (tierH * 0.9) / 2 + 1;
@@ -491,7 +665,13 @@ const HolographicCanvas = ({
 
             // Floor Label on active floor
             if (isCurrentFloor) {
-              const flLabel = createFloatingLabel(`FLOOR L${f}`, `Elev: ${Math.round(floorY)}m • Slice Active`, '#ffcc00');
+              const flLabel = createFloatingLabel(
+                `FLOOR L${f}`, 
+                `Elev: ${Math.round(floorY)}m • Slice Active`, 
+                '#ffcc00',
+                isRealistic ? 'rgba(255, 252, 245, 0.95)' : 'rgba(5, 18, 38, 0.88)',
+                isRealistic ? '#800000' : null
+              );
               flLabel.position.set(0, floorY + tierH + 5, 0);
               group.add(flLabel);
             }
@@ -500,64 +680,284 @@ const HolographicCanvas = ({
         } else {
           // Standard Architectural Typology (Levels 1-4)
           const activeMat = bldSelected 
-            ? new THREE.MeshPhysicalMaterial({ color: 0xffaa00, emissive: 0x442200, metalness: 0.9, roughness: 0.1, transparent: true, opacity: 0.65 })
+            ? (isRealistic 
+                ? new THREE.MeshStandardMaterial({ color: 0xe6a817, roughness: 0.6, metalness: 0.18, map: stoneTexture })
+                : new THREE.MeshPhysicalMaterial({ color: 0xffaa00, emissive: 0x442200, metalness: 0.9, roughness: 0.1, transparent: true, opacity: 0.65 }))
             : buildingMat;
 
           if (bldType.includes('SANCTUM') || bldType.includes('SHIKHARA') || bldType.includes('VIMANA')) {
+            // Authentic Sanctum Sanctorum (Jagati Plinth, Garbagriha, Shikhara/Vimana Tower, Amalaka, and Gold Kalasha)
             const baseSize = 24;
-            const baseH = height * 0.4;
-            const spireH = height * 0.6;
+            const baseH = height * 0.38;
+            const spireH = height * 0.62;
 
-            const baseGeo = new THREE.BoxGeometry(baseSize, baseH, baseSize);
-            const baseMesh = new THREE.Mesh(baseGeo, activeMat);
-            baseMesh.position.y = baseH / 2;
-            group.add(baseMesh);
-            const baseEdges = new THREE.LineSegments(new THREE.EdgesGeometry(baseGeo), edgeLineMat);
-            baseEdges.position.y = baseH / 2;
-            group.add(baseEdges);
+            if (isRealistic) {
+              // 1. Stepped Jagati Plinth
+              const jagatiTier1 = new THREE.Mesh(new THREE.BoxGeometry(baseSize + 8, 2.5, baseSize + 8), plinthMat);
+              jagatiTier1.position.y = 1.25;
+              group.add(jagatiTier1);
 
-            const spireGeo = new THREE.ConeGeometry(baseSize * 0.7, spireH, 4);
-            const spireMesh = new THREE.Mesh(spireGeo, activeMat);
-            spireMesh.position.y = baseH + spireH / 2;
-            spireMesh.rotation.y = Math.PI / 4;
-            group.add(spireMesh);
-            const spireEdges = new THREE.LineSegments(new THREE.EdgesGeometry(spireGeo), edgeLineMat);
-            spireEdges.position.y = baseH + spireH / 2;
-            spireEdges.rotation.y = Math.PI / 4;
-            group.add(spireEdges);
+              const jagatiTier2 = new THREE.Mesh(new THREE.BoxGeometry(baseSize + 4, 1.8, baseSize + 4), plinthMat);
+              jagatiTier2.position.y = 3.4;
+              group.add(jagatiTier2);
 
-            const kalash = new THREE.Mesh(new THREE.SphereGeometry(2.5, 12, 12), new THREE.MeshBasicMaterial({ color: 0xffcc00 }));
-            kalash.position.y = baseH + spireH + 2;
-            group.add(kalash);
-            totalPolygons += 450;
+              // 2. Mandovara (Sanctum Body Walls with Relief Offsets)
+              const sanctumBody = new THREE.Mesh(new THREE.BoxGeometry(baseSize, baseH, baseSize), activeMat);
+              sanctumBody.position.y = 4.3 + baseH / 2;
+              group.add(sanctumBody);
+
+              // Wall projection offsets (Rathas)
+              const rathaX = new THREE.Mesh(new THREE.BoxGeometry(baseSize + 1.6, baseH * 0.94, baseSize * 0.55), activeMat);
+              rathaX.position.y = 4.3 + baseH / 2;
+              group.add(rathaX);
+
+              const rathaZ = new THREE.Mesh(new THREE.BoxGeometry(baseSize * 0.55, baseH * 0.94, baseSize + 1.6), activeMat);
+              rathaZ.position.y = 4.3 + baseH / 2;
+              group.add(rathaZ);
+
+              // 3. Shikhara Spire (Tower)
+              if (isSouthDravidian) {
+                // Tiered Dravidian Vimana
+                const vimanaTiers = 5;
+                const vTierH = spireH / vimanaTiers;
+                for (let vt = 0; vt < vimanaTiers; vt++) {
+                  const vScale = 1 - (vt * 0.16);
+                  const vBox = new THREE.Mesh(new THREE.BoxGeometry(baseSize * vScale, vTierH * 0.92, baseSize * vScale), activeMat);
+                  vBox.position.y = 4.3 + baseH + (vt * vTierH) + (vTierH / 2);
+                  group.add(vBox);
+                }
+                // Domical Griva & Golden Vimana Stupi
+                const griva = new THREE.Mesh(new THREE.SphereGeometry(baseSize * 0.18, 16, 16), activeMat);
+                griva.position.y = 4.3 + baseH + spireH + 1.5;
+                group.add(griva);
+
+                const stupi = new THREE.Mesh(new THREE.ConeGeometry(baseSize * 0.08, 4.0, 12), goldKalashMat);
+                stupi.position.y = 4.3 + baseH + spireH + 4.5;
+                group.add(stupi);
+              } else {
+                // Curvilinear Nagara / Solanki Shikhara Spire
+                const shikharaGeo = new THREE.ConeGeometry(baseSize * 0.65, spireH, 8);
+                const shikharaMesh = new THREE.Mesh(shikharaGeo, activeMat);
+                shikharaMesh.position.y = 4.3 + baseH + spireH / 2;
+                group.add(shikharaMesh);
+
+                // Corner miniature spires (Urushringas)
+                [-baseSize * 0.28, baseSize * 0.28].forEach(ox => {
+                  [-baseSize * 0.28, baseSize * 0.28].forEach(oz => {
+                    const uru = new THREE.Mesh(new THREE.ConeGeometry(baseSize * 0.22, spireH * 0.5, 4), activeMat);
+                    uru.position.set(ox, 4.3 + baseH + (spireH * 0.25), oz);
+                    uru.rotation.y = Math.PI / 4;
+                    group.add(uru);
+                  });
+                });
+
+                // Amalaka (Ribbed Stone Disc at the peak)
+                const amalakaGeo = new THREE.CylinderGeometry(baseSize * 0.28, baseSize * 0.26, 2.2, 16);
+                const amalakaMesh = new THREE.Mesh(amalakaGeo, plinthMat);
+                amalakaMesh.position.y = 4.3 + baseH + spireH + 1.1;
+                group.add(amalakaMesh);
+
+                // Golden Brass Kalasha Finial
+                const kalashBall = new THREE.Mesh(new THREE.SphereGeometry(2.0, 16, 16), goldKalashMat);
+                kalashBall.position.y = 4.3 + baseH + spireH + 3.0;
+                group.add(kalashBall);
+
+                const kalashSpire = new THREE.Mesh(new THREE.ConeGeometry(1.0, 2.8, 12), goldKalashMat);
+                kalashSpire.position.y = 4.3 + baseH + spireH + 4.8;
+                group.add(kalashSpire);
+              }
+
+              // 4. Mukhamandapa Entrance Porch with Carved Stone Pillars
+              const porchPlinth = new THREE.Mesh(new THREE.BoxGeometry(14, 2.5, 10), plinthMat);
+              porchPlinth.position.set(0, 1.25, baseSize / 2 + 5);
+              group.add(porchPlinth);
+
+              [[-5, baseSize / 2 + 8], [5, baseSize / 2 + 8], [-5, baseSize / 2 + 3], [5, baseSize / 2 + 3]].forEach(([px, pz]) => {
+                const pillar = new THREE.Mesh(new THREE.BoxGeometry(1.4, baseH * 0.75, 1.4), plinthMat);
+                pillar.position.set(px, 2.5 + (baseH * 0.75) / 2, pz);
+                group.add(pillar);
+              });
+
+              const porchRoof = new THREE.Mesh(new THREE.ConeGeometry(9, 5, 4), activeMat);
+              porchRoof.position.set(0, 2.5 + (baseH * 0.75) + 2.5, baseSize / 2 + 5);
+              porchRoof.rotation.y = Math.PI / 4;
+              group.add(porchRoof);
+
+              totalPolygons += 850;
+            } else {
+              // Tactical Wireframe Shikhara
+              const baseGeo = new THREE.BoxGeometry(baseSize, baseH, baseSize);
+              const baseMesh = new THREE.Mesh(baseGeo, activeMat);
+              baseMesh.position.y = baseH / 2;
+              group.add(baseMesh);
+              const baseEdges = new THREE.LineSegments(new THREE.EdgesGeometry(baseGeo), edgeLineMat);
+              baseEdges.position.y = baseH / 2;
+              group.add(baseEdges);
+
+              const spireGeo = new THREE.ConeGeometry(baseSize * 0.7, spireH, 4);
+              const spireMesh = new THREE.Mesh(spireGeo, activeMat);
+              spireMesh.position.y = baseH + spireH / 2;
+              spireMesh.rotation.y = Math.PI / 4;
+              group.add(spireMesh);
+              const spireEdges = new THREE.LineSegments(new THREE.EdgesGeometry(spireGeo), edgeLineMat);
+              spireEdges.position.y = baseH + spireH / 2;
+              spireEdges.rotation.y = Math.PI / 4;
+              group.add(spireEdges);
+
+              const kalash = new THREE.Mesh(new THREE.SphereGeometry(2.5, 12, 12), new THREE.MeshBasicMaterial({ color: 0xffcc00 }));
+              kalash.position.y = baseH + spireH + 2;
+              group.add(kalash);
+              totalPolygons += 450;
+            }
           } else if (bldType.includes('GOPURAM') || bldType.includes('TOWER')) {
-            const tiers = Math.min(7, Math.max(3, Math.floor(height / 8)));
+            // Authentic Dravidian Gopuram Gateway Tower
+            const tiers = Math.min(7, Math.max(4, Math.floor(height / 7)));
             const baseW = 28, baseD = 18;
-            for (let t = 0; t < tiers; t++) {
-              const scale = 1 - (t * 0.11);
-              const tierH = height / tiers;
-              const geo = new THREE.BoxGeometry(baseW * scale, tierH * 0.9, baseD * scale);
+
+            if (isRealistic) {
+              // 1. Dvarashala Base Portal with Entrance Passage
+              const pylonW = (baseW - 8) / 2;
+              const leftPylon = new THREE.Mesh(new THREE.BoxGeometry(pylonW, 9, baseD), activeMat);
+              leftPylon.position.set(-baseW / 2 + pylonW / 2, 4.5, 0);
+              group.add(leftPylon);
+
+              const rightPylon = new THREE.Mesh(new THREE.BoxGeometry(pylonW, 9, baseD), activeMat);
+              rightPylon.position.set(baseW / 2 - pylonW / 2, 4.5, 0);
+              group.add(rightPylon);
+
+              const archLintel = new THREE.Mesh(new THREE.BoxGeometry(baseW, 3.5, baseD), plinthMat);
+              archLintel.position.set(0, 10.75, 0);
+              group.add(archLintel);
+
+              // 2. Tapered Horizontal Storeys (Talas)
+              const remainingH = height - 12.5;
+              const tierH = remainingH / tiers;
+              for (let t = 0; t < tiers; t++) {
+                const scale = 1 - (t * 0.11);
+                const storeyBox = new THREE.Mesh(new THREE.BoxGeometry(baseW * scale, tierH * 0.88, baseD * scale), activeMat);
+                storeyBox.position.y = 12.5 + (t * tierH) + (tierH * 0.44);
+                group.add(storeyBox);
+
+                // Overhanging cornice moulding (Kapota)
+                const cornice = new THREE.Mesh(new THREE.BoxGeometry((baseW * scale) + 1.2, 0.7, (baseD * scale) + 1.2), plinthMat);
+                cornice.position.y = 12.5 + (t * tierH) + (tierH * 0.9);
+                group.add(cornice);
+              }
+
+              // 3. Sala-Shikhara Barrel-Vaulted Crest Roof
+              const topScale = 1 - (tiers * 0.11);
+              const salaRoof = new THREE.Mesh(
+                new THREE.CylinderGeometry(baseD * topScale * 0.48, baseD * topScale * 0.48, baseW * topScale, 16, 1, false, 0, Math.PI),
+                plinthMat
+              );
+              salaRoof.rotation.z = Math.PI / 2;
+              salaRoof.position.y = height + 1.0;
+              group.add(salaRoof);
+
+              // Row of Golden Stupis / Kalashas along the roof ridge
+              const stupiCount = 5;
+              const spacing = (baseW * topScale * 0.8) / (stupiCount - 1);
+              for (let s = 0; s < stupiCount; s++) {
+                const sx = -(baseW * topScale * 0.4) + (s * spacing);
+                const kal = new THREE.Mesh(new THREE.ConeGeometry(0.9, 2.8, 10), goldKalashMat);
+                kal.position.set(sx, height + 4.2, 0);
+                group.add(kal);
+              }
+              totalPolygons += tiers * 220 + 200;
+            } else {
+              // Tactical Wireframe Gopuram
+              for (let t = 0; t < tiers; t++) {
+                const scale = 1 - (t * 0.11);
+                const tierH = height / tiers;
+                const geo = new THREE.BoxGeometry(baseW * scale, tierH * 0.9, baseD * scale);
+                const m = new THREE.Mesh(geo, activeMat);
+                m.position.y = (t * tierH) + (tierH / 2);
+                group.add(m);
+                const ed = new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeLineMat);
+                ed.position.y = (t * tierH) + (tierH / 2);
+                group.add(ed);
+              }
+              totalPolygons += tiers * 120;
+            }
+          } else if (bldType.includes('TANK') || bldType.includes('PUSHKARINI')) {
+            // Temple Holy Water Tank with Stepped Stone Ghats
+            const tankW = 34, tankD = 34;
+            const tankDepth = 4;
+
+            // Water Surface Plane
+            const waterPlane = new THREE.Mesh(new THREE.PlaneGeometry(tankW - 6, tankD - 6), waterMat);
+            waterPlane.rotation.x = -Math.PI / 2;
+            waterPlane.position.y = 0.2;
+            group.add(waterPlane);
+
+            // Stepped Ghat Terraces
+            [0, 1, 2, 3].forEach(step => {
+              const sw = tankW - step * 2;
+              const sd = tankD - step * 2;
+              const stepMesh = new THREE.Mesh(new THREE.BoxGeometry(sw, 0.4, sd), plinthMat);
+              stepMesh.position.y = 0.4 + step * 0.35;
+              group.add(stepMesh);
+            });
+            totalPolygons += 180;
+          } else if (bldType.includes('MANDAPAM') || bldType.includes('HALL') || bldType.includes('QUEUE')) {
+            // Colonnaded Hypostyle Hall / Mandapam
+            const hallW = 28, hallD = 20;
+            const plinthH = 2.2;
+            const hallPlinth = new THREE.Mesh(new THREE.BoxGeometry(hallW, plinthH, hallD), plinthMat);
+            hallPlinth.position.y = plinthH / 2;
+            group.add(hallPlinth);
+
+            if (isRealistic) {
+              // Perimeter Colonnade of Square Stone Pillars
+              const colsX = [-11, -4, 4, 11];
+              const colsZ = [-7, 0, 7];
+              colsX.forEach(cx => {
+                colsZ.forEach(cz => {
+                  const pil = new THREE.Mesh(new THREE.BoxGeometry(1.3, height - plinthH - 3, 1.3), plinthMat);
+                  pil.position.set(cx, plinthH + (height - plinthH - 3) / 2, cz);
+                  group.add(pil);
+                });
+              });
+
+              // Mandapam Stone Roof & Cornice
+              const roofBox = new THREE.Mesh(new THREE.BoxGeometry(hallW + 2, 2.5, hallD + 2), activeMat);
+              roofBox.position.y = height - 1.25;
+              group.add(roofBox);
+
+              const pyramidRoof = new THREE.Mesh(new THREE.ConeGeometry(12, 6, 4), activeMat);
+              pyramidRoof.position.set(0, height + 2.5, 0);
+              pyramidRoof.rotation.y = Math.PI / 4;
+              group.add(pyramidRoof);
+
+              totalPolygons += 360;
+            } else {
+              const geo = new THREE.BoxGeometry(hallW, height, hallD);
               const m = new THREE.Mesh(geo, activeMat);
-              m.position.y = (t * tierH) + (tierH / 2);
+              m.position.y = height / 2;
               group.add(m);
               const ed = new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeLineMat);
-              ed.position.y = (t * tierH) + (tierH / 2);
+              ed.position.y = height / 2;
               group.add(ed);
+              totalPolygons += 120;
             }
-            totalPolygons += tiers * 120;
           } else {
+            // General Stone Structure (Admin Block, Dispensary, Prasadam Counter)
             const geo = new THREE.BoxGeometry(22, height, 18);
             const m = new THREE.Mesh(geo, activeMat);
             m.position.y = height / 2;
             group.add(m);
-            const ed = new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeLineMat);
-            ed.position.y = height / 2;
-            group.add(ed);
+            if (!isRealistic) {
+              const ed = new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeLineMat);
+              ed.position.y = height / 2;
+              group.add(ed);
+            }
             totalPolygons += 120;
           }
 
-          const labelTheme = bldSelected ? '#ffaa00' : '#00f0ff';
-          const label = createFloatingLabel(bld.name, `${bld.height_meters || ''}m • ${bld.building_type}`, labelTheme);
+          const labelTheme = bldSelected ? '#ffaa00' : (isRealistic ? '#800000' : '#00f0ff');
+          const labelBg = isRealistic ? 'rgba(255, 252, 245, 0.94)' : 'rgba(5, 18, 38, 0.88)';
+          const labelTextClr = isRealistic ? '#800000' : null;
+          const label = createFloatingLabel(bld.name, `${bld.height_meters || ''}m • ${bld.building_type}`, labelTheme, labelBg, labelTextClr);
           label.position.set(0, height + 10, 0);
           group.add(label);
         }
@@ -1119,7 +1519,7 @@ const HolographicCanvas = ({
     if (onUpdateStats) {
       onUpdateStats({ polyCount: totalPolygons + 1500 });
     }
-  }, [temple, buildings, zones, boundary, roads, facilities, transport, parking, cameras, heatmapData, heatmapMode, layers, navLevel, selectedEntity, selectedFloor, festivalSimulationMode, selectedFestival]);
+  }, [temple, buildings, zones, boundary, roads, facilities, transport, parking, cameras, heatmapData, heatmapMode, layers, navLevel, selectedEntity, selectedFloor, renderMode, festivalSimulationMode, selectedFestival]);
 
   // Raycaster for Interactive Navigation Transitions
   const handlePointerDown = useCallback((event) => {

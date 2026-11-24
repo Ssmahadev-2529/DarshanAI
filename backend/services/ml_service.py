@@ -19,6 +19,16 @@ class MLService:
         self._is_loaded = False
         self._load_metrics_metadata()
 
+    @property
+    def models_loaded(self) -> bool:
+        if not self._is_loaded:
+            self.load_all_artifacts()
+        return self._is_loaded and self.crowd_regressor is not None
+
+    @property
+    def model_metrics(self) -> dict:
+        return self.metrics
+
     def _load_metrics_metadata(self):
         """Loads lightweight JSON metrics metadata without unpickling heavy model weights."""
         try:

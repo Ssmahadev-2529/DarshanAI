@@ -284,7 +284,63 @@ Follow these steps to demonstrate the full capabilities of DarshanAI:
 | `/api/cctv/select_channel`| `POST` | Dynamically change active inference feed source | Yes |
 | `/api/tokens/issue` | `POST` | Generate new pilgrim token with encrypted QR payload | Yes |
 | `/api/tokens/verify` | `POST` | Scan and validate pilgrim queue token at security gate | Yes |
+| `/api/admin/overview` | `GET` | Central administration platform telemetry and inventory counts | Yes |
+| `/api/admin/zones` | `GET`, `POST` | Manage operational crowd zones and entrance gateways | Yes |
+| `/api/admin/data-sources` | `GET`, `POST` | Authoritative GIS and operational data sources registry | Yes |
+| `/api/admin/3d-assets` | `GET`, `POST` | 3D digital twin models and spatial terrain packages | Yes |
+| `/api/admin/users` | `GET`, `POST` | Multi-tenant staff accounts and RBAC assignments | Yes |
+| `/api/admin/audit-logs` | `GET` | Immutable system audit logs for administrative actions | Yes |
+| `/api/admin/ml/retrain` | `POST` | Trigger model retraining and synchronize in-memory estimators | Yes |
+| `/api/system-health` | `GET` | Centralized live diagnostics probing all 9 subsystems | No |
 | `/ws/live-stream` | `WebSocket` | High-frequency telemetry and predictive ML WebSocket stream | Yes |
+
+</details>
+
+---
+
+<details>
+<summary><b>🏛️ Phase 8: Central Administration, Data Governance & 3D Realistic Rendering — [Click to Expand]</b></summary>
+
+<br/>
+
+### 1. Central Administration Dashboard (`/temples-management`)
+Comprehensive administrative command center managing:
+- **Multi-Temple Onboarding & Tenancy**: Real-time capacity, GPS coordinates, boundaries, and operating hours.
+- **Crowd Zones & Gateways**: Zone types (*ENTRY, QUEUE, SANCTUM, WAITING, VIP, PRASADAM, EXIT, PARKING, MEDICAL*), staff assignments, and capacity thresholds.
+- **Data Governance & Sources**: Authoritative geospatial providers (*OpenStreetMap, TTD Official, ISRO Bhuvan*), ODbL licences, classification tiers, and confidence scoring.
+- **3D Spatial Models**: GLB/GLTF models, LOD levels, and polygon budgets.
+- **CCTV & Edge Cameras**: FOV angles, coverage polygons, and camera calibrations.
+- **Predictive ML Retraining**: 1-click model synchronization and compressed pickle reloads with $R^2 > 0.98$.
+- **User Accounts & RBAC**: Granular roles (`SUPER_ADMIN`, `TEMPLE_ADMIN`, `OPERATIONS_MANAGER`, `EMERGENCY_OFFICER`, `DATA_ANALYST`, `VIEWER`).
+- **Immutable Audit Trail**: Chronological event logs with operator email, target entity, timestamp, and IP address.
+
+### 2. Realistic 3D Temple Architectural Rendering (`/digital-twin`)
+The Digital Twin incorporates a dual-mode visual engine toggled via the top toolbar:
+- **Realistic 3D Mode**: Solid, opaque, authentic Indian temple masonry:
+  - **Solanki / Nagara Architecture** (Somnath, Kashi Vishwanath): Warm honey sandstone masonry, multi-tier stepped *Jagati* plinth, curvilinear *Shikhara* spire with corner *Urushringas*, carved stone *Amalaka* disc, and gleaming brass-gilded *Kalasha* finial.
+  - **Dravidian Architecture** (Tirupati Balaji, Madurai Meenakshi): Carved dark granite masonry, stepped pyramidal *Vimana* with *Stupi*, monumental *Gopuram* gateway towers with *Dvarashala* portal, tiered *Talas*, *Sala-Shikhara* barrel crest, and row of 5 golden finials.
+  - **Diurnal Temple Lighting**: Natural warm sunlight, soft atmospheric sky haze, and sandstone flagstone courtyard pavement.
+- **Tactical GIS Mode**: High-contrast cyber-hologram with laser scanning plane, neon wireframes, particle telemetry, and concentric radar rings.
+- **Preserved Overlays**: Real-time crowd heatmaps, evacuation routes, and camera frustums overlay seamlessly in both modes.
+
+### 3. Centralized System Health & Telemetry Hub (`/system-health`)
+Continuous live health probes across all 9 subsystems:
+1. **Frontend**: Vite SPA status, CORS origin verification, routing integrity.
+2. **Backend API**: Process uptime, memory RSS/VMS footprints, thread count, sliding-window rate limiting (180 req/min).
+3. **Database**: PostgreSQL / SQLite round-trip ping latency (ms) and core table counts.
+4. **Data Governance**: Authoritative data sources count, verified ratio, confidence ratings.
+5. **Predictive ML Pipeline**: In-memory estimators status and accuracy scores.
+6. **CCTV Edge Streams**: Configured vs authorized cameras, streaming worker threads.
+7. **Background Jobs**: Memory trimmer (`libc.malloc_trim`), simulation manager state.
+8. **Big Data Lakehouse**: Spark/PySpark local partition data lake, Kafka pub/sub readiness.
+9. **GenAI Assistant**: Google Gemini 1.5 / deterministic fallback connectivity.
+
+### 4. Database Disaster Recovery & Backups
+Automated backup utility in `scripts/backup_db.py`:
+```bash
+# Execute full database backup (PostgreSQL pg_dump or SQLite snapshot)
+python scripts/backup_db.py
+```
 
 </details>
 

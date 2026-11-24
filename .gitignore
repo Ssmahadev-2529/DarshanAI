@@ -46,6 +46,7 @@ frontend/build/
 *.sqlite3
 backend/*.db
 *.sql
+backups/
 
 # Logs
 *.log

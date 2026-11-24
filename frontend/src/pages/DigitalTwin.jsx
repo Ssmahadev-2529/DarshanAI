@@ -63,6 +63,9 @@ const DigitalTwinPage = () => {
   const [navLevel, setNavLevel] = useState(2);
   const [selectedFloor, setSelectedFloor] = useState(1);
 
+  // Realistic 3D Architecture vs Tactical GIS Hologram Mode
+  const [renderMode, setRenderMode] = useState('REALISTIC'); // 'REALISTIC' | 'TACTICAL'
+
   // Interactive 3D States
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [autoRotate, setAutoRotate] = useState(true);
@@ -357,6 +360,30 @@ const DigitalTwinPage = () => {
             )}
           </div>
 
+          {/* Mode Switcher: Realistic 3D Architecture vs Tactical GIS Hologram */}
+          <div className="btn-group btn-group-sm shadow-sm" role="group">
+            <button
+              onClick={() => setRenderMode('REALISTIC')}
+              className={`btn btn-sm d-flex align-items-center gap-1 fw-semibold ${
+                renderMode === 'REALISTIC' ? 'btn-maroon text-gold' : 'btn-outline-secondary bg-white'
+              }`}
+              title="Realistic 3D Temple Architectural Model"
+            >
+              <Building2 size={14} />
+              <span className="d-none d-md-inline">Realistic 3D</span>
+            </button>
+            <button
+              onClick={() => setRenderMode('TACTICAL')}
+              className={`btn btn-sm d-flex align-items-center gap-1 fw-semibold ${
+                renderMode === 'TACTICAL' ? 'btn-dark text-info' : 'btn-outline-secondary bg-white'
+              }`}
+              title="Tactical Holographic GIS Matrix"
+            >
+              <Sparkles size={14} />
+              <span className="d-none d-md-inline">Tactical GIS</span>
+            </button>
+          </div>
+
           <button 
             onClick={() => loadTempleDigitalTwin(selectedTempleId)} 
             className="btn btn-outline-secondary btn-sm p-2 shadow-sm"
@@ -396,9 +423,10 @@ const DigitalTwinPage = () => {
         style={{ 
           height: isFullscreen ? '100vh' : '640px', 
           minHeight: '520px',
-          borderColor: '#00f0ff',
-          backgroundColor: '#040914',
-          boxShadow: '0 0 35px rgba(0, 240, 255, 0.22)'
+          borderColor: renderMode === 'REALISTIC' ? '#D4AF37' : '#00f0ff',
+          backgroundColor: renderMode === 'REALISTIC' ? '#dce7f0' : '#040914',
+          boxShadow: renderMode === 'REALISTIC' ? '0 8px 30px rgba(139, 0, 0, 0.12)' : '0 0 35px rgba(0, 240, 255, 0.22)',
+          transition: 'border-color 0.3s ease, background-color 0.3s ease'
         }}
       >
         {/* Core Three.js WebGL Holographic Engine with Multi-Level Navigation Support */}
@@ -422,6 +450,7 @@ const DigitalTwinPage = () => {
           navLevel={navLevel}
           selectedEntity={selectedEntity}
           selectedFloor={selectedFloor}
+          renderMode={renderMode}
           festivalSimulationMode={festivalSimulationMode}
           selectedFestival={selectedFestival}
           onSelectEntity={(ent) => setSelectedEntity(ent)}
